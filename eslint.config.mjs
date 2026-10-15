@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Código generado (Edge Function empaquetada) y salida estática.
+    "supabase/functions/api/server.js",
+    "out/**",
   ]),
 ]);
 

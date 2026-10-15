@@ -42,7 +42,12 @@ function client() {
         body: body === undefined ? undefined : JSON.stringify(body),
       }),
     );
-    return { status: res.status, headers: res.headers, json: (await res.json()) as Record<string, any> };
+    return {
+      status: res.status,
+      headers: res.headers,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- respuestas JSON arbitrarias en la prueba
+      json: (await res.json()) as Record<string, any>,
+    };
   };
 }
 
