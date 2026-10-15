@@ -12,7 +12,7 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
   }, [error]);
   return (
     <StateScreen
-      icon={<WifiOff className="size-9 text-gold-300" />}
+      icon={<WifiOff className="size-9 text-saffron-700" />}
       eyebrow="Error de conexión"
       title="No hemos podido cargar esta pantalla"
       actions={

@@ -34,13 +34,13 @@ export function TimerDisplay({
       aria-label={`${label}: ${formatClock(remainingMs)}${running ? "" : ", detenido"}`}
     >
       <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90" aria-hidden="true">
-        <circle cx="50" cy="50" r={r} fill="rgba(4,6,26,0.7)" stroke="rgba(132,152,255,0.18)" strokeWidth="7" />
+        <circle cx="50" cy="50" r={r} fill="#ffffff" stroke="#dfe5ee" strokeWidth="7" />
         <circle
           cx="50"
           cy="50"
           r={r}
           fill="none"
-          stroke={low ? "#ff4d6d" : running ? "#33e6d7" : "#7c88c2"}
+          stroke={low ? "#a8323e" : running ? "#1d3fa6" : "#a9b5c6"}
           strokeWidth="7"
           strokeLinecap="round"
           strokeDasharray={c}
@@ -53,14 +53,14 @@ export function TimerDisplay({
           className={cn(
             "score-digits",
             digits,
-            low ? "text-bad-400" : running ? "text-ink-50" : "text-ink-300",
+            low ? "text-bad-700" : running ? "text-ink-900" : "text-ink-600",
             low && "animate-pulse",
           )}
           aria-hidden="true"
         >
           {formatClock(remainingMs)}
         </span>
-        <span className="mt-1 flex items-center gap-1 text-[0.6rem] font-semibold uppercase tracking-[0.12em] text-ink-300">
+        <span className="mt-1 flex items-center gap-1 text-[0.7rem] font-semibold text-ink-600">
           {!running && size === "lg" && <Pause className="size-3" aria-hidden="true" />}
           {running ? label : "Detenido"}
         </span>

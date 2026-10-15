@@ -107,7 +107,7 @@ const loadRoom = async (code: string): Promise<RoomLoad> => {
 function RoomUnavailable({ full }: { full: boolean }) {
   return (
     <StateScreen
-      icon={full ? <Ban className="size-9 text-bad-400" /> : <SearchX className="size-9 text-ink-200" />}
+      icon={full ? <Ban className="size-9 text-bad-700" /> : <SearchX className="size-9 text-ink-700" />}
       eyebrow="Sala privada"
       title={full ? "Esta sala es privada" : "Sala no encontrada"}
       actions={
@@ -176,7 +176,7 @@ export function StaticHistoryDetail() {
       {(result) =>
         result ? (
           <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-            <Link href="/historial" className="text-sm font-semibold text-turquoise-300 hover:underline">
+            <Link href="/historial" className="text-sm font-semibold text-cobalt-600 hover:underline">
               ← Volver al historial
             </Link>
             <div className="mt-4">
@@ -185,7 +185,7 @@ export function StaticHistoryDetail() {
           </div>
         ) : (
           <StateScreen
-            icon={<SearchX className="size-9 text-ink-200" />}
+            icon={<SearchX className="size-9 text-ink-700" />}
             eyebrow="Historial"
             title="Resultado no encontrado"
             actions={

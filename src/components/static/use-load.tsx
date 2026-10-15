@@ -44,7 +44,9 @@ export function LoadError({ error, retry }: { error: Error; retry: () => void })
   const auth = error instanceof ApiError && error.code === "auth";
   return (
     <StateScreen
-      icon={auth ? <ShieldAlert className="size-9 text-gold-300" /> : <WifiOff className="size-9 text-gold-300" />}
+      icon={
+        auth ? <ShieldAlert className="size-9 text-saffron-700" /> : <WifiOff className="size-9 text-saffron-700" />
+      }
       eyebrow={auth ? "Identidad anónima" : "Error de conexión"}
       title={auth ? "No hemos podido identificarte" : "No hemos podido cargar esta pantalla"}
       actions={

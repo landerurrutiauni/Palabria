@@ -41,8 +41,8 @@ export function InvitePanel({ code }: { code: string }) {
   };
 
   return (
-    <div className="rounded-2xl border border-gold-400/40 bg-gold-400/5 p-4">
-      <label htmlFor="invite-url" className="text-sm font-semibold text-gold-300">
+    <div className="rounded-lg border border-saffron-500/40 bg-saffron-400/10 p-4">
+      <label htmlFor="invite-url" className="text-sm font-semibold text-saffron-700">
         Enlace de invitación privado
       </label>
       <div className="mt-2 flex flex-col gap-2 sm:flex-row">
@@ -66,7 +66,7 @@ export function InvitePanel({ code }: { code: string }) {
           ) : null}
         </div>
       </div>
-      <p className="mt-2 text-xs text-ink-300" aria-live="polite">
+      <p className="mt-2 text-xs text-ink-600" aria-live="polite">
         {copied
           ? "Enlace copiado. Envíaselo a tu rival."
           : "Quien abra este enlace podrá aceptar el duelo (sin registrarse)."}

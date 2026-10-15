@@ -80,7 +80,7 @@ export function RoscoLegend({ className }: { className?: string }) {
     { state: "unplayed", text: "Sin responder al final" },
   ];
   return (
-    <ul className={cn("grid grid-cols-2 gap-x-4 gap-y-3 text-sm text-ink-200 sm:grid-cols-3", className)}>
+    <ul className={cn("grid grid-cols-2 gap-x-4 gap-y-3 text-sm text-ink-700 sm:grid-cols-3", className)}>
       {items.map((it) => (
         <li key={it.state} className="flex items-center gap-2.5">
           <span className="rosco relative !w-9 shrink-0" style={{ containerType: "inline-size" }} aria-hidden="true">

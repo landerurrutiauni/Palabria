@@ -97,7 +97,7 @@ export function AnswerForm({
       <div className="flex gap-2">
         <button
           type="button"
-          className="btn btn-gold min-h-14 flex-1 font-display text-base uppercase tracking-[0.14em] sm:text-lg"
+          className="btn btn-gold min-h-14 flex-1 font-display text-[1.35rem] font-bold italic sm:text-2xl"
           onClick={() => !locked && onPass()}
           disabled={locked}
         >
@@ -106,7 +106,7 @@ export function AnswerForm({
         {extra}
       </div>
       {disabledReason && disabled ? (
-        <p id="answer-disabled-reason" className="text-center text-sm font-semibold text-ink-300">
+        <p id="answer-disabled-reason" className="text-center text-sm font-semibold text-ink-600">
           {disabledReason}
         </p>
       ) : null}

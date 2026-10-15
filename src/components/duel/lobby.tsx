@@ -12,28 +12,27 @@ import { InvitePanel } from "./invite-panel";
 
 function Seat({ player, seatLabel, waiting }: { player?: DuelPlayerView; seatLabel: string; waiting?: boolean }) {
   return (
-    <div className={cn("panel-soft flex items-center gap-3 p-4", player?.ready && "border-ok-500/50")}>
+    <div className={cn("panel-soft flex items-center gap-3 p-4", player?.ready && "border-ok-600/50")}>
       <span
         className={cn(
           "grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold",
-          player ? "bg-violet-600/40 text-ink-50" : "border-2 border-dashed border-ink-400/50 text-ink-400",
+          player ? "bg-cobalt-600/15 text-ink-900" : "border-2 border-dashed border-glaze-400 text-ink-500",
         )}
         aria-hidden="true"
       >
         {player ? player.name.charAt(0).toUpperCase() : "?"}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold uppercase tracking-wider text-ink-400">{seatLabel}</p>
+        <p className="text-xs font-semibold text-ink-500">{seatLabel}</p>
         {player ? (
           <>
-            <p className="truncate font-bold text-ink-50">
-              {player.name}{" "}
-              {player.isYou ? <span className="text-sm font-semibold text-turquoise-300">(tú)</span> : null}
+            <p className="truncate font-bold text-ink-900">
+              {player.name} {player.isYou ? <span className="text-sm font-semibold text-cobalt-600">(tú)</span> : null}
             </p>
             <PresenceDot connected={player.connected} />
           </>
         ) : (
-          <p className="flex items-center gap-2 font-semibold text-ink-300">
+          <p className="flex items-center gap-2 font-semibold text-ink-600">
             <Hourglass className="size-4 animate-pulse" aria-hidden="true" />
             {waiting ? "Esperando a tu rival…" : "Asiento libre"}
           </p>
@@ -41,11 +40,11 @@ function Seat({ player, seatLabel, waiting }: { player?: DuelPlayerView; seatLab
       </div>
       {player ? (
         player.ready ? (
-          <span className="flex items-center gap-1 text-sm font-bold text-ok-400">
+          <span className="flex items-center gap-1 text-sm font-bold text-ok-700">
             <CheckCircle2 className="size-4" aria-hidden="true" /> Listo
           </span>
         ) : (
-          <span className="text-sm font-semibold text-ink-400">Sin confirmar</span>
+          <span className="text-sm font-semibold text-ink-500">Sin confirmar</span>
         )
       ) : null}
     </div>
@@ -73,12 +72,12 @@ export function Lobby({
       <section className="panel stage-lights relative overflow-hidden p-6 sm:p-8">
         <p className="eyebrow flex items-center gap-2">
           <Swords className="size-4" aria-hidden="true" />
-          Sala privada · {modeLabel(view.mode)}
+          Sala privada, {modeLabel(view.mode)}
         </p>
-        <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">
+        <h1 className="mt-2 font-display text-3xl font-bold text-ink-900 sm:text-4xl">
           {waitingForGuest ? "Esperando a tu rival" : "¡Todo listo para el duelo!"}
         </h1>
-        <p className="mt-2 text-ink-200">
+        <p className="mt-2 text-ink-700">
           {waitingForGuest
             ? view.isHost
               ? "Comparte el enlace. En cuanto tu rival acepte y ambos estéis listos, empezará la cuenta atrás."
@@ -130,9 +129,9 @@ export function Lobby({
           </button>
         </div>
         {me?.ready && view.isHost && waitingForGuest ? (
-          <p className="mt-3 text-sm text-ok-400">El duelo empezará automáticamente cuando tu rival acepte.</p>
+          <p className="mt-3 text-sm text-ok-700">El duelo empezará automáticamente cuando tu rival acepte.</p>
         ) : null}
-        <p className="mt-6 flex flex-wrap items-center gap-2 text-xs text-ink-400">
+        <p className="mt-6 flex flex-wrap items-center gap-2 text-xs text-ink-500">
           <Clock className="size-3.5" aria-hidden="true" />
           {view.expiresAt ? (
             <>
@@ -158,9 +157,9 @@ export function Invitation({ view, busy, onJoin }: { view: DuelView; busy: boole
     <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <section className="panel stage-lights relative overflow-hidden p-6 text-center sm:p-10">
         <p className="eyebrow">Invitación a un duelo 1 vs 1</p>
-        <h1 className="mt-3 font-display text-3xl font-extrabold text-ink-50 sm:text-5xl">{view.hostName} te reta</h1>
-        <p className="mt-3 text-lg text-ink-200">
-          Modalidad: <strong className="text-gold-300">{modeLabel(view.mode)}</strong>. Mismo desafío del día, roscos
+        <h1 className="mt-3 font-display text-3xl font-bold text-ink-900 sm:text-5xl">{view.hostName} te reta</h1>
+        <p className="mt-3 text-lg text-ink-700">
+          Modalidad: <strong className="text-saffron-700">{modeLabel(view.mode)}</strong>. Mismo desafío del día, roscos
           distintos y equivalentes, turnos con reloj propio.
         </p>
         {view.canJoin ? (
@@ -174,15 +173,15 @@ export function Invitation({ view, busy, onJoin }: { view: DuelView; busy: boole
             {busy ? "Entrando…" : "Aceptar el desafío"}
           </button>
         ) : (
-          <p className="mx-auto mt-8 max-w-md rounded-2xl border border-gold-400/40 bg-gold-400/10 p-4 text-ink-100">
+          <p className="mx-auto mt-8 max-w-md rounded-lg border border-saffron-500/40 bg-saffron-400/15 p-4 text-ink-800">
             {view.joinBlockedReason ?? "No puedes unirte a esta sala."}
           </p>
         )}
-        <p className="mt-4 text-sm text-ink-400">
+        <p className="mt-4 text-sm text-ink-500">
           Sin registro: entrarás con tu identidad anónima de este navegador. Aceptar no gasta tu intento hasta que
           empiece el duelo.
         </p>
-        <Link href="/" className="mt-6 inline-block text-sm font-semibold text-turquoise-300 hover:underline">
+        <Link href="/" className="mt-6 inline-block text-sm font-semibold text-cobalt-600 hover:underline">
           ¿Qué es Palabría?
         </Link>
       </section>

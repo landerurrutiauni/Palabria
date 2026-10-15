@@ -10,13 +10,13 @@ export function StageIntro({ view, busy, onStart }: { view: SoloView; busy: bool
       <p className="eyebrow">
         Prueba {view.stageIndex + 1} de {view.stages.length}
       </p>
-      <h2 className="mt-3 font-display text-3xl font-extrabold text-ink-50 sm:text-4xl">{view.stage.title}</h2>
-      <p className="mt-2 text-lg text-turquoise-300">{view.stage.tagline}</p>
-      <p className="mx-auto mt-5 max-w-lg text-ink-200">{view.stage.howTo}</p>
+      <h2 className="mt-3 font-display text-3xl font-bold text-ink-900 sm:text-4xl">{view.stage.title}</h2>
+      <p className="mt-2 text-lg text-cobalt-600">{view.stage.tagline}</p>
+      <p className="mx-auto mt-5 max-w-lg text-ink-700">{view.stage.howTo}</p>
       <div className="mt-6 flex flex-wrap justify-center gap-3">
         <span className="chip">Llevas {view.totals.phasePoints} puntos</span>
         {isRosco && view.upcomingRoscoMs !== null ? (
-          <span className="chip text-gold-300">
+          <span className="chip text-saffron-700">
             Tu rosco: {formatClock(view.upcomingRoscoMs)} ({view.totals.bonusSeconds} s ganados)
           </span>
         ) : (
@@ -33,7 +33,7 @@ export function StageIntro({ view, busy, onStart }: { view: SoloView; busy: bool
         <Play className="size-5" aria-hidden="true" />
         {busy ? "Preparando…" : "Empezar prueba"}
       </button>
-      <p className="mt-4 text-xs text-ink-400">El reloj está detenido hasta que pulses «Empezar prueba».</p>
+      <p className="mt-4 text-xs text-ink-500">El reloj está detenido hasta que pulses «Empezar prueba».</p>
     </section>
   );
 }

@@ -18,11 +18,11 @@ export function FeedbackBanner({
         <div
           key={stamp}
           className={cn(
-            "flex animate-rise items-center gap-3 rounded-2xl border px-4 py-2.5 text-base font-semibold",
-            feedback.outcome === "correct" && "border-ok-500/50 bg-ok-500/15 text-ok-400",
-            feedback.outcome === "wrong" && "animate-shake border-bad-500/50 bg-bad-500/15 text-bad-400",
-            feedback.outcome === "passed" && "border-gold-400/50 bg-gold-400/10 text-gold-300",
-            feedback.outcome === "timeout" && "border-white/20 bg-white/5 text-ink-200",
+            "flex animate-rise items-center gap-3 rounded-lg border px-4 py-2.5 text-base font-semibold",
+            feedback.outcome === "correct" && "border-ok-600/50 bg-ok-50 text-ok-700",
+            feedback.outcome === "wrong" && "animate-shake border-bad-600/50 bg-bad-50 text-bad-700",
+            feedback.outcome === "passed" && "border-saffron-500/50 bg-saffron-400/15 text-saffron-700",
+            feedback.outcome === "timeout" && "border-glaze-300 bg-ink-900/[0.04] text-ink-700",
           )}
         >
           {feedback.outcome === "correct" && <Check className="size-5 shrink-0" strokeWidth={3} aria-hidden="true" />}
@@ -40,7 +40,7 @@ export function FeedbackBanner({
                 Incorrecto
                 {feedback.answer ? (
                   <>
-                    . Era <strong className="text-ink-50">«{feedback.answer}»</strong>
+                    . Era <strong className="text-ink-900">«{feedback.answer}»</strong>
                   </>
                 ) : null}
               </>
@@ -52,7 +52,7 @@ export function FeedbackBanner({
                 Se acabó el tiempo
                 {feedback.answer ? (
                   <>
-                    . Era <strong className="text-ink-50">«{feedback.answer}»</strong>
+                    . Era <strong className="text-ink-900">«{feedback.answer}»</strong>
                   </>
                 ) : null}
               </>
@@ -60,7 +60,7 @@ export function FeedbackBanner({
             {feedback.outcome === "passed" && feedback.answer && feedback.stageKind !== "rosco" ? (
               <>
                 {" "}
-                Era <strong className="text-ink-50">«{feedback.answer}»</strong>
+                Era <strong className="text-ink-900">«{feedback.answer}»</strong>
               </>
             ) : null}
           </span>

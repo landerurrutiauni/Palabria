@@ -57,18 +57,16 @@ function PlayerPanel({
     >
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate font-display text-lg font-bold text-ink-50">
+          <p className="truncate font-display text-lg font-bold text-ink-900">
             {player.name}
-            {player.isYou ? <span className="ml-2 text-sm font-semibold text-turquoise-300">(tú)</span> : null}
+            {player.isYou ? <span className="ml-2 text-sm font-semibold text-cobalt-600">(tú)</span> : null}
           </p>
           <PresenceDot connected={player.connected} />
         </div>
         {active ? (
-          <span className="rounded-full bg-turquoise-400 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-night-950">
-            Turno
-          </span>
+          <span className="rounded-full bg-cobalt-600 px-3 py-1 text-xs font-bold text-white">Turno</span>
         ) : (
-          <span className="flex items-center gap-1 rounded-full bg-white/5 px-3 py-1 text-xs font-bold uppercase tracking-wider text-ink-300">
+          <span className="flex items-center gap-1 rounded-full bg-ink-900/[0.04] px-3 py-1 text-xs font-bold text-ink-600">
             <Pause className="size-3" aria-hidden="true" /> En pausa
           </span>
         )}
@@ -84,12 +82,12 @@ function PlayerPanel({
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           <StatChips correct={player.correct} wrong={player.wrong} open={player.open} compact />
           {!isRosco ? (
-            <p className="text-sm text-ink-300">
-              Pruebas: <strong className="score-digits text-lg text-ink-50">{player.phasePoints}</strong> pts ·{" "}
-              <strong className="text-gold-300">+{player.bonusSeconds} s</strong>
+            <p className="text-sm text-ink-600">
+              Pruebas: <strong className="score-digits text-lg text-ink-900">{player.phasePoints}</strong> pts ·{" "}
+              <strong className="text-saffron-700">+{player.bonusSeconds} s</strong>
             </p>
           ) : null}
-          {note ? <p className="text-sm font-semibold text-gold-300">{note}</p> : null}
+          {note ? <p className="text-sm font-semibold text-saffron-700">{note}</p> : null}
         </div>
       </div>
       {!isRosco && player.phaseOutcomes.length > 0 ? (
@@ -178,7 +176,7 @@ export function DuelBoard({
       title,
       subtitle: nextIsMe ? "¡Te toca!" : `Turno de ${rival.name}`,
       tone:
-        la?.outcome === "passed" ? "text-gold-300" : la?.outcome === "wrong" ? "text-bad-400" : "text-turquoise-300",
+        la?.outcome === "passed" ? "text-saffron-700" : la?.outcome === "wrong" ? "text-bad-700" : "text-cobalt-600",
       key: view.turn.number,
     });
     if (nextIsMe) play("turn");
@@ -221,7 +219,7 @@ export function DuelBoard({
           <span className="eyebrow">
             {view.stages.length > 1 ? `Prueba ${view.stage.index + 1} de ${view.stages.length}` : "Duelo"}
           </span>
-          <h1 className="font-display text-xl font-bold text-ink-50">{view.stage.title}</h1>
+          <h1 className="font-display text-xl font-bold text-ink-900">{view.stage.title}</h1>
         </div>
         <div className="flex items-center gap-2">
           <ConnectionBadge status={syncStatus} />
@@ -242,23 +240,23 @@ export function DuelBoard({
                 {activeSeat !== p.seat || inCountdown ? (
                   <Rosco letters={p.letters} label={p.isYou ? "Tu rosco" : `Rosco de ${p.name}`} paused />
                 ) : (
-                  <div className="grid size-14 place-items-center rounded-full bg-turquoise-400/15 text-xs font-extrabold uppercase text-turquoise-300">
+                  <div className="grid size-14 place-items-center rounded-full bg-cobalt-600/10 text-xs font-bold text-cobalt-600">
                     Turno
                   </div>
                 )}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-ink-50">{p.isYou ? "Tú" : p.name}</p>
+                <p className="truncate text-sm font-bold text-ink-900">{p.isYou ? "Tú" : p.name}</p>
                 <p
                   className={cn(
                     "score-digits text-2xl leading-none",
-                    active && isRosco ? "text-ink-50" : "text-ink-300",
+                    active && isRosco ? "text-ink-900" : "text-ink-600",
                   )}
                 >
                   {formatClock(remainingOf(p.seat))}
                 </p>
                 <p className="text-xs font-semibold">
-                  <span className="text-ok-400">✓ {p.correct}</span> <span className="text-bad-400">✕ {p.wrong}</span>
+                  <span className="text-ok-700">✓ {p.correct}</span> <span className="text-bad-700">✕ {p.wrong}</span>
                 </p>
               </div>
             </div>
@@ -286,10 +284,10 @@ export function DuelBoard({
                 paused={!isRosco || inCountdown}
               >
                 <div className="flex flex-col items-center">
-                  <span className="score-digits text-[17cqw] leading-none text-ink-50">
+                  <span className="score-digits text-[17cqw] leading-none text-ink-900">
                     {formatClock(isRosco ? remainingOf(activeSeat) : (shotRemaining ?? 0))}
                   </span>
-                  <span className="mt-1 font-display text-[3cqw] uppercase tracking-[0.2em] text-turquoise-300">
+                  <span className="mt-1 font-display text-[4.6cqw] italic text-cobalt-600">
                     {activeSeat === you ? "Tu turno" : "Su turno"}
                   </span>
                 </div>
@@ -299,12 +297,12 @@ export function DuelBoard({
 
           <div
             className={cn(
-              "rounded-full px-5 py-2 text-center font-display text-base font-extrabold uppercase tracking-[0.14em] sm:py-3 sm:text-lg",
+              "rounded-full px-5 py-2 text-center font-display text-base font-bold sm:py-3 sm:text-lg",
               inCountdown
-                ? "bg-gold-400/15 text-gold-300"
+                ? "bg-saffron-400/20 text-saffron-700"
                 : myTurn
-                  ? "bg-turquoise-400 text-night-950 shadow-glow-turquoise"
-                  : "bg-white/5 text-ink-300",
+                  ? "bg-cobalt-600 text-white shadow-glow-turn"
+                  : "bg-ink-900/[0.04] text-ink-600",
             )}
             role="status"
             aria-live="assertive"
@@ -318,15 +316,15 @@ export function DuelBoard({
 
           {!isRosco && shotRemaining !== null && !inCountdown ? (
             <div className="panel-soft p-3">
-              <div className="flex items-center justify-between text-sm font-semibold text-ink-200">
+              <div className="flex items-center justify-between text-sm font-semibold text-ink-700">
                 <span>Tiempo de jugada</span>
-                <span className={cn("score-digits text-2xl", shotRemaining <= 5000 ? "text-bad-400" : "text-ink-50")}>
+                <span className={cn("score-digits text-2xl", shotRemaining <= 5000 ? "text-bad-700" : "text-ink-900")}>
                   {formatClock(shotRemaining)}
                 </span>
               </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-ink-900/[0.07]" aria-hidden="true">
                 <div
-                  className={cn("h-full rounded-full", shotRemaining <= 5000 ? "bg-bad-500" : "bg-turquoise-400")}
+                  className={cn("h-full rounded-full", shotRemaining <= 5000 ? "bg-bad-600" : "bg-cobalt-600")}
                   style={{ width: `${(shotRemaining / (view.turn.shotClockMs ?? 1)) * 100}%` }}
                 />
               </div>
@@ -336,24 +334,27 @@ export function DuelBoard({
           {inCountdown ? (
             <div className="panel grid place-items-center p-8 text-center">
               <p className="eyebrow">{view.stage.title}</p>
-              <p className="score-digits mt-2 animate-pop text-8xl text-gold-300" key={Math.ceil(countdownMs / 1000)}>
+              <p
+                className="score-digits mt-2 animate-pop text-8xl text-saffron-700"
+                key={Math.ceil(countdownMs / 1000)}
+              >
                 {Math.ceil(countdownMs / 1000)}
               </p>
-              <p className="mt-2 max-w-sm text-sm text-ink-300">{view.stage.howTo}</p>
+              <p className="mt-2 max-w-sm text-sm text-ink-600">{view.stage.howTo}</p>
             </div>
           ) : prompt ? (
             <QuestionCard prompt={prompt} />
           ) : (
             <div className="panel p-6 text-center">
-              <Pause className="mx-auto size-8 text-ink-300" aria-hidden="true" />
-              <p className="mt-3 text-lg font-semibold text-ink-100">{waitingText}</p>
-              <p className="mt-1 text-sm text-ink-400">Puedes consultar tu rosco y el marcador mientras esperas.</p>
+              <Pause className="mx-auto size-8 text-ink-600" aria-hidden="true" />
+              <p className="mt-3 text-lg font-semibold text-ink-800">{waitingText}</p>
+              <p className="mt-1 text-sm text-ink-500">Puedes consultar tu rosco y el marcador mientras esperas.</p>
             </div>
           )}
 
           <FeedbackBanner feedback={feedback?.fb ?? null} stamp={feedback?.stamp ?? 0} />
 
-          <div className="sticky bottom-0 z-10 -mx-3 border-t border-white/10 bg-night-950/90 px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+          <div className="sticky bottom-0 z-10 -mx-3 border-t border-glaze-200 bg-glaze-0/90 px-3 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
             <AnswerForm
               promptKey={`${view.stage.index}-${prompt?.index ?? "x"}-${view.turn.number}`}
               disabled={!prompt}
@@ -395,12 +396,10 @@ export function DuelBoard({
         <div className="pointer-events-none fixed inset-0 z-40 grid place-items-center" aria-hidden="true">
           <div
             key={flash.key}
-            className="animate-flash rounded-3xl border border-white/15 bg-night-950/85 px-10 py-6 text-center shadow-panel backdrop-blur"
+            className="animate-flash rounded-xl border border-glaze-300 bg-glaze-0/85 px-10 py-6 text-center shadow-tile backdrop-blur"
           >
-            <p className={cn("font-display text-4xl font-extrabold uppercase tracking-wider sm:text-5xl", flash.tone)}>
-              {flash.title}
-            </p>
-            <p className="mt-2 text-lg font-semibold text-ink-100">{flash.subtitle}</p>
+            <p className={cn("font-display text-4xl font-bold sm:text-5xl", flash.tone)}>{flash.title}</p>
+            <p className="mt-2 text-lg font-semibold text-ink-800">{flash.subtitle}</p>
           </div>
         </div>
       ) : null}

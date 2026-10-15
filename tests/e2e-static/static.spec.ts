@@ -43,7 +43,7 @@ test("Pages: identidad anónima sin cookies, rosco individual, historial y clasi
   await expect(page.getByText("Soluciones del rosco")).toBeVisible();
 
   await page.goto(`${BASE}/historial/`);
-  await page.getByRole("link", { name: /Individual · Solo El Rosco/ }).click();
+  await page.getByRole("link", { name: /individual, Solo El Rosco/ }).click();
   await expect(page).toHaveURL(new RegExp(`${BASE}/historial/ver/\\?id=`));
   await expect(page.getByText("Soluciones del rosco")).toBeVisible();
 

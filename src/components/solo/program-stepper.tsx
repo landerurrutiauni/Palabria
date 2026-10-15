@@ -19,12 +19,12 @@ export function ProgramStepper({ stages, current }: { stages: StageSummaryView[]
             <span
               className={cn(
                 "flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border px-3 text-xs font-semibold",
-                done && "border-ok-500/40 bg-ok-500/10 text-ok-400",
-                active && "border-turquoise-400/70 bg-turquoise-400/15 text-ink-50 shadow-glow-turquoise",
-                !done && !active && "border-white/10 bg-white/5 text-ink-400",
+                done && "border-ok-600/40 bg-ok-50 text-ok-700",
+                active && "border-cobalt-600/70 bg-cobalt-600/10 text-ink-900 shadow-glow-turn",
+                !done && !active && "border-glaze-200 bg-ink-900/[0.04] text-ink-500",
               )}
             >
-              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-white/10 text-[0.7rem]">
+              <span className="grid size-5 shrink-0 place-items-center rounded-full bg-ink-900/[0.07] text-[0.7rem]">
                 {done ? (
                   <Check className="size-3.5" strokeWidth={3} aria-hidden="true" />
                 ) : i > current ? (

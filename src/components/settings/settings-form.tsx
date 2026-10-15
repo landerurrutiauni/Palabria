@@ -24,8 +24,8 @@ function Toggle({
   return (
     <label className="flex cursor-pointer items-center justify-between gap-4 py-4">
       <span>
-        <span className="block font-semibold text-ink-50">{label}</span>
-        <span className="block text-sm text-ink-300">{description}</span>
+        <span className="block font-semibold text-ink-900">{label}</span>
+        <span className="block text-sm text-ink-600">{description}</span>
       </span>
       <span className="relative inline-flex shrink-0">
         <input
@@ -35,8 +35,8 @@ function Toggle({
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
         />
-        <span className="h-8 w-14 rounded-full bg-white/15 transition peer-checked:bg-turquoise-400 peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-400" />
-        <span className="absolute left-1 top-1 size-6 rounded-full bg-white shadow transition peer-checked:translate-x-6" />
+        <span className="h-8 w-14 rounded-full bg-ink-900/10 transition peer-checked:bg-cobalt-600 peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cobalt-700" />
+        <span className="absolute left-1 top-1 size-6 rounded-full bg-glaze-0 shadow transition peer-checked:translate-x-6" />
       </span>
     </label>
   );
@@ -70,10 +70,10 @@ export function SettingsForm({ displayName }: { displayName: string }) {
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <section className="panel p-6" aria-labelledby="nombre">
-        <h2 id="nombre" className="font-display text-lg font-bold text-ink-50">
+        <h2 id="nombre" className="font-display text-lg font-bold text-ink-900">
           Nombre visible
         </h2>
-        <p className="mt-1 text-sm text-ink-300">
+        <p className="mt-1 text-sm text-ink-600">
           Opcional. Es lo que verán tus rivales y la clasificación. No pongas datos personales.
         </p>
         <form onSubmit={saveName} className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -95,7 +95,7 @@ export function SettingsForm({ displayName }: { displayName: string }) {
             {saving ? "Guardando…" : "Guardar"}
           </button>
         </form>
-        <p id="name-help" className="mt-2 text-xs text-ink-400">
+        <p id="name-help" className="mt-2 text-xs text-ink-500">
           Entre 2 y 20 caracteres: letras, números, espacios, puntos y guiones.
         </p>
         {nameError ? (
@@ -104,17 +104,17 @@ export function SettingsForm({ displayName }: { displayName: string }) {
           </Notice>
         ) : null}
         {saved ? (
-          <p className="mt-3 text-sm font-semibold text-ok-400" role="status">
+          <p className="mt-3 text-sm font-semibold text-ok-700" role="status">
             Nombre guardado.
           </p>
         ) : null}
       </section>
 
       <section className="panel p-6" aria-labelledby="sonido">
-        <h2 id="sonido" className="font-display text-lg font-bold text-ink-50">
+        <h2 id="sonido" className="font-display text-lg font-bold text-ink-900">
           Sonido
         </h2>
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-glaze-200">
           <Toggle
             label="Efectos de sonido"
             description="Aciertos, fallos, Pasapalabra, cuenta atrás y final de partida."
@@ -123,9 +123,9 @@ export function SettingsForm({ displayName }: { displayName: string }) {
           />
           <div className="flex items-center gap-4 py-4">
             {prefs.soundVolume === 0 ? (
-              <VolumeX className="size-5 text-ink-300" aria-hidden="true" />
+              <VolumeX className="size-5 text-ink-600" aria-hidden="true" />
             ) : (
-              <Volume2 className="size-5 text-ink-300" aria-hidden="true" />
+              <Volume2 className="size-5 text-ink-600" aria-hidden="true" />
             )}
             <label htmlFor="volume" className="sr-only">
               Volumen
@@ -158,11 +158,11 @@ export function SettingsForm({ displayName }: { displayName: string }) {
       </section>
 
       <section className="panel p-6 lg:col-span-2" aria-labelledby="accesibilidad">
-        <h2 id="accesibilidad" className="font-display text-lg font-bold text-ink-50">
+        <h2 id="accesibilidad" className="font-display text-lg font-bold text-ink-900">
           Accesibilidad
         </h2>
         <fieldset className="mt-4">
-          <legend className="font-semibold text-ink-50">Animaciones</legend>
+          <legend className="font-semibold text-ink-900">Animaciones</legend>
           <div className="mt-2 grid gap-2 sm:grid-cols-3">
             {(
               [
@@ -175,7 +175,7 @@ export function SettingsForm({ displayName }: { displayName: string }) {
                 key={value}
                 className={cn(
                   "panel-soft flex cursor-pointer gap-3 p-3",
-                  prefs.motion === value && "border-turquoise-400/60",
+                  prefs.motion === value && "border-cobalt-600/60",
                 )}
               >
                 <input
@@ -187,14 +187,14 @@ export function SettingsForm({ displayName }: { displayName: string }) {
                   className="mt-1 accent-[var(--color-turquoise-400)]"
                 />
                 <span>
-                  <span className="block font-semibold text-ink-50">{label}</span>
-                  <span className="block text-sm text-ink-300">{text}</span>
+                  <span className="block font-semibold text-ink-900">{label}</span>
+                  <span className="block text-sm text-ink-600">{text}</span>
                 </span>
               </label>
             ))}
           </div>
         </fieldset>
-        <div className="mt-2 divide-y divide-white/5">
+        <div className="mt-2 divide-y divide-glaze-200">
           <Toggle
             label="Alto contraste"
             description="Textos más brillantes y bordes más marcados."

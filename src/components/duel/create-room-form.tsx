@@ -31,13 +31,13 @@ export function CreateRoomForm() {
     {
       value: "rosco",
       title: "Solo El Rosco",
-      text: "Directos al rosco · unos 6 minutos",
+      text: "Directos al rosco, unos 6 minutos",
       icon: <Timer className="size-5" aria-hidden="true" />,
     },
     {
       value: "program",
       title: "Programa completo",
-      text: "4 pruebas por turnos + El Rosco · unos 12 minutos",
+      text: "4 pruebas por turnos y El Rosco, unos 12 minutos",
       icon: <ListOrdered className="size-5" aria-hidden="true" />,
     },
   ];
@@ -45,14 +45,14 @@ export function CreateRoomForm() {
   return (
     <div className="mt-6">
       <fieldset>
-        <legend className="text-sm font-semibold text-ink-200">Modalidad (la misma para los dos)</legend>
+        <legend className="text-sm font-semibold text-ink-700">Modalidad (la misma para los dos)</legend>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           {options.map((o) => (
             <label
               key={o.value}
               className={cn(
                 "panel-soft flex cursor-pointer gap-3 p-4 transition",
-                mode === o.value ? "border-gold-400/70 shadow-glow-gold" : "hover:border-white/30",
+                mode === o.value ? "border-saffron-500/70 shadow-tile" : "hover:border-glaze-400",
               )}
             >
               <input
@@ -64,11 +64,11 @@ export function CreateRoomForm() {
                 className="mt-1 size-4 accent-[var(--color-gold-400)]"
               />
               <span>
-                <span className="flex items-center gap-2 font-bold text-ink-50">
+                <span className="flex items-center gap-2 font-bold text-ink-900">
                   {o.icon}
                   {o.title}
                 </span>
-                <span className="mt-1 block text-sm text-ink-300">{o.text}</span>
+                <span className="mt-1 block text-sm text-ink-600">{o.text}</span>
               </span>
             </label>
           ))}
@@ -88,7 +88,7 @@ export function CreateRoomForm() {
         <Swords className="size-5" aria-hidden="true" />
         {busy ? "Creando sala…" : "Crear sala y obtener enlace"}
       </button>
-      <p className="mt-3 text-xs text-ink-400">
+      <p className="mt-3 text-xs text-ink-500">
         Crear la sala no gasta tu intento: se consume cuando empieza el duelo.
       </p>
     </div>

@@ -206,7 +206,11 @@ export function SoloGame({
     return (
       <StateScreen
         icon={
-          inProgress ? <Hourglass className="size-9 text-gold-300" /> : <CheckCircle2 className="size-9 text-ok-400" />
+          inProgress ? (
+            <Hourglass className="size-9 text-saffron-700" />
+          ) : (
+            <CheckCircle2 className="size-9 text-ok-700" />
+          )
         }
         eyebrow="Desafío individual"
         title={inProgress ? "Ya tienes una partida en curso" : "Desafío ya completado"}

@@ -37,15 +37,12 @@ export function RoscoStage({
             aria-label={`Tiempo restante ${formatClock(remainingMs)}`}
           >
             <span
-              className={cn("score-digits text-[19cqw] leading-none", low ? "text-bad-400" : "text-ink-50")}
+              className={cn("score-digits text-[19cqw] leading-none", low ? "text-bad-700" : "text-ink-900")}
               aria-hidden="true"
             >
               {formatClock(remainingMs)}
             </span>
-            <span
-              className="mt-1 font-display text-[3cqw] uppercase tracking-[0.25em] text-turquoise-300"
-              aria-hidden="true"
-            >
+            <span className="mt-1 font-display text-[4.6cqw] italic text-cobalt-600" aria-hidden="true">
               {view.totals.correct} aciertos
             </span>
           </div>
@@ -64,7 +61,7 @@ export function RoscoStage({
         </div>
         {prompt ? <QuestionCard prompt={prompt} /> : null}
         <FeedbackBanner feedback={feedback?.fb ?? null} stamp={feedback?.stamp ?? 0} />
-        <div className="sticky bottom-0 z-10 -mx-4 border-t border-white/10 bg-night-950/90 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+        <div className="sticky bottom-0 z-10 -mx-4 border-t border-glaze-200 bg-glaze-0/90 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur sm:static sm:mx-0 sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
           <AnswerForm
             promptKey={`${view.stageIndex}-${prompt?.index ?? "x"}`}
             disabled={!prompt || remainingMs <= 0}

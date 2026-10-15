@@ -94,7 +94,7 @@ export function RoomClient({ code, initial }: { code: string; initial: DuelView 
   if (fatal) {
     return (
       <StateScreen
-        icon={<Ban className="size-9 text-bad-400" />}
+        icon={<Ban className="size-9 text-bad-700" />}
         eyebrow="Sala privada"
         title={fatal.code === "room_full" ? "Esta sala es privada" : "No se puede acceder a la sala"}
         actions={
@@ -138,7 +138,7 @@ export function RoomClient({ code, initial }: { code: string; initial: DuelView 
   if (view.status === "expired") {
     return (
       <StateScreen
-        icon={<Clock4 className="size-9 text-gold-300" />}
+        icon={<Clock4 className="size-9 text-saffron-700" />}
         eyebrow="Sala privada"
         title={view.result?.endReason === "cancelled" ? "Sala cancelada" : "Sala caducada"}
         actions={

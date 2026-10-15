@@ -1,8 +1,8 @@
-import "@fontsource-variable/inter";
-import "@fontsource-variable/unbounded";
-import "@fontsource/barlow-condensed/latin-600.css";
-import "@fontsource/barlow-condensed/latin-700.css";
-import "@fontsource/barlow-condensed/latin-800.css";
+import "@fontsource-variable/archivo/wdth.css";
+import "@fontsource/ibarra-real-nova/latin-400.css";
+import "@fontsource/ibarra-real-nova/latin-400-italic.css";
+import "@fontsource/ibarra-real-nova/latin-600.css";
+import "@fontsource/ibarra-real-nova/latin-700.css";
 import "./globals.css";
 import { AppShell } from "@/components/layout/app-shell";
 import { DEFAULT_PREFERENCES, siteMetadata, siteViewport } from "@/lib/site";

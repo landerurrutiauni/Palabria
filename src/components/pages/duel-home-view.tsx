@@ -13,7 +13,7 @@ export function DuelHomeView({ me, timing }: { me: MeView; timing: TimingConfig 
   if (duel.used) {
     return (
       <StateScreen
-        icon={<CheckCircle2 className="size-9 text-ok-400" />}
+        icon={<CheckCircle2 className="size-9 text-ok-700" />}
         eyebrow="1 vs 1"
         title={duel.status === "in_progress" ? "Tu duelo de hoy está en marcha" : "Ya has jugado tu duelo de hoy"}
         actions={
@@ -38,16 +38,16 @@ export function DuelHomeView({ me, timing }: { me: MeView; timing: TimingConfig 
   return (
     <div className="mx-auto grid max-w-5xl gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr]">
       <section className="panel p-6 sm:p-8">
-        <p className="eyebrow">1 vs 1 · sala privada</p>
-        <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">Desafía a un amigo</h1>
-        <p className="mt-3 text-ink-200">
+        <p className="eyebrow">1 vs 1 en sala privada</p>
+        <h1 className="mt-2 font-display text-3xl font-bold text-ink-900 sm:text-4xl">Desafía a un amigo</h1>
+        <p className="mt-3 text-ink-700">
           Crea una sala, comparte el enlace por WhatsApp, Telegram o como quieras y jugad desde vuestros dispositivos.
           Sin registro: cada navegador tiene su identidad anónima.
         </p>
         {duel.openRoomCode ? (
-          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-gold-400/40 bg-gold-400/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="flex items-center gap-2 text-sm text-ink-100">
-              <DoorOpen className="size-5 text-gold-300" aria-hidden="true" />
+          <div className="mt-6 flex flex-col gap-3 rounded-lg border border-saffron-500/40 bg-saffron-400/15 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="flex items-center gap-2 text-sm text-ink-800">
+              <DoorOpen className="size-5 text-saffron-700" aria-hidden="true" />
               Ya tienes una sala abierta. Si creas otra, la anterior se cerrará.
             </p>
             <Link href={roomHref(duel.openRoomCode)} className="btn btn-gold shrink-0">

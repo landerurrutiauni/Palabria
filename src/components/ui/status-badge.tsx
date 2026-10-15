@@ -8,16 +8,20 @@ export function AttemptBadge({ state, className }: { state: AttemptState; classN
     available: {
       text: "Disponible",
       icon: CircleDot,
-      tone: "border-turquoise-400/50 bg-turquoise-400/10 text-turquoise-300",
+      tone: "border-cobalt-600/50 bg-cobalt-600/[0.07] text-cobalt-600",
     },
-    in_progress: { text: "En curso", icon: Hourglass, tone: "border-gold-400/50 bg-gold-400/10 text-gold-300" },
-    completed: { text: "Completado hoy", icon: CheckCircle2, tone: "border-ok-500/40 bg-ok-500/10 text-ok-400" },
+    in_progress: {
+      text: "En curso",
+      icon: Hourglass,
+      tone: "border-saffron-500/50 bg-saffron-400/15 text-saffron-700",
+    },
+    completed: { text: "Completado hoy", icon: CheckCircle2, tone: "border-ok-600/40 bg-ok-50 text-ok-700" },
   }[state];
   const Icon = map.icon;
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold uppercase tracking-wider",
+        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-bold",
         map.tone,
         className,
       )}

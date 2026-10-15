@@ -14,8 +14,8 @@ export function PlaySelectionView({ me, timing }: { me: MeView; timing: TimingCo
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Modo individual</p>
-          <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">Elige cómo jugar hoy</h1>
-          <p className="mt-2 max-w-2xl text-ink-200">
+          <h1 className="mt-2 font-display text-3xl font-bold text-ink-900 sm:text-4xl">Elige cómo jugar hoy</h1>
+          <p className="mt-2 max-w-2xl text-ink-700">
             Tienes un único intento individual al día. El programa completo y El Rosco lo comparten: elige bien.
           </p>
         </div>
@@ -25,10 +25,10 @@ export function PlaySelectionView({ me, timing }: { me: MeView; timing: TimingCo
       {solo.used ? (
         <div className="panel mt-8 flex flex-col gap-4 p-6 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <CheckCircle2 className="size-8 shrink-0 text-ok-400" aria-hidden="true" />
-            <p className="text-ink-200">
+            <CheckCircle2 className="size-8 shrink-0 text-ok-700" aria-hidden="true" />
+            <p className="text-ink-700">
               {state === "in_progress" ? "Tienes en marcha" : "Hoy ya has jugado"}{" "}
-              <strong className="text-ink-50">{modeLabel(solo.mode ?? "rosco")}</strong>.{" "}
+              <strong className="text-ink-900">{modeLabel(solo.mode ?? "rosco")}</strong>.{" "}
               {state === "in_progress"
                 ? "Termina tu partida: el reloj sigue corriendo."
                 : "Vuelve mañana para el nuevo desafío."}
@@ -90,20 +90,18 @@ function ModeCard({
   const body = (
     <>
       <div className="flex items-center gap-3">
-        <span className="grid size-12 place-items-center rounded-2xl bg-turquoise-400/15 text-turquoise-300">
-          {icon}
-        </span>
+        <span className="grid size-12 place-items-center rounded-lg bg-cobalt-600/10 text-cobalt-600">{icon}</span>
         <div>
-          <h2 className="font-display text-xl font-bold text-ink-50">{title}</h2>
-          <p className="text-sm text-ink-300">{subtitle}</p>
+          <h2 className="font-display text-xl font-bold text-ink-900">{title}</h2>
+          <p className="text-sm text-ink-600">{subtitle}</p>
         </div>
       </div>
-      <ul className="mt-5 space-y-2 text-sm text-ink-200">
+      <ul className="mt-5 space-y-2 text-sm text-ink-700">
         {points.map((p) => (
           <li key={p}>· {p}</li>
         ))}
       </ul>
-      <span className="mt-6 inline-flex items-center gap-2 font-semibold text-turquoise-300">
+      <span className="mt-6 inline-flex items-center gap-2 font-semibold text-cobalt-600">
         {disabled ? "No disponible hasta mañana" : "Ver reglas y empezar"}
         {!disabled && <ArrowRight className="size-4" aria-hidden="true" />}
       </span>
@@ -117,7 +115,7 @@ function ModeCard({
     );
   }
   return (
-    <Link href={href} className="panel block p-6 transition hover:-translate-y-0.5 hover:border-turquoise-400/50">
+    <Link href={href} className="panel block p-6 transition hover:-translate-y-0.5 hover:border-cobalt-600/50">
       {body}
     </Link>
   );

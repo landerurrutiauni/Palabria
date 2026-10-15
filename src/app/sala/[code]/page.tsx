@@ -28,7 +28,7 @@ export default async function RoomPage({ params }: { params: Promise<{ code: str
     const full = failure?.code === "room_full";
     return (
       <StateScreen
-        icon={full ? <Ban className="size-9 text-bad-400" /> : <SearchX className="size-9 text-ink-200" />}
+        icon={full ? <Ban className="size-9 text-bad-700" /> : <SearchX className="size-9 text-ink-700" />}
         eyebrow="Sala privada"
         title={full ? "Esta sala es privada" : "Sala no encontrada"}
         actions={

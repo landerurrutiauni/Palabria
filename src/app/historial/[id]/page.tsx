@@ -25,7 +25,7 @@ export default async function HistoryDetailPage({ params }: { params: Promise<{ 
   if (!session?.result) notFound();
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <Link href="/historial" className="text-sm font-semibold text-turquoise-300 hover:underline">
+      <Link href="/historial" className="text-sm font-semibold text-cobalt-600 hover:underline">
         ← Volver al historial
       </Link>
       <div className="mt-4">

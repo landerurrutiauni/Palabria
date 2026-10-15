@@ -34,7 +34,7 @@ export function AppShell({
         {remotePrefs ? <script dangerouslySetInnerHTML={{ __html: applyCachedPrefs }} /> : null}
         <a
           href="#contenido"
-          className="sr-only z-50 rounded-full bg-gold-400 px-4 py-2 font-semibold text-night-950 focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+          className="sr-only z-50 rounded-full bg-saffron-400 px-4 py-2 font-semibold text-ink-900 focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
         >
           Saltar al contenido
         </a>

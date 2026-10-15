@@ -10,10 +10,10 @@ export const siteMetadata: Metadata = {
 };
 
 export const siteViewport: Viewport = {
-  themeColor: "#070b26",
+  themeColor: "#1d3fa6",
   width: "device-width",
   initialScale: 1,
-  colorScheme: "dark",
+  colorScheme: "light",
   // El teclado del móvil redimensiona el contenido en lugar de taparlo.
   interactiveWidget: "resizes-content",
 };

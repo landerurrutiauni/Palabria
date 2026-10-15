@@ -21,12 +21,12 @@ export function LeaderboardPageView({
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">
       <p className="eyebrow">Clasificación diaria</p>
-      <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">Los mejores del día</h1>
-      <p className="mt-2 text-ink-300">
+      <h1 className="mt-2 font-display text-3xl font-bold text-ink-900 sm:text-4xl">Los mejores del día</h1>
+      <p className="mt-2 text-ink-600">
         Solo se muestran nombres visibles y datos de juego. Orden: puntos, aciertos, menos fallos y menos tiempo.
       </p>
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex rounded-full bg-white/5 p-1" role="tablist" aria-label="Modalidad">
+        <div className="flex rounded-full bg-ink-900/[0.04] p-1" role="tablist" aria-label="Modalidad">
           {(["rosco", "program"] as const).map((m) => (
             <Link
               key={m}
@@ -35,7 +35,7 @@ export function LeaderboardPageView({
               aria-selected={mode === m}
               className={cn(
                 "rounded-full px-4 py-2 text-sm font-semibold",
-                mode === m ? "bg-turquoise-400 text-night-950" : "text-ink-200 hover:text-ink-50",
+                mode === m ? "bg-cobalt-600 text-white" : "text-ink-700 hover:text-ink-900",
               )}
             >
               {m === "rosco" ? "Solo El Rosco" : "Programa completo"}
@@ -50,7 +50,7 @@ export function LeaderboardPageView({
           >
             <ChevronLeft className="size-4" aria-hidden="true" />
           </Link>
-          <span className="min-w-44 text-center text-sm font-semibold text-ink-100">
+          <span className="min-w-44 text-center text-sm font-semibold text-ink-800">
             {formatChallengeDate(date, { weekday: false })}
           </span>
           {date < today ? (
@@ -72,15 +72,15 @@ export function LeaderboardPageView({
         {board ? (
           <LeaderboardTable board={board} limit={50} />
         ) : (
-          <p className="text-ink-300">
+          <p className="text-ink-600">
             La clasificación no está disponible ahora mismo. El juego sigue funcionando con normalidad.
           </p>
         )}
       </div>
       {board?.you ? (
-        <p className="mt-4 text-sm text-ink-200">
-          Tu posición: <strong className="text-ink-50">#{board.you.rank}</strong> de {board.total} con {board.you.score}{" "}
-          puntos.
+        <p className="mt-4 text-sm text-ink-700">
+          Tu posición: <strong className="text-ink-900">#{board.you.rank}</strong> de {board.total} con{" "}
+          {board.you.score} puntos.
         </p>
       ) : null}
     </div>

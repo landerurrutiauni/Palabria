@@ -13,8 +13,8 @@ export function StatsPageView({ stats }: { stats: StatsView }) {
     { label: "% de acierto", value: `${stats.solo.accuracy}%` },
     { label: "Roscos completados", value: stats.solo.roscosCompleted },
     { label: "Roscos perfectos", value: stats.solo.perfectRoscos },
-    { label: "Mejor puntuación · Rosco", value: stats.solo.bestScoreRosco ?? "—" },
-    { label: "Mejor puntuación · Programa", value: stats.solo.bestScoreProgram ?? "—" },
+    { label: "Mejor puntuación en El Rosco", value: stats.solo.bestScoreRosco ?? "—" },
+    { label: "Mejor puntuación en el programa", value: stats.solo.bestScoreProgram ?? "—" },
     {
       label: "Mejor tiempo (rosco resuelto)",
       value: stats.solo.bestTimeMs ? formatDuration(stats.solo.bestTimeMs) : "—",
@@ -30,28 +30,28 @@ export function StatsPageView({ stats }: { stats: StatsView }) {
   ];
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      <p className="eyebrow">Sin cuentas · guardado en este navegador</p>
-      <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">Tus estadísticas</h1>
-      <p className="mt-2 max-w-2xl text-ink-300">
+      <p className="eyebrow">Sin cuentas, guardado en este navegador</p>
+      <h1 className="mt-2 font-display text-3xl font-bold text-ink-900 sm:text-4xl">Tus estadísticas</h1>
+      <p className="mt-2 max-w-2xl text-ink-600">
         Calculadas en el servidor a partir de tus resultados verificados. Están ligadas a tu identidad anónima: si
         borras las cookies o cambias de navegador empezarás de cero.
       </p>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-3">
         <Highlight
-          icon={<Flame className="size-6 text-gold-400" />}
+          icon={<Flame className="size-6 text-saffron-700" />}
           label="Racha actual"
           value={`${stats.streak.current}`}
           note="días seguidos completando el desafío individual"
         />
         <Highlight
-          icon={<Medal className="size-6 text-turquoise-300" />}
+          icon={<Medal className="size-6 text-cobalt-600" />}
           label="Mejor racha"
           value={`${stats.streak.best}`}
           note="días"
         />
         <Highlight
-          icon={<Trophy className="size-6 text-ok-400" />}
+          icon={<Trophy className="size-6 text-ok-700" />}
           label="Duelos ganados"
           value={`${stats.duel.wins}`}
           note={`de ${stats.duel.played} jugados`}
@@ -65,16 +65,16 @@ export function StatsPageView({ stats }: { stats: StatsView }) {
 
       <section className="mt-10" aria-labelledby="historial">
         <div className="flex items-end justify-between gap-3">
-          <h2 id="historial" className="font-display text-xl font-bold text-ink-50">
+          <h2 id="historial" className="font-display text-xl font-bold text-ink-900">
             Historial por fecha
           </h2>
-          <Link href="/historial" className="text-sm font-semibold text-turquoise-300 hover:underline">
-            Ver todo →
+          <Link href="/historial" className="text-sm font-semibold text-cobalt-600 hover:underline">
+            Ver todo
           </Link>
         </div>
         <HistoryList entries={stats.history.slice(0, 10)} className="mt-4" />
       </section>
-      <p className="mt-6 flex items-center gap-2 text-xs text-ink-400">
+      <p className="mt-6 flex items-center gap-2 text-xs text-ink-500">
         <Timer className="size-3.5" aria-hidden="true" />
         La racha suma un día cada vez que completas tu desafío individual (Rosco o programa) y se rompe si un día no lo
         haces.
@@ -96,12 +96,12 @@ function Highlight({
 }) {
   return (
     <div className="panel p-5">
-      <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-ink-300">
+      <div className="flex items-center gap-2 text-sm font-semibold text-ink-600">
         <span aria-hidden="true">{icon}</span>
         {label}
       </div>
-      <p className="score-digits mt-2 text-6xl text-ink-50">{value}</p>
-      <p className="text-sm text-ink-300">{note}</p>
+      <p className="score-digits mt-2 text-6xl text-ink-900">{value}</p>
+      <p className="text-sm text-ink-600">{note}</p>
     </div>
   );
 }
@@ -117,8 +117,8 @@ function StatGroup({
 }) {
   return (
     <section className="panel p-5 sm:p-6">
-      <h2 className="flex items-center gap-2 font-display text-lg font-bold text-ink-50">
-        <span className="text-turquoise-300" aria-hidden="true">
+      <h2 className="flex items-center gap-2 font-display text-lg font-bold text-ink-900">
+        <span className="text-cobalt-600" aria-hidden="true">
           {icon}
         </span>
         {title}
@@ -126,8 +126,8 @@ function StatGroup({
       <dl className="mt-4 grid grid-cols-2 gap-3">
         {items.map((it) => (
           <div key={it.label} className="panel-soft p-3">
-            <dt className="text-xs font-semibold uppercase tracking-wider text-ink-300">{it.label}</dt>
-            <dd className="score-digits mt-1 text-3xl text-ink-50">{it.value}</dd>
+            <dt className="text-xs font-semibold text-ink-600">{it.label}</dt>
+            <dd className="score-digits mt-1 text-3xl text-ink-900">{it.value}</dd>
           </div>
         ))}
       </dl>

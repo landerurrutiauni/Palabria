@@ -5,7 +5,7 @@ import { StateScreen } from "@/components/ui/notice";
 export default function NotFound() {
   return (
     <StateScreen
-      icon={<SearchX className="size-9 text-ink-200" />}
+      icon={<SearchX className="size-9 text-ink-700" />}
       eyebrow="Error 404"
       title="¡Pasapalabra! Esta página no existe"
       actions={

@@ -75,8 +75,8 @@ test.describe("modo individual", () => {
     // Se adelanta el reloj del navegador una semana.
     await page.clock.setFixedTime(new Date(Date.now() + 7 * 86_400_000));
     await page.goto("/");
-    await expect(page.getByText(/Desafío del día · PAL-/)).toContainText(`PAL-${date.replace(/-/g, "")}`);
-    await expect(page.getByRole("link", { name: "Continuar partida" })).toBeVisible();
+    await expect(page.getByText(/Desafío PAL-/)).toContainText(`PAL-${date.replace(/-/g, "")}`);
+    await expect(page.getByRole("link", { name: "Continuar partida" }).first()).toBeVisible();
     const res = await page.request.post("/api/solo", { data: { mode: "program" } });
     expect(res.status()).toBe(409);
   });
