@@ -21807,6 +21807,11 @@ function publicSeed(salt, dateKey, variant) {
 // src/lib/server/env.ts
 var DEV_SECRET = "palabria-dev-secret-change-me-0123456789abcdef";
 var cached3 = null;
+var saltFallback = null;
+function setChallengeSaltFallback(salt) {
+  saltFallback = salt?.trim() || null;
+  cached3 = null;
+}
 function serverEnv() {
   if (cached3) return cached3;
   const isProduction = process.env.NODE_ENV === "production";
@@ -21819,7 +21824,7 @@ function serverEnv() {
     databaseUrl: process.env.DATABASE_URL?.trim() || null,
     pgliteDir: process.env.PGLITE_DIR?.trim() || ".data/pglite",
     appSecret: appSecret.length >= 32 ? appSecret : DEV_SECRET,
-    challengeSalt: process.env.CHALLENGE_SALT?.trim() || "palabria-default-salt",
+    challengeSalt: process.env.CHALLENGE_SALT?.trim() || saltFallback || "palabria-default-salt",
     isProduction,
     secureCookies: process.env.COOKIE_SECURE ? process.env.COOKIE_SECURE === "true" : isProduction,
     publicUrl,
@@ -24705,7 +24710,18 @@ function startEdgeServer() {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
   }).auth;
   let dbPromise = null;
-  const getDb = () => dbPromise ??= createPostgres(env("SUPABASE_DB_URL"), { poolSize: 3 });
+  const openDb = async () => {
+    const db = await createPostgres(env("SUPABASE_DB_URL"), { poolSize: 3 });
+    if (!Deno.env.get("CHALLENGE_SALT")) {
+      const res = await db.query("select value from app_settings where key = 'challenge_salt'");
+      setChallengeSaltFallback(res.rows[0]?.value ?? null);
+    }
+    return db;
+  };
+  const getDb = () => dbPromise ??= openDb().catch((error62) => {
+    dbPromise = null;
+    throw error62;
+  });
   setDefaultDatabase(getDb);
   if (serviceKey) {
     const keyHeaders = serviceKey.startsWith("sb_") ? { apikey: serviceKey } : { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` };

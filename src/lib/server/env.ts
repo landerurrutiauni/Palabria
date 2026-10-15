@@ -15,6 +15,16 @@ export interface ServerEnv {
 const DEV_SECRET = "palabria-dev-secret-change-me-0123456789abcdef";
 
 let cached: ServerEnv | null = null;
+let saltFallback: string | null = null;
+
+/**
+ * Semilla guardada en la base de datos (app_settings) para cuando no se define
+ * CHALLENGE_SALT. La variable de entorno, si existe, tiene prioridad.
+ */
+export function setChallengeSaltFallback(salt: string | null): void {
+  saltFallback = salt?.trim() || null;
+  cached = null;
+}
 
 export function serverEnv(): ServerEnv {
   if (cached) return cached;
@@ -28,7 +38,7 @@ export function serverEnv(): ServerEnv {
     databaseUrl: process.env.DATABASE_URL?.trim() || null,
     pgliteDir: process.env.PGLITE_DIR?.trim() || ".data/pglite",
     appSecret: appSecret.length >= 32 ? appSecret : DEV_SECRET,
-    challengeSalt: process.env.CHALLENGE_SALT?.trim() || "palabria-default-salt",
+    challengeSalt: process.env.CHALLENGE_SALT?.trim() || saltFallback || "palabria-default-salt",
     isProduction,
     secureCookies: process.env.COOKIE_SECURE ? process.env.COOKIE_SECURE === "true" : isProduction,
     publicUrl,

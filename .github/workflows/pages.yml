@@ -1,16 +1,14 @@
 name: GitHub Pages + Supabase
 
-# Despliega el juego completo:
-#  1. Supabase: migraciones de la base de datos, secretos y la Edge Function «api»
-#     (la lógica autoritativa del juego).
-#  2. GitHub Pages: la interfaz como exportación estática de Next.js.
+# Publica la interfaz en GitHub Pages (exportación estática de Next.js).
 #
-# Secretos del repositorio (Settings → Secrets and variables → Actions → Secrets):
-#   SUPABASE_ACCESS_TOKEN  token personal de https://supabase.com/dashboard/account/tokens
-#   SUPABASE_DB_PASSWORD   contraseña de la base de datos del proyecto
-#   CHALLENGE_SALT         semilla secreta de la selección diaria (openssl rand -base64 32)
-# Variables opcionales (pestaña Variables): SUPABASE_PROJECT_REF, SUPABASE_PUBLISHABLE_KEY,
-# ALLOWED_ORIGINS. Los valores por defecto son los del proyecto publicado.
+# La base de datos y la Edge Function «api» de Supabase ya están desplegadas.
+# Si además añades el secreto SUPABASE_ACCESS_TOKEN (token personal de
+# https://supabase.com/dashboard/account/tokens), este flujo también aplica las
+# migraciones nuevas, activa el inicio de sesión anónimo y vuelve a desplegar la
+# función en cada cambio. Sin ese secreto, el paso de Supabase se omite.
+# Variables opcionales (Settings → Secrets and variables → Actions → Variables):
+# SUPABASE_PROJECT_REF, SUPABASE_PUBLISHABLE_KEY y ALLOWED_ORIGINS.
 
 on:
   push:
@@ -31,46 +29,47 @@ env:
 
 jobs:
   supabase:
-    name: Supabase (base de datos y Edge Function)
+    name: Supabase (opcional)
     runs-on: ubuntu-latest
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-      CHALLENGE_SALT: ${{ secrets.CHALLENGE_SALT }}
       ALLOWED_ORIGINS: ${{ vars.ALLOWED_ORIGINS || format('https://{0}.github.io', github.repository_owner) }}
     steps:
-      - name: Comprobar secretos
+      - name: ¿Hay token de Supabase?
+        id: check
         run: |
-          missing=""
-          [ -n "$SUPABASE_ACCESS_TOKEN" ] || missing="$missing SUPABASE_ACCESS_TOKEN"
-          [ -n "$SUPABASE_DB_PASSWORD" ] || missing="$missing SUPABASE_DB_PASSWORD"
-          [ -n "$CHALLENGE_SALT" ] || missing="$missing CHALLENGE_SALT"
-          if [ -n "$missing" ]; then
-            echo "::error::Faltan secretos del repositorio:$missing (Settings → Secrets and variables → Actions)."
-            exit 1
+          if [ -n "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Sin SUPABASE_ACCESS_TOKEN: se publica solo la web (Supabase no se toca)."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
           fi
       - uses: actions/checkout@v4
+        if: steps.check.outputs.enabled == 'true'
       - uses: actions/setup-node@v4
+        if: steps.check.outputs.enabled == 'true'
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      - if: steps.check.outputs.enabled == 'true'
+        run: npm ci
+      - name: Inicio de sesión anónimo y migraciones
+        if: steps.check.outputs.enabled == 'true'
+        run: node scripts/supabase-setup.mjs
       - name: Empaquetar la Edge Function
+        if: steps.check.outputs.enabled == 'true'
         run: npm run build:edge
       - uses: supabase/setup-cli@v1
+        if: steps.check.outputs.enabled == 'true'
         with:
           version: latest
-      - name: Vincular el proyecto
-        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
-      - name: Aplicar migraciones
-        run: supabase db push
-      - name: Guardar secretos de la función
-        run: >-
-          supabase secrets set --project-ref "$SUPABASE_PROJECT_REF"
-          "CHALLENGE_SALT=$CHALLENGE_SALT" "ALLOWED_ORIGINS=$ALLOWED_ORIGINS"
       - name: Desplegar la Edge Function
-        run: supabase functions deploy api --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
+        if: steps.check.outputs.enabled == 'true'
+        run: |
+          supabase secrets set --project-ref "$SUPABASE_PROJECT_REF" "ALLOWED_ORIGINS=$ALLOWED_ORIGINS"
+          supabase functions deploy api --project-ref "$SUPABASE_PROJECT_REF" --no-verify-jwt
       - name: Comprobar la API
+        if: steps.check.outputs.enabled == 'true'
         run: |
           url="https://$SUPABASE_PROJECT_REF.supabase.co/functions/v1/api/health"
           for i in 1 2 3 4 5 6; do

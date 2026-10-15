@@ -334,24 +334,27 @@ ninguna regla al navegador**:
 La exportación estática no contiene preguntas ni respuestas (se comprueba buscando textos del banco en `out/`): todo
 el contenido sigue en la base de datos y solo sale por la API, igual que en la versión con servidor.
 
-### Puesta en marcha (una sola vez)
+### Puesta en marcha
 
-En **Supabase** (proyecto `pkbxxjumiafigigzegxi`):
+**Supabase** (proyecto `pkbxxjumiafigigzegxi`): las tablas (migraciones), la semilla secreta de los desafíos
+(generada dentro de la base de datos, tabla `app_settings`) y la Edge Function `api` ya están desplegadas. La función
+publicada carga `server.js` desde este repositorio fijado a un commit concreto. Solo falta, en el panel de Supabase:
 
-1. _Authentication → Sign In / Providers_: activa **Allow anonymous sign-ins**.
-2. _Account → Access Tokens_: crea un token personal para la CLI.
+- _Authentication → Sign In / Providers_: activar **Allow anonymous sign-ins** y guardar.
 
-En **GitHub** (_Settings_ del repositorio):
+**GitHub** (_Settings_ del repositorio):
 
-1. _Pages → Build and deployment → Source_: **GitHub Actions**.
-2. _Secrets and variables → Actions → Secrets_: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD` (contraseña de la base
-   de datos del proyecto) y `CHALLENGE_SALT` (`openssl rand -base64 32`). Nunca se escriben en el código.
-3. Opcional (_Variables_): `SUPABASE_PROJECT_REF`, `SUPABASE_PUBLISHABLE_KEY` y `ALLOWED_ORIGINS` para usar otro
-   proyecto u otro dominio. La clave _publishable_ es pública por diseño.
+- _Pages → Build and deployment → Source_: **GitHub Actions**.
 
-Cada `push` a la rama principal ejecuta `.github/workflows/pages.yml`: aplica las migraciones (`supabase db push`),
-guarda los secretos de la función (`CHALLENGE_SALT`, `ALLOWED_ORIGINS`), despliega la Edge Function, comprueba
-`/health`, compila la web estática y la publica en Pages. También se puede lanzar a mano (_Actions → Run workflow_).
+Cada `push` a la rama principal ejecuta `.github/workflows/pages.yml`, que compila la web estática y la publica en
+Pages (también se puede lanzar a mano en _Actions → Run workflow_).
+
+Opcional, para que GitHub Actions actualice también Supabase en cada cambio: añade el secreto
+`SUPABASE_ACCESS_TOKEN` (token personal de _Account → Access Tokens_). Con él, el flujo activa el inicio de sesión
+anónimo y aplica las migraciones nuevas por la API de gestión (`scripts/supabase-setup.mjs`, sin contraseña de la base
+de datos), guarda `ALLOWED_ORIGINS` y despliega la Edge Function con la CLI. Variables opcionales:
+`SUPABASE_PROJECT_REF`, `SUPABASE_PUBLISHABLE_KEY` y `ALLOWED_ORIGINS`. Si defines `CHALLENGE_SALT` como secreto de la
+función, tiene prioridad sobre la semilla guardada en la base de datos.
 
 ### Desarrollo y pruebas en local (sin Supabase)
 

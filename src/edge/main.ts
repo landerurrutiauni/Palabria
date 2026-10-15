@@ -12,6 +12,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { bearerToken, createApiHandler } from "@/lib/server/api-handler";
 import { createPostgres, setDefaultDatabase, type Database } from "@/lib/server/db-core";
+import { setChallengeSaltFallback } from "@/lib/server/env";
 import { playerFromAuthUser } from "@/lib/server/players";
 import { setRoomPublisher } from "@/lib/server/realtime";
 
@@ -56,7 +57,20 @@ export function startEdgeServer(): void {
   }).auth;
 
   let dbPromise: Promise<Database> | null = null;
-  const getDb = () => (dbPromise ??= createPostgres(env("SUPABASE_DB_URL"), { poolSize: 3 }));
+  const openDb = async () => {
+    const db = await createPostgres(env("SUPABASE_DB_URL"), { poolSize: 3 });
+    if (!Deno.env.get("CHALLENGE_SALT")) {
+      // Semilla secreta generada en la base de datos (migración app_settings).
+      const res = await db.query<{ value: string }>("select value from app_settings where key = 'challenge_salt'");
+      setChallengeSaltFallback(res.rows[0]?.value ?? null);
+    }
+    return db;
+  };
+  const getDb = () =>
+    (dbPromise ??= openDb().catch((error: unknown) => {
+      dbPromise = null;
+      throw error;
+    }));
   setDefaultDatabase(getDb);
 
   if (serviceKey) {

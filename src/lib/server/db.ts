@@ -57,6 +57,8 @@ export async function runMigrations(db: Database, dir = migrationsDir()): Promis
   await db.exec(
     "create table if not exists schema_migrations (name text primary key, applied_at timestamptz not null default now())",
   );
+  // Sin políticas: los roles públicos de Supabase tampoco pueden leer esta tabla.
+  await db.exec("alter table schema_migrations enable row level security");
   const files = fs
     .readdirSync(/*turbopackIgnore: true*/ dir)
     .filter((f) => f.endsWith(".sql"))
