@@ -74,8 +74,13 @@ export function SoloGame({
   const expired = playing && remainingMs <= 0;
   useEffect(() => {
     if (!expired) return;
-    const id = window.setTimeout(refresh, 350);
-    return () => window.clearTimeout(id);
+    // Se reintenta hasta que el servidor (autoridad del tiempo) cierre la prueba.
+    const first = window.setTimeout(refresh, 350);
+    const retry = window.setInterval(refresh, 1500);
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(retry);
+    };
   }, [expired, refresh]);
 
   // Al volver a la pestaña se recalcula todo desde el servidor.
