@@ -21,13 +21,16 @@
     "challenges:show": "tsx scripts/show-challenge.ts",
     "check": "npm run lint && npm run typecheck && npm run test && npm run content:validate",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "build:edge": "node scripts/build-edge.mjs",
+    "api:dev": "DEV_AUTH=1 tsx scripts/api-server.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "0.5.10",
     "@fontsource-variable/inter": "5.3.0",
     "@fontsource-variable/unbounded": "5.3.0",
     "@fontsource/barlow-condensed": "5.3.0",
+    "@supabase/supabase-js": "^2.118.0",
     "lucide-react": "1.57.0",
     "next": "16.4.1",
     "pg": "8.23.1",
@@ -42,6 +45,7 @@
     "@types/pg": "8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.4.1",
     "prettier": "3.8.1",

@@ -45,9 +45,9 @@ import type {
 } from "@/lib/views";
 import { getChallengeForDate, loadQuestionSet, todayKey } from "./challenges";
 import { serverNow } from "./clock";
-import { getDb, isUniqueViolation, type Database, type Queryable } from "./db";
+import { defaultDatabase, isUniqueViolation, type Database, type Queryable } from "./db-core";
 import { AppError, Errors } from "./errors";
-import type { Player } from "./identity";
+import type { Player } from "./players";
 import { publishRoomUpdate } from "./realtime";
 import { recordDuelResults } from "./results";
 import { fullLetters, lettersView, phasePrompt, phaseReview, roscoPrompt } from "./view-helpers";
@@ -509,7 +509,7 @@ export interface RoomRef {
 
 /** Crea una sala privada. No consume el intento 1 vs 1. */
 export async function createRoom(player: Player, mode: GameMode, dbArg?: Database): Promise<RoomRef> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   return db.transaction(async (tx) => {
     const now = await serverNow(tx);
     const date = todayKey(now);
@@ -600,15 +600,15 @@ async function withRoomTx<T>(
     const parts = await loadParticipants(tx, room.id, true);
     const now = await serverNow(tx);
     const value = await fn(tx, room, parts, now);
-    return { value, roomId: room.id };
+    return { value, room: { id: room.id, code: room.code } };
   });
-  publishRoomUpdate(result.roomId);
+  await publishRoomUpdate(result.room);
   return result.value;
 }
 
 /** El invitado acepta el desafío (entra sin registrarse). */
 export async function joinRoom(player: Player, code: string, dbArg?: Database): Promise<void> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   try {
     await withRoomTx(db, code, async (tx, roomIn, parts, now) => {
       const room = await expireIfStale(tx, roomIn, now);
@@ -657,7 +657,7 @@ export async function joinRoom(player: Player, code: string, dbArg?: Database): 
 
 /** Marca al jugador como preparado; cuando ambos lo están, empieza el duelo. */
 export async function setReady(player: Player, code: string, ready: boolean, dbArg?: Database): Promise<void> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   try {
     await withRoomTx(db, code, async (tx, roomIn, parts, now) => {
       const room = await expireIfStale(tx, roomIn, now);
@@ -687,7 +687,7 @@ export async function setReady(player: Player, code: string, ready: boolean, dbA
  * el invitado deja su asiento libre). Durante la partida equivale a rendirse.
  */
 export async function leaveRoom(player: Player, code: string, dbArg?: Database): Promise<void> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   await withRoomTx(db, code, async (tx, room, parts, now) => {
     const me = parts.find((p) => p.player_id === player.id);
     if (!me) throw Errors.notParticipant();
@@ -745,7 +745,7 @@ export async function roomAction(
   input: RoomActionInput,
   dbArg?: Database,
 ): Promise<{ view: DuelView; feedback: FeedbackView | null; duplicate: boolean }> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   const outcome = await withRoomTx(db, code, async (tx, room, parts, now) => {
     const me = parts.find((p) => p.player_id === player.id);
     if (!me) throw Errors.notParticipant();
@@ -880,7 +880,7 @@ export interface RoomSnapshot {
 
 /** Vista de la sala para el visitante (participante o invitado potencial). */
 export async function getRoomView(player: Player, code: string, dbArg?: Database): Promise<RoomSnapshot> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   if (!isValidRoomCode(code)) throw Errors.roomNotFound();
   let now = await serverNow(db);
   const load = async () => {
@@ -902,7 +902,7 @@ export async function getRoomView(player: Player, code: string, dbArg?: Database
       const locked = await lockRoomByCode(tx, code);
       await expireIfStale(tx, locked, await serverNow(tx));
     });
-    publishRoomUpdate(room.id);
+    await publishRoomUpdate({ id: room.id, code: room.code });
     ({ room, parts } = await load());
   } else if (room.status === "in_progress") {
     const changed = await settleRoomIfNeeded(db, room, parts, now);
@@ -978,7 +978,7 @@ export async function openRoomFor(db: Queryable, playerId: string, date: string)
 
 /** Caduca salas antiguas y cierra duelos cuyo tiempo ha vencido (barrido periódico). */
 export async function sweepRooms(dbArg?: Database): Promise<number> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   const now = await serverNow(db);
   const expired = await db.query(
     `update multiplayer_rooms set status = 'expired', end_reason = 'expired', version = version + 1, updated_at = now()

@@ -17,8 +17,8 @@ import type {
 } from "@/lib/views";
 import { todayKey } from "./challenges";
 import { serverNow } from "./clock";
-import type { Queryable } from "./db";
-import type { Player } from "./identity";
+import type { Queryable } from "./db-core";
+import type { Player } from "./players";
 import { effectiveStreak } from "./results";
 import { openRoomFor } from "./room-service";
 

@@ -5,3 +5,4 @@ test-results
 playwright-report
 .data
 supabase/migrations
+supabase/functions/api/server.js

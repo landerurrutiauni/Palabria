@@ -1,4 +1,4 @@
-import type { Queryable } from "./db";
+import type { Queryable } from "./db-core";
 
 /**
  * Hora oficial del juego. Se toma del reloj de la base de datos para que

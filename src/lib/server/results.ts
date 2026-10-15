@@ -10,7 +10,7 @@ import { duelLine, duelOutcomeFor } from "@/lib/game/duel-engine";
 import type { GameMode } from "@/lib/game/phases";
 import { roscoCounts } from "@/lib/game/rosco";
 import { soloSummary, type SoloState } from "@/lib/game/solo-engine";
-import type { Queryable } from "./db";
+import type { Queryable } from "./db-core";
 
 interface StatsRow {
   solo_played: number;

@@ -6,82 +6,19 @@
  */
 import fs from "node:fs";
 import path from "node:path";
+import { createPostgres, setDefaultDatabase, type Database, type Queryable } from "./db-core";
 import { serverEnv } from "./env";
 
-export interface QueryResult<T> {
-  rows: T[];
-  rowCount: number;
-}
-
-export interface Queryable {
-  query<T = Record<string, unknown>>(sql: string, params?: unknown[]): Promise<QueryResult<T>>;
-  /** Ejecuta varias sentencias SQL sin parámetros. */
-  exec(sql: string): Promise<void>;
-}
-
-export interface Database extends Queryable {
-  readonly kind: "postgres" | "pglite";
-  transaction<T>(fn: (tx: Queryable) => Promise<T>): Promise<T>;
-  close(): Promise<void>;
-}
-
-const OID_INT8 = 20;
-const OID_DATE = 1082;
-const OID_NUMERIC = 1700;
-
-async function createPostgres(url: string): Promise<Database> {
-  const pg = await import("pg");
-  const { Pool, types } = pg.default ?? pg;
-  types.setTypeParser(OID_INT8, (v: string) => Number(v));
-  types.setTypeParser(OID_DATE, (v: string) => v);
-  types.setTypeParser(OID_NUMERIC, (v: string) => Number(v));
-  const needsSsl = /sslmode=require/.test(url) || /supabase\.(co|com)/.test(url);
-  const pool = new Pool({
-    connectionString: url,
-    max: Number(process.env.DATABASE_POOL_SIZE ?? 10),
-    ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
-  });
-  type Client = { query: (sql: string, params?: unknown[]) => Promise<{ rows: unknown[]; rowCount: number | null }> };
-  const wrap = (client: Client): Queryable => ({
-    async query<T>(sql: string, params?: unknown[]) {
-      const res = await client.query(sql, params as unknown[]);
-      return { rows: res.rows as T[], rowCount: res.rowCount ?? 0 };
-    },
-    async exec(sql: string) {
-      await client.query(sql);
-    },
-  });
-  const base = wrap(pool as unknown as Client);
-  return {
-    kind: "postgres",
-    ...base,
-    async transaction<T>(fn: (tx: Queryable) => Promise<T>): Promise<T> {
-      const client = await pool.connect();
-      try {
-        await client.query("begin");
-        const result = await fn(wrap(client as unknown as Client));
-        await client.query("commit");
-        return result;
-      } catch (error) {
-        await client.query("rollback").catch(() => undefined);
-        throw error;
-      } finally {
-        client.release();
-      }
-    },
-    async close() {
-      await pool.end();
-    },
-  };
-}
+export * from "./db-core";
 
 async function createPglite(dataDir: string | null): Promise<Database> {
   const { PGlite } = await import("@electric-sql/pglite");
   if (dataDir) fs.mkdirSync(/*turbopackIgnore: true*/ dataDir, { recursive: true });
+  // Mismos conversores que en `pg`: bigint → number, date → texto, numeric → number.
   const parsers = {
-    [OID_INT8]: (v: string) => Number(v),
-    [OID_DATE]: (v: string) => v,
-    [OID_NUMERIC]: (v: string) => Number(v),
+    20: (v: string) => Number(v),
+    1082: (v: string) => v,
+    1700: (v: string) => Number(v),
   };
   const db = dataDir ? new PGlite(dataDir, { parsers }) : new PGlite({ parsers });
   await db.waitReady;
@@ -146,7 +83,7 @@ export async function openDatabase(
   const env = serverEnv();
   const url = options.url === undefined ? env.databaseUrl : options.url;
   const db = url
-    ? await createPostgres(url)
+    ? await createPostgres(url, { poolSize: Number(process.env.DATABASE_POOL_SIZE ?? 10) })
     : await createPglite(options.pgliteDir === undefined ? env.pgliteDir : options.pgliteDir);
   if (options.migrate ?? process.env.AUTO_MIGRATE !== "false") await runMigrations(db);
   return db;
@@ -168,8 +105,4 @@ export function setDbForTesting(db: Database | null): void {
   globalForDb.__palabriaDb = db ? Promise.resolve(db) : undefined;
 }
 
-export function isUniqueViolation(error: unknown, constraint?: string): boolean {
-  const e = error as { code?: string; constraint?: string; message?: string };
-  if (e?.code !== "23505") return false;
-  return constraint ? (e.constraint ?? e.message ?? "").includes(constraint) : true;
-}
+setDefaultDatabase(getDb);

@@ -22,7 +22,7 @@ import type {
 import { challengeDateKey, isDateKey } from "@/lib/game/daily";
 import { publicSeed, selectChallengeContent, type SelectionResult } from "@/lib/content/select";
 import { validateChallenge, type ValidationIssue } from "@/lib/content/validate";
-import type { Queryable } from "./db";
+import type { Queryable } from "./db-core";
 import { serverEnv } from "./env";
 
 export interface ChallengeRecord {

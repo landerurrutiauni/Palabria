@@ -24,10 +24,10 @@ import {
 import type { FeedbackView, PhaseReview, SoloResultView, SoloView } from "@/lib/views";
 import { getChallengeForDate, loadQuestionSet, todayKey } from "./challenges";
 import { serverNow } from "./clock";
-import { getDb, isUniqueViolation, type Database, type Queryable } from "./db";
+import { defaultDatabase, isUniqueViolation, type Database, type Queryable } from "./db-core";
 import { serverEnv } from "./env";
 import { AppError, Errors } from "./errors";
-import type { Player } from "./identity";
+import type { Player } from "./players";
 import { effectiveStreak, recordSoloResult } from "./results";
 import {
   fullLetters,
@@ -260,7 +260,7 @@ async function logEvent(
 
 /** Empieza la partida individual del día. Consume el intento de forma atómica. */
 export async function startSolo(player: Player, mode: GameMode, dbArg?: Database): Promise<SoloView> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   try {
     return await db.transaction(async (tx) => {
       const now = await serverNow(tx);
@@ -344,13 +344,13 @@ async function loadAndSettle(
 
 /** Partida individual de hoy (o null si no se ha empezado). */
 export async function getTodaySolo(player: Player, dbArg?: Database): Promise<SoloView | null> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   const now = await serverNow(db);
   return loadAndSettle(db, player, { date: todayKey(now) });
 }
 
 export async function getSoloSession(player: Player, sessionId: string, dbArg?: Database): Promise<SoloView | null> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   return loadAndSettle(db, player, { sessionId });
 }
 
@@ -378,7 +378,7 @@ export async function soloAction(
   input: SoloActionInput,
   dbArg?: Database,
 ): Promise<{ view: SoloView; feedback: FeedbackView | null; duplicate: boolean }> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   const outcome = await db.transaction(async (tx) => {
     const res = await tx.query<SessionRow>(
       `select ${SESSION_COLUMNS} from game_sessions where id = $1 and player_id = $2 for update`,
@@ -432,7 +432,7 @@ export async function soloAction(
  * jugador no haya vuelto (para que su resultado y la clasificación existan).
  */
 export async function sweepSoloSessions(dbArg?: Database): Promise<number> {
-  const db = dbArg ?? (await getDb());
+  const db = dbArg ?? (await defaultDatabase());
   const now = await serverNow(db);
   const res = await db.query<{ id: string }>(
     `select id from game_sessions where status = 'in_progress' and started_at_ms < $1 order by started_at_ms limit 100`,
