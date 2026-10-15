@@ -7,7 +7,15 @@ con identidad visual propia. Cada día hay un desafío nuevo y estable para todo
   Ambos comparten **un único intento diario**.
 - **1 vs 1**: salas privadas por enlace de invitación, **por turnos**, con un reloj para cada jugador que se detiene y
   arranca como en la televisión. Un intento diario independiente del individual.
-- **Sin cuentas**: identidad anónima persistente mediante cookie `HttpOnly` firmada por el servidor.
+- **Sin cuentas**: identidad anónima persistente mediante cookie `HttpOnly` firmada por el servidor (o, en la versión
+  GitHub Pages, sesión anónima de Supabase Auth).
+
+Se puede desplegar de dos formas con el mismo código de juego:
+
+1. **Servidor Node.js** (Next.js completo con su API en `/api`): ver [Despliegue](#12-despliegue).
+2. **GitHub Pages + Supabase**: interfaz estática en GitHub Pages y lógica autoritativa en una Supabase Edge Function.
+   Publicada en **https://landerurrutiauni.github.io/Pasapalabra/**. Ver
+   [Versión GitHub Pages + Supabase](#13-versión-github-pages--supabase).
 
 ---
 
@@ -247,18 +255,21 @@ TEST_DATABASE_URL=postgres://… npm test                # integración contra P
 npm run content:validate
 npm run build
 E2E_DATABASE_URL=postgres://… npm run test:e2e         # Playwright (requiere `npm run build` y PostgreSQL)
+E2E_DATABASE_URL=postgres://… npm run test:e2e:static  # versión GitHub Pages (ver sección 13)
 ```
 
 Resultados en el entorno de desarrollo (PostgreSQL 16 local, Chromium):
 
-| Comprobación                          | Resultado                            |
-| ------------------------------------- | ------------------------------------ |
-| ESLint, TypeScript estricto, Prettier | sin errores                          |
-| Vitest (PGlite)                       | 8 archivos, 65 pruebas superadas     |
-| Vitest (PostgreSQL 16)                | 8 archivos, 65 pruebas superadas     |
-| Validación de contenido               | banco, reserva y 45 días sin errores |
-| `next build`                          | correcto, sin avisos                 |
-| Playwright E2E (PostgreSQL 16)        | 5 pruebas superadas                  |
+| Comprobación                          | Resultado                             |
+| ------------------------------------- | ------------------------------------- |
+| ESLint, TypeScript estricto, Prettier | sin errores                           |
+| Vitest (PGlite)                       | 9 archivos, 70 pruebas superadas      |
+| Vitest (PostgreSQL 16)                | 9 archivos, 70 pruebas superadas      |
+| Validación de contenido               | banco, reserva y 45 días sin errores  |
+| `next build`                          | correcto, sin avisos                  |
+| Playwright E2E (PostgreSQL 16)        | 5 pruebas superadas                   |
+| Playwright E2E versión GitHub Pages   | 2 pruebas superadas                   |
+| Edge Function en Deno 2               | arranca y responde (salud, CORS, JWT) |
 
 Cobertura destacada:
 
@@ -285,10 +296,10 @@ Cobertura destacada:
   La mejor experiencia se obtiene con un servidor Node.js persistente.
 - **PGlite** solo admite un proceso: úsalo únicamente en desarrollo.
 - El limitador de ráfagas es en memoria (por instancia).
-- El flujo de despliegue en Supabase está documentado pero no se ha podido ejecutar contra un proyecto real de
-  Supabase desde este entorno (sin credenciales); se ha probado con PostgreSQL 16 y con PGlite.
-- La integración continua (`.github/workflows/ci.yml`) está preparada pero no se ha ejecutado en GitHub desde este
-  entorno.
+- El entorno de desarrollo no tiene acceso de red a Supabase: la Edge Function se ha probado en Deno contra
+  PostgreSQL 16 local y el despliegue real lo hace GitHub Actions (`pages.yml`) con los secretos del repositorio.
+- Sin una cuenta, el inicio de sesión anónimo de Supabase está sujeto a sus límites por IP (por defecto, 30 nuevas
+  identidades por hora y dirección IP).
 
 ## 12. Despliegue
 
@@ -306,3 +317,59 @@ conexiones). Ten en cuenta la limitación de SSE descrita arriba.
 
 Detrás de un proxy inverso, desactiva el _buffering_ para `/api/rooms/*/events` (la respuesta ya incluye
 `X-Accel-Buffering: no` para Nginx).
+
+## 13. Versión GitHub Pages + Supabase
+
+GitHub Pages solo sirve ficheros estáticos, así que esta versión separa la interfaz del servidor **sin trasladar
+ninguna regla al navegador**:
+
+| Pieza         | Dónde                                                                       | Qué hace                                                                                                                                                                 |
+| ------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Interfaz      | GitHub Pages (`next build` con `output: "export"`, ficheros `*.static.tsx`) | Las mismas pantallas y componentes; cargan los datos desde la API en el navegador. Rutas con parámetros en la consulta: `/sala/?c=…`, `/historial/ver/?id=…`.            |
+| API del juego | Supabase Edge Function `api` (`supabase/functions/api`)                     | `createApiHandler` (`src/lib/server/api-handler.ts`): las mismas rutas, servicios, transacciones y bloqueos que la API de Next.js. Empaquetada con `npm run build:edge`. |
+| Base de datos | PostgreSQL de Supabase (`SUPABASE_DB_URL`)                                  | Mismas migraciones. RLS activado y sin permisos para `anon`/`authenticated`: el navegador no puede leer ninguna tabla.                                                   |
+| Identidad     | Supabase Auth, inicio de sesión **anónimo**                                 | La función verifica el JWT (`auth.getClaims`) y asocia el `sub` a un jugador (`anonymous_players.auth_user_id`). Sin correo ni contraseña.                               |
+| Tiempo real   | Supabase Realtime **Broadcast** (`room-<código>`) + sondeo cada 3 s         | Tras cada cambio de una sala, la función envía un aviso sin datos; cada navegador relee **su** vista filtrada desde la API. El sondeo aplica fin de reloj y presencia.   |
+
+La exportación estática no contiene preguntas ni respuestas (se comprueba buscando textos del banco en `out/`): todo
+el contenido sigue en la base de datos y solo sale por la API, igual que en la versión con servidor.
+
+### Puesta en marcha (una sola vez)
+
+En **Supabase** (proyecto `pkbxxjumiafigigzegxi`):
+
+1. _Authentication → Sign In / Providers_: activa **Allow anonymous sign-ins**.
+2. _Account → Access Tokens_: crea un token personal para la CLI.
+
+En **GitHub** (_Settings_ del repositorio):
+
+1. _Pages → Build and deployment → Source_: **GitHub Actions**.
+2. _Secrets and variables → Actions → Secrets_: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_DB_PASSWORD` (contraseña de la base
+   de datos del proyecto) y `CHALLENGE_SALT` (`openssl rand -base64 32`). Nunca se escriben en el código.
+3. Opcional (_Variables_): `SUPABASE_PROJECT_REF`, `SUPABASE_PUBLISHABLE_KEY` y `ALLOWED_ORIGINS` para usar otro
+   proyecto u otro dominio. La clave _publishable_ es pública por diseño.
+
+Cada `push` a la rama principal ejecuta `.github/workflows/pages.yml`: aplica las migraciones (`supabase db push`),
+guarda los secretos de la función (`CHALLENGE_SALT`, `ALLOWED_ORIGINS`), despliega la Edge Function, comprueba
+`/health`, compila la web estática y la publica en Pages. También se puede lanzar a mano (_Actions → Run workflow_).
+
+### Desarrollo y pruebas en local (sin Supabase)
+
+`scripts/api-server.ts` sirve la misma API en Node con identidades simuladas (`dev.<uuid>`, solo con `DEV_AUTH=1`) y
+`scripts/serve-static.mjs` imita GitHub Pages (prefijo `/Pasapalabra`, `404.html`):
+
+```bash
+NEXT_PUBLIC_BASE_PATH=/Pasapalabra NEXT_PUBLIC_API_URL=http://localhost:3301 NEXT_PUBLIC_DEV_AUTH=1 \
+  npm run build:pages
+E2E_DATABASE_URL=postgres://… npm run test:e2e:static   # identidad, rosco, historial, clasificación y duelo
+```
+
+La Edge Function empaquetada se ha ejecutado en Deno 2 contra PostgreSQL 16 (salud, CORS, rechazo de tokens y, con la
+variante de desarrollo, partidas completas por la API).
+
+### Diferencias con la versión con servidor
+
+- Identidad guardada en el almacenamiento local del navegador (sesión anónima de Supabase) en lugar de una cookie
+  `HttpOnly`. Borrar los datos del sitio crea una identidad nueva, igual que borrar las cookies.
+- Sin SSE: avisos por Realtime Broadcast y sondeo cada 3 s (latencia algo mayor si Realtime no está disponible).
+- El HTML inicial no incluye datos del jugador: cada pantalla muestra «Cargando…» mientras pide sus datos.

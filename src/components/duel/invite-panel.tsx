@@ -2,6 +2,7 @@
 
 import { Check, Copy, Share2 } from "lucide-react";
 import { useState, useSyncExternalStore } from "react";
+import { BASE_PATH, roomHref } from "@/lib/client/runtime";
 
 const noopSubscribe = () => () => undefined;
 
@@ -17,7 +18,7 @@ export function InvitePanel({ code }: { code: string }) {
     () => typeof navigator.share === "function",
     () => false,
   );
-  const url = `${origin}/sala/${code}`;
+  const url = origin ? `${origin}${BASE_PATH}${roomHref(code)}` : roomHref(code);
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {

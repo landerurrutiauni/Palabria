@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { IS_STATIC } from "@/lib/client/runtime";
 import { useServerOffset } from "@/lib/client/time";
 
 function parts(ms: number) {
@@ -24,7 +25,8 @@ export function Countdown({ target, serverNow, className }: { target: number; se
   const left = target - now;
   useEffect(() => {
     if (left <= 0) {
-      const id = window.setTimeout(() => router.refresh(), 1500);
+      // Nuevo día en Madrid: se recarga para obtener el desafío nuevo del servidor.
+      const id = window.setTimeout(() => (IS_STATIC ? window.location.reload() : router.refresh()), 1500);
       return () => window.clearTimeout(id);
     }
   }, [left, router]);

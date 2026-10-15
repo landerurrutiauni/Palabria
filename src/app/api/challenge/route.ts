@@ -1,3 +1,4 @@
+import { timingFromEnv } from "@/lib/game/config";
 import { nextChallengeStart } from "@/lib/game/daily";
 import { getChallengeForDate, roscoPreview, todayKey } from "@/lib/server/challenges";
 import { serverNow } from "@/lib/server/clock";
@@ -21,6 +22,7 @@ export async function GET() {
       serverNow: now,
       nextResetAt: nextChallengeStart(now),
       letters: await roscoPreview(db, challenge.id),
+      timing: timingFromEnv(),
     });
   } catch (error) {
     return errorResponse(error);

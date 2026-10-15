@@ -17,9 +17,10 @@ export async function GET(request: Request) {
     const db = await getDb();
     const date = url.searchParams.get("date") ?? todayKey(await serverNow(db));
     const mode = url.searchParams.get("mode") === "program" ? "program" : "rosco";
+    const limit = Math.min(50, Math.max(1, Math.trunc(Number(url.searchParams.get("limit"))) || 50));
     if (!isDateKey(date)) return json({ error: { code: "bad_request", message: "Fecha no válida." } }, { status: 400 });
     const player = await currentPlayer();
-    return json(await getLeaderboard(db, { date, mode, playerId: player?.id ?? null, limit: 50 }));
+    return json(await getLeaderboard(db, { date, mode, playerId: player?.id ?? null, limit }));
   } catch (error) {
     return errorResponse(error);
   }

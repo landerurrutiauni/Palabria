@@ -23,6 +23,7 @@ import type {
 import { dayNumber } from "@/lib/game/daily";
 import { normalizeAnswer } from "@/lib/game/normalize";
 import { PHASE_RULES, PROGRAM_PHASES } from "@/lib/game/phases";
+export { difficultyLabel } from "@/lib/game/phases";
 import { seededShuffle, shortHash } from "./hash";
 import { promptTexts, textRevealsAnswer } from "./validate";
 
@@ -149,10 +150,6 @@ export function selectChallengeContent(bank: QuestionBank, dateKey: string, salt
 /** Semilla pública (no revela el secreto de selección). */
 export function publicSeed(salt: string, dateKey: string, variant: number): string {
   return `${shortHash(`${salt}:${dateKey}`)}-${variant}`;
-}
-
-export function difficultyLabel(d: string): string {
-  return d === "facil" ? "Fácil" : d === "dificil" ? "Difícil" : "Media";
 }
 
 export type { Difficulty, PhaseKind };

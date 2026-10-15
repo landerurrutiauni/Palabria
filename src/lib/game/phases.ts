@@ -113,3 +113,8 @@ export function stagesForMode(mode: GameMode): readonly StageKind[] {
 export function modeLabel(mode: GameMode): string {
   return mode === "rosco" ? "Solo El Rosco" : "Programa completo";
 }
+
+/** Nombre de la dificultad del desafío del día. */
+export function difficultyLabel(d: string): string {
+  return d === "facil" ? "Fácil" : d === "dificil" ? "Difícil" : "Media";
+}

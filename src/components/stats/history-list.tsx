@@ -4,6 +4,7 @@ import { formatClock } from "@/lib/game/clock";
 import { formatChallengeDate } from "@/lib/game/daily";
 import { modeLabel } from "@/lib/game/phases";
 import { cn } from "@/lib/client/cn";
+import { historyHref, roomHref } from "@/lib/client/runtime";
 import type { HistoryEntry } from "@/lib/views";
 
 export function HistoryList({ entries, className }: { entries: HistoryEntry[]; className?: string }) {
@@ -21,6 +22,7 @@ export function HistoryList({ entries, className }: { entries: HistoryEntry[]; c
   return (
     <ul className={cn("flex flex-col gap-2", className)}>
       {entries.map((e) => {
+        const link = e.kind === "duel" ? (e.roomCode ? roomHref(e.roomCode) : null) : historyHref(e.id);
         const body = (
           <>
             <span
@@ -59,14 +61,14 @@ export function HistoryList({ entries, className }: { entries: HistoryEntry[]; c
                 <span className="score-digits text-2xl text-gold-300">{e.score}</span>
               )}
             </span>
-            {e.link ? <ChevronRight className="size-5 text-ink-400" aria-hidden="true" /> : null}
+            {link ? <ChevronRight className="size-5 text-ink-400" aria-hidden="true" /> : null}
           </>
         );
         return (
           <li key={e.id}>
-            {e.link ? (
+            {link ? (
               <Link
-                href={e.link}
+                href={link}
                 className="panel-soft flex items-center gap-3 p-3 transition hover:border-turquoise-400/40"
               >
                 {body}

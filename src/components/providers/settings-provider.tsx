@@ -3,7 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/client/api";
 import { sound, type SoundName } from "@/lib/client/sound";
-import type { PreferencesView } from "@/lib/views";
+import { PREFS_CACHE_KEY } from "@/lib/site";
+import type { MeView, PreferencesView } from "@/lib/views";
 
 interface SettingsContextValue {
   prefs: PreferencesView;
@@ -20,14 +21,50 @@ function applyToDocument(prefs: PreferencesView) {
   root.dataset.text = prefs.largeText ? "large" : "normal";
 }
 
-export function SettingsProvider({ initial, children }: { initial: PreferencesView; children: React.ReactNode }) {
+function cachePrefs(prefs: PreferencesView) {
+  try {
+    window.localStorage.setItem(PREFS_CACHE_KEY, JSON.stringify(prefs));
+  } catch {
+    /* almacenamiento no disponible */
+  }
+}
+
+export function SettingsProvider({
+  initial,
+  remote = false,
+  children,
+}: {
+  initial: PreferencesView;
+  /** Versión estática: las preferencias del jugador se piden a la API al cargar. */
+  remote?: boolean;
+  children: React.ReactNode;
+}) {
   const [prefs, setPrefs] = useState<PreferencesView>(initial);
+  // Hasta recibirlas no se tocan los atributos que ya aplicó la copia local.
+  const [loaded, setLoaded] = useState(!remote);
 
   useEffect(() => {
+    if (!remote) return;
+    let alive = true;
+    api<MeView>("/api/me")
+      .then((me) => {
+        if (!alive) return;
+        setPrefs(me.preferences);
+        cachePrefs(me.preferences);
+      })
+      .catch(() => undefined)
+      .finally(() => alive && setLoaded(true));
+    return () => {
+      alive = false;
+    };
+  }, [remote]);
+
+  useEffect(() => {
+    if (!loaded) return;
     sound.enabled = prefs.soundEnabled;
     sound.volume = prefs.soundVolume / 100;
     applyToDocument(prefs);
-  }, [prefs]);
+  }, [prefs, loaded]);
 
   useEffect(() => {
     // El audio solo se desbloquea tras un gesto del usuario (política de los navegadores).
@@ -40,13 +77,18 @@ export function SettingsProvider({ initial, children }: { initial: PreferencesVi
     };
   }, []);
 
-  const update = useCallback((patch: Partial<PreferencesView>) => {
-    setPrefs((current) => {
-      const next = { ...current, ...patch };
-      void api("/api/me/preferences", { method: "PUT", body: next }).catch(() => undefined);
-      return next;
-    });
-  }, []);
+  const update = useCallback(
+    (patch: Partial<PreferencesView>) => {
+      setPrefs((current) => {
+        const next = { ...current, ...patch };
+        void api("/api/me/preferences", { method: "PUT", body: next }).catch(() => undefined);
+        if (remote) cachePrefs(next);
+        return next;
+      });
+      setLoaded(true);
+    },
+    [remote],
+  );
 
   const play = useCallback((name: SoundName) => sound.play(name), []);
   const value = useMemo(() => ({ prefs, update, play }), [prefs, update, play]);

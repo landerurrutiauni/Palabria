@@ -27,10 +27,30 @@ function env(name: string): string {
   return value;
 }
 
+/**
+ * Clave de API: primero las nuevas (`SUPABASE_PUBLISHABLE_KEYS` /
+ * `SUPABASE_SECRET_KEYS`, diccionarios JSON) y, si no, las heredadas
+ * (`SUPABASE_ANON_KEY` / `SUPABASE_SERVICE_ROLE_KEY`).
+ */
+function apiKey(jsonName: string, legacyName: string): string | undefined {
+  const raw = Deno.env.get(jsonName);
+  if (raw) {
+    try {
+      const keys = JSON.parse(raw) as Record<string, string>;
+      const key = keys.default ?? Object.values(keys)[0];
+      if (key) return key;
+    } catch {
+      /* formato inesperado: se usa la clave heredada */
+    }
+  }
+  return Deno.env.get(legacyName) || undefined;
+}
+
 export function startEdgeServer(): void {
   const supabaseUrl = env("SUPABASE_URL");
-  const anonKey = env("SUPABASE_ANON_KEY");
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const anonKey = apiKey("SUPABASE_PUBLISHABLE_KEYS", "SUPABASE_ANON_KEY");
+  if (!anonKey) throw new Error("Falta la clave pública de Supabase (SUPABASE_PUBLISHABLE_KEYS o SUPABASE_ANON_KEY)");
+  const serviceKey = apiKey("SUPABASE_SECRET_KEYS", "SUPABASE_SERVICE_ROLE_KEY");
   const auth = createClient(supabaseUrl, anonKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
   }).auth;
@@ -40,10 +60,14 @@ export function startEdgeServer(): void {
   setDefaultDatabase(getDb);
 
   if (serviceKey) {
+    // Las claves nuevas (sb_secret_…) no son JWT: solo van en la cabecera apikey.
+    const keyHeaders: Record<string, string> = serviceKey.startsWith("sb_")
+      ? { apikey: serviceKey }
+      : { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` };
     setRoomPublisher(async (room) => {
       const res = await fetch(`${supabaseUrl}/realtime/v1/api/broadcast`, {
         method: "POST",
-        headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json" },
+        headers: { ...keyHeaders, "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [{ topic: `room-${room.code}`, event: "update", payload: { at: Date.now() } }],
         }),

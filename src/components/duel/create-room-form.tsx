@@ -6,6 +6,7 @@ import { ListOrdered, Swords, Timer } from "lucide-react";
 import { Notice } from "@/components/ui/notice";
 import { api, ApiError } from "@/lib/client/api";
 import { cn } from "@/lib/client/cn";
+import { roomHref } from "@/lib/client/runtime";
 import type { GameMode } from "@/lib/game/phases";
 
 export function CreateRoomForm() {
@@ -19,7 +20,7 @@ export function CreateRoomForm() {
     setError(null);
     try {
       const { code } = await api<{ code: string }>("/api/rooms", { body: { mode } });
-      router.push(`/sala/${code}`);
+      router.push(roomHref(code));
     } catch (e) {
       if (e instanceof ApiError) setError(e);
       setBusy(false);

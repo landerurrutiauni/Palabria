@@ -7,6 +7,7 @@
  * el servidor sigue siendo la única autoridad sobre intentos, tiempo y puntos.
  */
 import { z } from "zod";
+import { timingFromEnv } from "@/lib/game/config";
 import { isDateKey, nextChallengeStart } from "@/lib/game/daily";
 import {
   actionIdSchema,
@@ -94,6 +95,7 @@ export function createApiHandler(options: ApiHandlerOptions): (request: Request)
       serverNow: now,
       nextResetAt: nextChallengeStart(now),
       letters: await roscoPreview(db, challenge.id),
+      timing: timingFromEnv(),
     });
   });
 
@@ -199,13 +201,14 @@ export function createApiHandler(options: ApiHandlerOptions): (request: Request)
     const now = await serverNow(db);
     const date = url.searchParams.get("date") ?? todayKey(now);
     const mode = url.searchParams.get("mode") === "program" ? "program" : "rosco";
+    const limit = Math.min(50, Math.max(1, Math.trunc(Number(url.searchParams.get("limit"))) || 50));
     if (!isDateKey(date) || date > todayKey(now)) throw Errors.badRequest("Fecha no válida.");
     if (options.background && Date.now() - lastSweep > 60_000) {
       lastSweep = Date.now();
       options.background(Promise.all([sweepSoloSessions(db), sweepRooms(db)]).catch(() => undefined));
     }
     const me = await optionalPlayer();
-    return respond(await getLeaderboard(db, { date, mode, playerId: me?.id ?? null, limit: 50 }));
+    return respond(await getLeaderboard(db, { date, mode, playerId: me?.id ?? null, limit }));
   });
 
   const corsHeaders = (origin: string | null): Record<string, string> => {

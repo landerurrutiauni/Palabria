@@ -1,6 +1,8 @@
 "use client";
 
 import type { ApiErrorBody } from "@/lib/views";
+import { IS_STATIC } from "./runtime";
+import { accessToken, publicApiKey } from "./session";
 
 export class ApiError extends Error {
   readonly code: string;
@@ -16,20 +18,44 @@ export class ApiError extends Error {
   }
 }
 
-/** Petición JSON al backend propio. Los errores llegan como ApiError con mensaje en español. */
+const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "").replace(/\/$/, "");
+
+/** En la versión estática, /api/... se sirve desde la Supabase Edge Function. */
+function resolve(url: string): string {
+  return IS_STATIC ? `${API_URL}${url.replace(/^\/api/, "")}` : url;
+}
+
+async function authHeaders(renew = false): Promise<Record<string, string>> {
+  if (!IS_STATIC) return {};
+  const headers: Record<string, string> = { Authorization: `Bearer ${await accessToken({ renew })}` };
+  if (publicApiKey()) headers.apikey = publicApiKey();
+  return headers;
+}
+
+/** Petición JSON al backend del juego. Los errores llegan como ApiError con mensaje en español. */
 export async function api<T>(
   url: string,
   init: { method?: string; body?: unknown; signal?: AbortSignal } = {},
+  retried = false,
 ): Promise<T> {
+  let identity: Record<string, string>;
+  try {
+    identity = await authHeaders(retried);
+  } catch (error) {
+    throw new ApiError(0, "auth", `No se pudo iniciar tu identidad anónima: ${(error as Error).message}`);
+  }
   let response: Response;
   try {
-    response = await fetch(url, {
+    response = await fetch(resolve(url), {
       method: init.method ?? (init.body === undefined ? "GET" : "POST"),
-      headers: init.body === undefined ? undefined : { "Content-Type": "application/json" },
+      headers: {
+        ...(init.body === undefined ? {} : { "Content-Type": "application/json" }),
+        ...identity,
+      },
       body: init.body === undefined ? undefined : JSON.stringify(init.body),
       signal: init.signal,
       cache: "no-store",
-      credentials: "same-origin",
+      credentials: IS_STATIC ? "omit" : "same-origin",
     });
   } catch (error) {
     if ((error as Error).name === "AbortError") throw error;
@@ -41,6 +67,7 @@ export async function api<T>(
   } catch {
     data = null;
   }
+  if (response.status === 401 && IS_STATIC && !retried) return api<T>(url, init, true);
   if (!response.ok) {
     const body = data as ApiErrorBody | null;
     throw new ApiError(

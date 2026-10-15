@@ -8,7 +8,7 @@ import { fileURLToPath } from "node:url";
 const root = fileURLToPath(new URL("..", import.meta.url));
 const NPM = {
   pg: "npm:pg@8.23.1",
-  "@supabase/supabase-js": "npm:@supabase/supabase-js@2.118.0",
+  "@supabase/supabase-js": "npm:@supabase/supabase-js@2.117.3",
 };
 
 // `--dev <salida>`: variante de prueba con autenticación de desarrollo (no se despliega).

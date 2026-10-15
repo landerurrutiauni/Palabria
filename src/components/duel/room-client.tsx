@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Ban, Clock4 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSettings } from "@/components/providers/settings-provider";
@@ -26,6 +27,7 @@ export function RoomClient({ code, initial }: { code: string; initial: DuelView 
   const [failed, setFailed] = useState<{ actionId: string; action: DuelActionInput } | null>(null);
   const busyRef = useRef(false);
   const { play } = useSettings();
+  const router = useRouter();
   const lastStatus = useRef(view.status);
 
   useEffect(() => {
@@ -176,7 +178,7 @@ export function RoomClient({ code, initial }: { code: string; initial: DuelView 
           onReady={(ready) => void post("ready", { ready })}
           onLeave={() =>
             void post("leave").then((r) => {
-              if (r) window.location.href = view.isHost ? "/duelo" : "/";
+              if (r) router.push(view.isHost ? "/duelo" : "/");
             })
           }
         />

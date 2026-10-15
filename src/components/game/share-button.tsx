@@ -2,6 +2,7 @@
 
 import { Check, Share2 } from "lucide-react";
 import { useState } from "react";
+import { BASE_PATH } from "@/lib/client/runtime";
 
 /** Comparte el resultado con la hoja nativa del dispositivo o lo copia al portapapeles. */
 export function ShareButton({
@@ -15,7 +16,7 @@ export function ShareButton({
 }) {
   const [copied, setCopied] = useState(false);
   const share = async () => {
-    const url = typeof window !== "undefined" ? window.location.origin : "";
+    const url = typeof window !== "undefined" ? `${window.location.origin}${BASE_PATH}/` : "";
     const full = text.includes("http") ? text : `${text}\n${url}`;
     try {
       if (navigator.share) {

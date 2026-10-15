@@ -208,7 +208,7 @@ export async function getStats(db: Queryable, player: Player): Promise<StatsView
       outcome: h.outcome,
       opponentName: h.opponent_name,
       perfect: h.perfect,
-      link: h.kind === "duel" ? (h.room_code ? `/sala/${h.room_code}` : null) : `/historial/${h.id}`,
+      roomCode: h.room_code,
     })),
   };
 }

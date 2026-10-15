@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api, ApiError } from "./api";
+import { IS_STATIC } from "./runtime";
+import { supabaseClient } from "./session";
 import type { DuelView } from "@/lib/views";
 
 export type SyncStatus = "live" | "connecting" | "reconnecting" | "offline";
@@ -35,7 +37,40 @@ export function useRoomSync(code: string, initial: DuelView) {
     }
   }, [code, accept]);
 
+  // Versión GitHub Pages + Supabase: aviso por Supabase Realtime + sondeo
+  // periódico (que además mantiene la presencia del jugador en la sala).
   useEffect(() => {
+    if (!IS_STATIC) return;
+    let channelLive = false;
+    let stopped = false;
+    const sb = supabaseClient();
+    const channel = sb
+      ?.channel(`room-${code}`)
+      .on("broadcast", { event: "update" }, () => void refresh())
+      .subscribe((state) => {
+        channelLive = state === "SUBSCRIBED";
+      });
+    const tick = async () => {
+      const ok = await refresh();
+      if (stopped) return;
+      setStatus(!ok ? (navigator.onLine ? "reconnecting" : "offline") : channelLive || !sb ? "live" : "reconnecting");
+    };
+    void tick();
+    const id = window.setInterval(tick, 3000);
+    const onOnline = () => void refresh();
+    window.addEventListener("online", onOnline);
+    document.addEventListener("visibilitychange", onOnline);
+    return () => {
+      stopped = true;
+      window.clearInterval(id);
+      if (channel) void sb?.removeChannel(channel);
+      window.removeEventListener("online", onOnline);
+      document.removeEventListener("visibilitychange", onOnline);
+    };
+  }, [code, refresh]);
+
+  useEffect(() => {
+    if (IS_STATIC) return;
     let source: EventSource | null = null;
     let poll: number | null = null;
     let closed = false;

@@ -244,7 +244,8 @@ export interface HistoryEntry {
   outcome: "win" | "loss" | "draw" | null;
   opponentName: string | null;
   perfect: boolean;
-  link: string | null;
+  /** Código de la sala (duelos) para enlazar su resultado. */
+  roomCode: string | null;
 }
 
 export interface StatsView {

@@ -8,7 +8,7 @@ var __export = (target, all) => {
 };
 
 // src/edge/main.ts
-import { createClient } from "npm:@supabase/supabase-js@2.118.0";
+import { createClient } from "npm:@supabase/supabase-js@2.117.3";
 
 // node_modules/zod/v4/classic/external.js
 var external_exports = {};
@@ -19727,6 +19727,44 @@ function date4(params) {
   return _coercedDate(ZodDate, params);
 }
 
+// src/lib/game/config.ts
+var DEFAULT_TIMING = {
+  soloRoscoMs: 18e4,
+  programRoscoBaseMs: 12e4,
+  duelRoscoMs: 18e4,
+  duelProgramRoscoBaseMs: 12e4,
+  reconnectGraceMs: 45e3,
+  duelStartDelayMs: 3500,
+  duelStageGapMs: 5e3,
+  intermissionTimeoutMs: 30 * 6e4,
+  roomWaitingTtlMs: 3 * 60 * 6e4
+};
+function secondsFromEnv(name, fallbackMs, min, max) {
+  const raw = typeof process !== "undefined" ? process.env[name] : void 0;
+  if (!raw) return fallbackMs;
+  const value = Number(raw);
+  if (!Number.isFinite(value) || value < min || value > max) return fallbackMs;
+  return Math.round(value * 1e3);
+}
+function timingFromEnv() {
+  return {
+    soloRoscoMs: secondsFromEnv("ROSCO_SECONDS", DEFAULT_TIMING.soloRoscoMs, 10, 900),
+    programRoscoBaseMs: secondsFromEnv("PROGRAM_ROSCO_BASE_SECONDS", DEFAULT_TIMING.programRoscoBaseMs, 10, 900),
+    duelRoscoMs: secondsFromEnv("DUEL_ROSCO_SECONDS", DEFAULT_TIMING.duelRoscoMs, 10, 900),
+    duelProgramRoscoBaseMs: secondsFromEnv(
+      "DUEL_PROGRAM_ROSCO_BASE_SECONDS",
+      DEFAULT_TIMING.duelProgramRoscoBaseMs,
+      10,
+      900
+    ),
+    reconnectGraceMs: secondsFromEnv("DUEL_RECONNECT_GRACE_SECONDS", DEFAULT_TIMING.reconnectGraceMs, 5, 600),
+    duelStartDelayMs: DEFAULT_TIMING.duelStartDelayMs,
+    duelStageGapMs: DEFAULT_TIMING.duelStageGapMs,
+    intermissionTimeoutMs: DEFAULT_TIMING.intermissionTimeoutMs,
+    roomWaitingTtlMs: secondsFromEnv("ROOM_WAITING_TTL_SECONDS", DEFAULT_TIMING.roomWaitingTtlMs, 60, 86400)
+  };
+}
+
 // src/lib/game/daily.ts
 var CHALLENGE_TIME_ZONE = "Europe/Madrid";
 var partsFormatter = new Intl.DateTimeFormat("en-US", {
@@ -19842,7 +19880,10 @@ var Errors = {
 // src/lib/server/api-common.ts
 function errorPayload(error62) {
   if (error62 instanceof AppError) {
-    return { status: error62.status, body: { error: { code: error62.code, message: error62.message, details: error62.details } } };
+    return {
+      status: error62.status,
+      body: { error: { code: error62.code, message: error62.message, details: error62.details } }
+    };
   }
   if (error62 instanceof GameRuleError) {
     return { status: 409, body: { error: { code: error62.code, message: error62.message } } };
@@ -22065,44 +22106,6 @@ function sanitizeDisplayName(raw) {
 
 // src/lib/server/room-service.ts
 import { randomBytes, randomUUID } from "node:crypto";
-
-// src/lib/game/config.ts
-var DEFAULT_TIMING = {
-  soloRoscoMs: 18e4,
-  programRoscoBaseMs: 12e4,
-  duelRoscoMs: 18e4,
-  duelProgramRoscoBaseMs: 12e4,
-  reconnectGraceMs: 45e3,
-  duelStartDelayMs: 3500,
-  duelStageGapMs: 5e3,
-  intermissionTimeoutMs: 30 * 6e4,
-  roomWaitingTtlMs: 3 * 60 * 6e4
-};
-function secondsFromEnv(name, fallbackMs, min, max) {
-  const raw = typeof process !== "undefined" ? process.env[name] : void 0;
-  if (!raw) return fallbackMs;
-  const value = Number(raw);
-  if (!Number.isFinite(value) || value < min || value > max) return fallbackMs;
-  return Math.round(value * 1e3);
-}
-function timingFromEnv() {
-  return {
-    soloRoscoMs: secondsFromEnv("ROSCO_SECONDS", DEFAULT_TIMING.soloRoscoMs, 10, 900),
-    programRoscoBaseMs: secondsFromEnv("PROGRAM_ROSCO_BASE_SECONDS", DEFAULT_TIMING.programRoscoBaseMs, 10, 900),
-    duelRoscoMs: secondsFromEnv("DUEL_ROSCO_SECONDS", DEFAULT_TIMING.duelRoscoMs, 10, 900),
-    duelProgramRoscoBaseMs: secondsFromEnv(
-      "DUEL_PROGRAM_ROSCO_BASE_SECONDS",
-      DEFAULT_TIMING.duelProgramRoscoBaseMs,
-      10,
-      900
-    ),
-    reconnectGraceMs: secondsFromEnv("DUEL_RECONNECT_GRACE_SECONDS", DEFAULT_TIMING.reconnectGraceMs, 5, 600),
-    duelStartDelayMs: DEFAULT_TIMING.duelStartDelayMs,
-    duelStageGapMs: DEFAULT_TIMING.duelStageGapMs,
-    intermissionTimeoutMs: DEFAULT_TIMING.intermissionTimeoutMs,
-    roomWaitingTtlMs: secondsFromEnv("ROOM_WAITING_TTL_SECONDS", DEFAULT_TIMING.roomWaitingTtlMs, 60, 86400)
-  };
-}
 
 // src/lib/game/phase-items.ts
 function createPhaseItems(kind, count) {
@@ -24421,7 +24424,7 @@ async function getStats(db, player) {
       outcome: h.outcome,
       opponentName: h.opponent_name,
       perfect: h.perfect,
-      link: h.kind === "duel" ? h.room_code ? `/sala/${h.room_code}` : null : `/historial/${h.id}`
+      roomCode: h.room_code
     }))
   };
 }
@@ -24497,7 +24500,8 @@ function createApiHandler(options) {
       contentVersion: challenge.contentVersion,
       serverNow: now,
       nextResetAt: nextChallengeStart(now),
-      letters: await roscoPreview(db, challenge.id)
+      letters: await roscoPreview(db, challenge.id),
+      timing: timingFromEnv()
     });
   });
   route("GET", /^\/me$/, async ({ db, player, respond }) => respond(await getMe(db, await player())));
@@ -24518,7 +24522,11 @@ function createApiHandler(options) {
     rateLimit(`prefs:${me.id}`, 30, 6e4);
     return respond(await savePreferences(db, me.id, await readJson(request, preferencesSchema)));
   });
-  route("GET", /^\/solo$/, async ({ db, player, respond }) => respond({ session: await getTodaySolo(await player(), db) }));
+  route(
+    "GET",
+    /^\/solo$/,
+    async ({ db, player, respond }) => respond({ session: await getTodaySolo(await player(), db) })
+  );
   route("POST", /^\/solo$/, async ({ db, request, player, respond }) => {
     const me = await player();
     rateLimit(`solo-start:${me.id}`, 10, 6e4);
@@ -24586,13 +24594,14 @@ function createApiHandler(options) {
     const now = await serverNow(db);
     const date5 = url2.searchParams.get("date") ?? todayKey(now);
     const mode = url2.searchParams.get("mode") === "program" ? "program" : "rosco";
+    const limit = Math.min(50, Math.max(1, Math.trunc(Number(url2.searchParams.get("limit"))) || 50));
     if (!isDateKey(date5) || date5 > todayKey(now)) throw Errors.badRequest("Fecha no v\xE1lida.");
     if (options.background && Date.now() - lastSweep > 6e4) {
       lastSweep = Date.now();
       options.background(Promise.all([sweepSoloSessions(db), sweepRooms(db)]).catch(() => void 0));
     }
     const me = await optionalPlayer();
-    return respond(await getLeaderboard(db, { date: date5, mode, playerId: me?.id ?? null, limit: 50 }));
+    return respond(await getLeaderboard(db, { date: date5, mode, playerId: me?.id ?? null, limit }));
   });
   const corsHeaders = (origin) => {
     const allowed = options.allowedOrigins === "*" ? origin ?? "*" : origin && options.allowedOrigins.includes(origin) ? origin : null;
@@ -24675,10 +24684,23 @@ function env(name) {
   if (!value) throw new Error(`Falta la variable de entorno ${name}`);
   return value;
 }
+function apiKey(jsonName, legacyName) {
+  const raw = Deno.env.get(jsonName);
+  if (raw) {
+    try {
+      const keys = JSON.parse(raw);
+      const key = keys.default ?? Object.values(keys)[0];
+      if (key) return key;
+    } catch {
+    }
+  }
+  return Deno.env.get(legacyName) || void 0;
+}
 function startEdgeServer() {
   const supabaseUrl = env("SUPABASE_URL");
-  const anonKey = env("SUPABASE_ANON_KEY");
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const anonKey = apiKey("SUPABASE_PUBLISHABLE_KEYS", "SUPABASE_ANON_KEY");
+  if (!anonKey) throw new Error("Falta la clave p\xFAblica de Supabase (SUPABASE_PUBLISHABLE_KEYS o SUPABASE_ANON_KEY)");
+  const serviceKey = apiKey("SUPABASE_SECRET_KEYS", "SUPABASE_SERVICE_ROLE_KEY");
   const auth = createClient(supabaseUrl, anonKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
   }).auth;
@@ -24686,11 +24708,14 @@ function startEdgeServer() {
   const getDb = () => dbPromise ??= createPostgres(env("SUPABASE_DB_URL"), { poolSize: 3 });
   setDefaultDatabase(getDb);
   if (serviceKey) {
+    const keyHeaders = serviceKey.startsWith("sb_") ? { apikey: serviceKey } : { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` };
     setRoomPublisher(async (room) => {
       const res = await fetch(`${supabaseUrl}/realtime/v1/api/broadcast`, {
         method: "POST",
-        headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [{ topic: `room-${room.code}`, event: "update", payload: { at: Date.now() } }] }),
+        headers: { ...keyHeaders, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [{ topic: `room-${room.code}`, event: "update", payload: { at: Date.now() } }]
+        }),
         signal: AbortSignal.timeout(2e3)
       });
       if (!res.ok) throw new Error(`Broadcast ${res.status}`);

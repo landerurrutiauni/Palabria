@@ -36,3 +36,12 @@ jobs:
       - run: npm run test:e2e
         env:
           CI: "true"
+      - name: Exportación estática (GitHub Pages) contra la API de desarrollo
+        run: npm run build:pages
+        env:
+          NEXT_PUBLIC_BASE_PATH: /Pasapalabra
+          NEXT_PUBLIC_API_URL: http://localhost:3301
+          NEXT_PUBLIC_DEV_AUTH: "1"
+      - run: npm run test:e2e:static
+        env:
+          CI: "true"

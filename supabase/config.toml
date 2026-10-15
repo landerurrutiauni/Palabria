@@ -1,0 +1,8 @@
+# Configuración mínima de la CLI de Supabase para desplegar Palabría
+# (migraciones en supabase/migrations y la Edge Function «api»).
+project_id = "palabria"
+
+[functions.api]
+# La función verifica ella misma el JWT de la sesión anónima (auth.getClaims),
+# compatible con las claves de firma nuevas y las heredadas.
+verify_jwt = false

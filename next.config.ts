@@ -7,7 +7,31 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
-const nextConfig: NextConfig = {
+const turbopack: NextConfig["turbopack"] = {
+  rules: {
+    "*.css": {
+      loaders: ["@tailwindcss/turbopack"],
+      as: "*.css",
+    },
+  },
+};
+
+/**
+ * Versión estática para GitHub Pages (NEXT_OUTPUT=export). Solo se compilan
+ * los ficheros `*.static.tsx` de `src/app`: pantallas que cargan los datos en
+ * el navegador desde la Supabase Edge Function. Sin API, proxy ni cookies.
+ */
+const staticExport: NextConfig = {
+  output: "export",
+  pageExtensions: ["static.tsx", "static.ts"],
+  basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
+  trailingSlash: true,
+  images: { unoptimized: true },
+  reactStrictMode: true,
+  turbopack,
+};
+
+const server: NextConfig = {
   // Imagen Docker compacta: NEXT_OUTPUT=standalone (ver Dockerfile). Por defecto, `next start`.
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   poweredByHeader: false,
@@ -18,17 +42,10 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/**": ["./supabase/migrations/**/*", "./content/overrides/**/*"],
   },
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
+  turbopack,
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
 };
 
-export default nextConfig;
+export default process.env.NEXT_OUTPUT === "export" ? staticExport : server;

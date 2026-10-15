@@ -8,6 +8,7 @@ import { Notice } from "@/components/ui/notice";
 import { api, ApiError } from "@/lib/client/api";
 import { sound } from "@/lib/client/sound";
 import { cn } from "@/lib/client/cn";
+import { IS_STATIC } from "@/lib/client/runtime";
 
 function Toggle({
   label,
@@ -58,7 +59,7 @@ export function SettingsForm({ displayName }: { displayName: string }) {
       const me = await api<{ displayName: string }>("/api/me", { method: "PATCH", body: { displayName: name } });
       setName(me.displayName);
       setSaved(true);
-      router.refresh();
+      if (!IS_STATIC) router.refresh();
     } catch (error) {
       setNameError(error instanceof ApiError ? error.message : "No se pudo guardar el nombre.");
     } finally {
