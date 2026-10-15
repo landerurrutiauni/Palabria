@@ -11,7 +11,9 @@ export default async function SettingsPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="eyebrow">Preferencias</p>
-      <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">Ajustes de sonido y accesibilidad</h1>
+      <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">
+        Ajustes de sonido y accesibilidad
+      </h1>
       <div className="mt-8">
         <SettingsForm displayName={player.displayName} />
       </div>
@@ -22,14 +24,14 @@ export default async function SettingsPage() {
             Tu identidad anónima
           </h2>
           <p className="mt-1">
-            No hay cuentas ni contraseñas. Al entrar por primera vez, el servidor te asignó un identificador aleatorio que se
-            guarda en una cookie protegida (HttpOnly) de este navegador. Sirve para recordar tus intentos diarios, tu racha y tu
-            historial. No usamos huellas digitales del dispositivo ni pedimos datos personales.
+            No hay cuentas ni contraseñas. Al entrar por primera vez, el servidor te asignó un identificador aleatorio
+            que se guarda en una cookie protegida (HttpOnly) de este navegador. Sirve para recordar tus intentos
+            diarios, tu racha y tu historial. No usamos huellas digitales del dispositivo ni pedimos datos personales.
           </p>
           <p className="mt-2 text-ink-300">
-            Limitación: si borras las cookies o juegas desde otro navegador tendrás una identidad nueva (sin historial). Los
-            límites diarios se aplican a cada identidad anónima; no es posible garantizar de forma absoluta que una misma
-            persona no use varias.
+            Limitación: si borras las cookies o juegas desde otro navegador tendrás una identidad nueva (sin historial).
+            Los límites diarios se aplican a cada identidad anónima; no es posible garantizar de forma absoluta que una
+            misma persona no use varias.
           </p>
         </div>
       </section>

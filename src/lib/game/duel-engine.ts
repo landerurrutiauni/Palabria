@@ -277,7 +277,13 @@ function abandon(state: DuelState, seat: Seat, now: number): void {
   state.finishedAt = now;
 }
 
-function timeoutEvent(seat: Seat, stage: number, stageKind: StageKind, item: number | null, answer: string | null): DuelEvent {
+function timeoutEvent(
+  seat: Seat,
+  stage: number,
+  stageKind: StageKind,
+  item: number | null,
+  answer: string | null,
+): DuelEvent {
   return {
     type: "timeout",
     seat,

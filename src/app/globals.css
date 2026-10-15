@@ -51,36 +51,79 @@
 }
 
 @keyframes pulse-ring {
-  0% { box-shadow: 0 0 0 0 rgb(51 230 215 / 0.55); }
-  100% { box-shadow: 0 0 0 14px rgb(51 230 215 / 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgb(51 230 215 / 0.55);
+  }
+  100% {
+    box-shadow: 0 0 0 14px rgb(51 230 215 / 0);
+  }
 }
 @keyframes pop {
-  0% { transform: scale(0.6); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-6px); }
-  40% { transform: translateX(6px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(4px);
+  }
 }
 @keyframes rise {
-  from { transform: translateY(10px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 @keyframes flash {
-  0% { opacity: 0; transform: scale(0.96); }
-  15% { opacity: 1; transform: scale(1); }
-  75% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 @keyframes sweep {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 @keyframes blink {
-  to { visibility: hidden; }
+  to {
+    visibility: hidden;
+  }
 }
 
 /* ───────────────────────── Base ───────────────────────── */
@@ -189,7 +232,11 @@ html[data-motion="reduce"] *::after {
     border-radius: 999px;
     font-weight: 700;
     letter-spacing: 0.01em;
-    transition: transform 120ms ease, box-shadow 160ms ease, background 160ms ease, opacity 160ms ease;
+    transition:
+      transform 120ms ease,
+      box-shadow 160ms ease,
+      background 160ms ease,
+      opacity 160ms ease;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
@@ -204,16 +251,22 @@ html[data-motion="reduce"] *::after {
   .btn-primary {
     color: var(--color-night-950);
     background: linear-gradient(180deg, var(--color-turquoise-300), var(--color-turquoise-500));
-    box-shadow: 0 10px 30px -10px rgb(51 230 215 / 0.7), inset 0 1px 0 rgb(255 255 255 / 0.5);
+    box-shadow:
+      0 10px 30px -10px rgb(51 230 215 / 0.7),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
   }
   .btn-primary:hover:not(:disabled) {
-    box-shadow: 0 14px 36px -10px rgb(51 230 215 / 0.85), inset 0 1px 0 rgb(255 255 255 / 0.5);
+    box-shadow:
+      0 14px 36px -10px rgb(51 230 215 / 0.85),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
   }
 
   .btn-gold {
     color: #2a1600;
     background: linear-gradient(180deg, var(--color-gold-300), var(--color-gold-500));
-    box-shadow: 0 10px 30px -10px rgb(255 201 74 / 0.75), inset 0 1px 0 rgb(255 255 255 / 0.55);
+    box-shadow:
+      0 10px 30px -10px rgb(255 201 74 / 0.75),
+      inset 0 1px 0 rgb(255 255 255 / 0.55);
   }
 
   .btn-ghost {
@@ -254,7 +307,9 @@ html[data-motion="reduce"] *::after {
     color: var(--color-ink-50);
     background: rgb(4 6 26 / 0.65);
     border: 2px solid rgb(132 152 255 / 0.3);
-    transition: border-color 140ms ease, box-shadow 140ms ease;
+    transition:
+      border-color 140ms ease,
+      box-shadow 140ms ease;
   }
   .field:focus {
     outline: none;
@@ -297,8 +352,16 @@ html[data-motion="reduce"] *::after {
   border-radius: 999px;
   background:
     radial-gradient(circle at 50% 50%, rgb(10 16 51 / 0.95) 54%, transparent 55%),
-    conic-gradient(from 180deg, rgb(90 55 209 / 0.45), rgb(47 79 216 / 0.45), rgb(20 198 184 / 0.35), rgb(90 55 209 / 0.45));
-  box-shadow: inset 0 0 0 1px rgb(132 152 255 / 0.25), 0 0 60px -10px rgb(90 55 209 / 0.6);
+    conic-gradient(
+      from 180deg,
+      rgb(90 55 209 / 0.45),
+      rgb(47 79 216 / 0.45),
+      rgb(20 198 184 / 0.35),
+      rgb(90 55 209 / 0.45)
+    );
+  box-shadow:
+    inset 0 0 0 1px rgb(132 152 255 / 0.25),
+    0 0 60px -10px rgb(90 55 209 / 0.6);
 }
 
 .rosco-letter {
@@ -319,7 +382,11 @@ html[data-motion="reduce"] *::after {
   background: radial-gradient(circle at 35% 30%, #2a3a92, #16205a 70%);
   border: 0.45cqw solid rgb(120 145 255 / 0.55);
   box-shadow: 0 0.6cqw 1.6cqw -0.6cqw rgb(0 0 0 / 0.8);
-  transition: transform 220ms cubic-bezier(0.2, 1.2, 0.4, 1), background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  transition:
+    transform 220ms cubic-bezier(0.2, 1.2, 0.4, 1),
+    background 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
 }
 
 .rosco-letter .badge {
@@ -345,7 +412,9 @@ html[data-motion="reduce"] *::after {
   border-color: white;
   transform: scale(1.16);
   z-index: 2;
-  box-shadow: 0 0 0 0.6cqw rgb(51 230 215 / 0.35), 0 0 4cqw rgb(51 230 215 / 0.8);
+  box-shadow:
+    0 0 0 0.6cqw rgb(51 230 215 / 0.35),
+    0 0 4cqw rgb(51 230 215 / 0.8);
   animation: var(--animate-pulse-ring);
 }
 

@@ -31,7 +31,8 @@ export function RoomClient({ code, initial }: { code: string; initial: DuelView 
   useEffect(() => {
     if (lastStatus.current !== view.status) {
       if (view.status === "in_progress") play("start");
-      if (view.status === "completed" || view.status === "abandoned") play(view.result?.outcome === "win" ? "win" : "end");
+      if (view.status === "completed" || view.status === "abandoned")
+        play(view.result?.outcome === "win" ? "win" : "end");
       lastStatus.current = view.status;
     }
   }, [view.status, view.result?.outcome, play]);
@@ -112,7 +113,12 @@ export function RoomClient({ code, initial }: { code: string; initial: DuelView 
       className="mb-4"
       action={
         failed ? (
-          <button type="button" className="btn btn-ghost" onClick={() => void act(failed.action, failed.actionId)} disabled={busy}>
+          <button
+            type="button"
+            className="btn btn-ghost"
+            onClick={() => void act(failed.action, failed.actionId)}
+            disabled={busy}
+          >
             Reintentar
           </button>
         ) : (

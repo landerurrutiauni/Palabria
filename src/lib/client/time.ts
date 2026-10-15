@@ -42,7 +42,12 @@ export function estimateServerNow(tick: number | null, offset: number, serverNow
   return tick === null ? serverNow : tick + offset;
 }
 
-export function remainingFrom(bankMs: number, startedAt: number | null, running: boolean, serverNowEstimate: number): number {
+export function remainingFrom(
+  bankMs: number,
+  startedAt: number | null,
+  running: boolean,
+  serverNowEstimate: number,
+): number {
   if (!running || startedAt === null) return bankMs;
   return Math.max(0, bankMs - Math.max(0, serverNowEstimate - startedAt));
 }

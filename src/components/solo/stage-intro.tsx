@@ -23,7 +23,13 @@ export function StageIntro({ view, busy, onStart }: { view: SoloView; busy: bool
           <span className="chip">{formatClock(view.stage.timeLimitMs)} para esta prueba</span>
         )}
       </div>
-      <button type="button" className="btn btn-primary mt-8 min-h-14 px-8 text-lg" onClick={onStart} disabled={busy} autoFocus>
+      <button
+        type="button"
+        className="btn btn-primary mt-8 min-h-14 px-8 text-lg"
+        onClick={onStart}
+        disabled={busy}
+        autoFocus
+      >
         <Play className="size-5" aria-hidden="true" />
         {busy ? "Preparando…" : "Empezar prueba"}
       </button>

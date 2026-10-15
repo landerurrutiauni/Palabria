@@ -3,7 +3,15 @@ import { cn } from "@/lib/client/cn";
 import type { FeedbackView } from "@/lib/views";
 
 /** Indicación inmediata tras cada respuesta (anunciada a lectores de pantalla). */
-export function FeedbackBanner({ feedback, stamp, className }: { feedback: FeedbackView | null; stamp: number; className?: string }) {
+export function FeedbackBanner({
+  feedback,
+  stamp,
+  className,
+}: {
+  feedback: FeedbackView | null;
+  stamp: number;
+  className?: string;
+}) {
   return (
     <div aria-live="polite" aria-atomic="true" className={cn("min-h-12", className)}>
       {feedback && feedback.outcome !== "clue" ? (
@@ -19,7 +27,9 @@ export function FeedbackBanner({ feedback, stamp, className }: { feedback: Feedb
         >
           {feedback.outcome === "correct" && <Check className="size-5 shrink-0" strokeWidth={3} aria-hidden="true" />}
           {feedback.outcome === "wrong" && <X className="size-5 shrink-0" strokeWidth={3} aria-hidden="true" />}
-          {feedback.outcome === "passed" && <RotateCcw className="size-5 shrink-0" strokeWidth={3} aria-hidden="true" />}
+          {feedback.outcome === "passed" && (
+            <RotateCcw className="size-5 shrink-0" strokeWidth={3} aria-hidden="true" />
+          )}
           {feedback.outcome === "timeout" && <Clock className="size-5 shrink-0" aria-hidden="true" />}
           <span>
             {feedback.outcome === "correct" && (
@@ -27,17 +37,20 @@ export function FeedbackBanner({ feedback, stamp, className }: { feedback: Feedb
             )}
             {feedback.outcome === "wrong" && (
               <>
-                Incorrecto{feedback.answer ? (
+                Incorrecto
+                {feedback.answer ? (
                   <>
                     . Era <strong className="text-ink-50">«{feedback.answer}»</strong>
                   </>
                 ) : null}
               </>
             )}
-            {feedback.outcome === "passed" && (feedback.stageKind === "rosco" ? "Pasapalabra: volverás a esta letra." : "Pregunta pasada.")}
+            {feedback.outcome === "passed" &&
+              (feedback.stageKind === "rosco" ? "Pasapalabra: volverás a esta letra." : "Pregunta pasada.")}
             {feedback.outcome === "timeout" && (
               <>
-                Se acabó el tiempo{feedback.answer ? (
+                Se acabó el tiempo
+                {feedback.answer ? (
                   <>
                     . Era <strong className="text-ink-50">«{feedback.answer}»</strong>
                   </>

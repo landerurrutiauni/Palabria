@@ -2,7 +2,10 @@ import { expect, test, type Page } from "@playwright/test";
 import { answer, answers, clockSeconds, letter, today } from "./helpers";
 
 async function clockOf(page: Page, who: "Tu reloj" | "Su reloj"): Promise<number> {
-  const label = await page.getByRole("timer", { name: new RegExp(`^${who}`) }).first().getAttribute("aria-label");
+  const label = await page
+    .getByRole("timer", { name: new RegExp(`^${who}`) })
+    .first()
+    .getAttribute("aria-label");
   return clockSeconds(label);
 }
 

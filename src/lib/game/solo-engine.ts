@@ -237,7 +237,10 @@ export function applySoloAction(
 
   if (action.type === "start_stage") {
     if (stage.status !== "ready") throw new GameRuleError("invalid_action");
-    const timeLimitMs = stage.kind === "rosco" && state.mode === "program" ? state.rules.roscoMs + earnedBonusMs(state) : stage.timeLimitMs;
+    const timeLimitMs =
+      stage.kind === "rosco" && state.mode === "program"
+        ? state.rules.roscoMs + earnedBonusMs(state)
+        : stage.timeLimitMs;
     state.stages[state.stageIndex] = { ...stage, status: "playing", startedAt: now, timeLimitMs };
     state.readySince = null;
     return {

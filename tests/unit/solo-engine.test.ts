@@ -21,7 +21,12 @@ function roscoGame(): SoloState {
 describe("modo individual: solo El Rosco", () => {
   it("valida aciertos, registra fallos y permite pasar letras", () => {
     let s = roscoGame();
-    let r = applySoloAction(s, { type: "answer", stage: 0, item: 0, text: roscoAnswer(set, 0).toUpperCase() }, set, T0 + 1000);
+    let r = applySoloAction(
+      s,
+      { type: "answer", stage: 0, item: 0, text: roscoAnswer(set, 0).toUpperCase() },
+      set,
+      T0 + 1000,
+    );
     expect(r.event.outcome).toBe("correct");
     s = r.state;
     r = applySoloAction(s, { type: "answer", stage: 0, item: 1, text: "incorrecta" }, set, T0 + 2000);
@@ -44,7 +49,12 @@ describe("modo individual: solo El Rosco", () => {
     }
     expect(s.stages[0]!.rosco!.cursor).toBe(0);
     for (let i = 0; i < 27; i++) {
-      s = applySoloAction(s, { type: "answer", stage: 0, item: i, text: roscoAnswer(set, i) }, set, T0 + 10_000 + i).state;
+      s = applySoloAction(
+        s,
+        { type: "answer", stage: 0, item: i, text: roscoAnswer(set, i) },
+        set,
+        T0 + 10_000 + i,
+      ).state;
     }
     expect(s.status).toBe("completed");
     const sum = soloSummary(s, T0 + 20_000);
@@ -74,9 +84,9 @@ describe("modo individual: solo El Rosco", () => {
   it("rechaza respuestas repetidas a una letra ya resuelta (reenvíos)", () => {
     let s = roscoGame();
     s = applySoloAction(s, { type: "answer", stage: 0, item: 0, text: roscoAnswer(set, 0) }, set, T0 + 1000).state;
-    expect(() => applySoloAction(s, { type: "answer", stage: 0, item: 0, text: roscoAnswer(set, 0) }, set, T0 + 1100)).toThrow(
-      /ya no está activa/,
-    );
+    expect(() =>
+      applySoloAction(s, { type: "answer", stage: 0, item: 0, text: roscoAnswer(set, 0) }, set, T0 + 1100),
+    ).toThrow(/ya no está activa/);
   });
 
   it("el reloj no se reinicia: el tiempo restante depende solo del inicio guardado", () => {
@@ -99,7 +109,12 @@ describe("modo individual: programa completo", () => {
     let now = T0;
     // Palabras al vuelo: 6 aciertos (+60 puntos, +18 s)
     for (let i = 0; i < 6; i++) {
-      s = applySoloAction(s, { type: "answer", stage: 0, item: i, text: set.quick[i]!.answers[0]! }, set, (now += 1000)).state;
+      s = applySoloAction(
+        s,
+        { type: "answer", stage: 0, item: i, text: set.quick[i]!.answers[0]! },
+        set,
+        (now += 1000),
+      ).state;
     }
     expect(s.stageIndex).toBe(1);
     expect(s.stages[1]!.status).toBe("ready");
@@ -108,7 +123,12 @@ describe("modo individual: programa completo", () => {
     s = applySoloAction(s, { type: "start_stage", stage: 1 }, set, now).state;
     // La pista justa: pide una pista y acierta (30 puntos), luego falla la segunda palabra.
     s = applySoloAction(s, { type: "clue", stage: 1, item: 0 }, set, (now += 1000)).state;
-    s = applySoloAction(s, { type: "answer", stage: 1, item: 0, text: set.clues[0]!.answers[0]! }, set, (now += 1000)).state;
+    s = applySoloAction(
+      s,
+      { type: "answer", stage: 1, item: 0, text: set.clues[0]!.answers[0]! },
+      set,
+      (now += 1000),
+    ).state;
     s = applySoloAction(s, { type: "answer", stage: 1, item: 1, text: "nada" }, set, (now += 1000)).state;
     expect(s.stages[1]!.items.map((i) => i.points)).toEqual([30, 0]);
     // Dichos y hechos: pasa todo

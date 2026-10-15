@@ -60,9 +60,10 @@ export async function getPreferences(db: Queryable, playerId: string): Promise<P
     motion: PreferencesView["motion"];
     high_contrast: boolean;
     large_text: boolean;
-  }>("select sound_enabled, sound_volume, motion, high_contrast, large_text from player_preferences where player_id = $1", [
-    playerId,
-  ]);
+  }>(
+    "select sound_enabled, sound_volume, motion, high_contrast, large_text from player_preferences where player_id = $1",
+    [playerId],
+  );
   const r = res.rows[0];
   if (!r) return DEFAULT_PREFS;
   return {
@@ -74,7 +75,11 @@ export async function getPreferences(db: Queryable, playerId: string): Promise<P
   };
 }
 
-export async function savePreferences(db: Queryable, playerId: string, prefs: PreferencesView): Promise<PreferencesView> {
+export async function savePreferences(
+  db: Queryable,
+  playerId: string,
+  prefs: PreferencesView,
+): Promise<PreferencesView> {
   await db.query(
     `insert into player_preferences (player_id, sound_enabled, sound_volume, motion, high_contrast, large_text, updated_at)
      values ($1, $2, $3, $4, $5, $6, now())

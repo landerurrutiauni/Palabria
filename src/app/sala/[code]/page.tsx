@@ -13,11 +13,7 @@ export const metadata: Metadata = {
   robots: { index: false },
 };
 
-export default async function RoomPage({
-  params,
-}: {
-  params: Promise<{ code: string }>;
-}) {
+export default async function RoomPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
   const player = await requirePlayerForPage();
   let snapshot: Awaited<ReturnType<typeof getRoomView>> | null = null;
@@ -25,24 +21,14 @@ export default async function RoomPage({
   try {
     snapshot = await getRoomView(player, code);
   } catch (error) {
-    if (
-      error instanceof AppError &&
-      (error.code === "room_full" || error.code === "room_not_found")
-    )
-      failure = error;
+    if (error instanceof AppError && (error.code === "room_full" || error.code === "room_not_found")) failure = error;
     else throw error;
   }
   if (failure || !snapshot) {
     const full = failure?.code === "room_full";
     return (
       <StateScreen
-        icon={
-          full ? (
-            <Ban className="size-9 text-bad-400" />
-          ) : (
-            <SearchX className="size-9 text-ink-200" />
-          )
-        }
+        icon={full ? <Ban className="size-9 text-bad-400" /> : <SearchX className="size-9 text-ink-200" />}
         eyebrow="Sala privada"
         title={full ? "Esta sala es privada" : "Sala no encontrada"}
         actions={

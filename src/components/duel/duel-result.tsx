@@ -10,7 +10,12 @@ import type { DuelPlayerView, DuelView, Seat } from "@/lib/views";
 
 function Line({ p, winner }: { p: DuelPlayerView; winner: boolean }) {
   return (
-    <div className={cn("panel flex flex-col items-center p-5 text-center", winner && "border-gold-400/60 shadow-glow-gold")}>
+    <div
+      className={cn(
+        "panel flex flex-col items-center p-5 text-center",
+        winner && "border-gold-400/60 shadow-glow-gold",
+      )}
+    >
       <p className="flex items-center gap-2 font-display text-lg font-bold text-ink-50">
         {winner ? <Trophy className="size-5 text-gold-400" aria-label="Ganador" /> : null}
         {p.name}
@@ -32,7 +37,9 @@ function Line({ p, winner }: { p: DuelPlayerView; winner: boolean }) {
           <dd className="score-digits text-2xl text-ink-100">{formatDuration(p.timeUsedMs)}</dd>
         </div>
       </dl>
-      {p.status === "abandoned" ? <p className="mt-3 text-sm font-semibold text-gold-300">Abandonó la partida</p> : null}
+      {p.status === "abandoned" ? (
+        <p className="mt-3 text-sm font-semibold text-gold-300">Abandonó la partida</p>
+      ) : null}
       <div className="mt-4 w-full max-w-[16rem]">
         <Rosco letters={p.letters} label={p.isYou ? "Tu rosco final" : `Rosco final de ${p.name}`} />
       </div>
@@ -95,7 +102,9 @@ export function DuelResult({ view }: { view: DuelView }) {
       {view.result?.you ? <PhaseSolutions phases={view.result.you.phases} /> : null}
       {view.result?.rival ? (
         <details className="panel p-5 sm:p-6">
-          <summary className="cursor-pointer font-display text-lg font-bold text-ink-50">Preguntas de {rival.name}</summary>
+          <summary className="cursor-pointer font-display text-lg font-bold text-ink-50">
+            Preguntas de {rival.name}
+          </summary>
           <div className="mt-4">
             <RoscoSolutions letters={view.result.rival.letters} title={`Soluciones de ${rival.name}`} />
           </div>

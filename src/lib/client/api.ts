@@ -17,7 +17,10 @@ export class ApiError extends Error {
 }
 
 /** Petición JSON al backend propio. Los errores llegan como ApiError con mensaje en español. */
-export async function api<T>(url: string, init: { method?: string; body?: unknown; signal?: AbortSignal } = {}): Promise<T> {
+export async function api<T>(
+  url: string,
+  init: { method?: string; body?: unknown; signal?: AbortSignal } = {},
+): Promise<T> {
   let response: Response;
   try {
     response = await fetch(url, {

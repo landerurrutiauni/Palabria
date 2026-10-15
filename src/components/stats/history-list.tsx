@@ -10,7 +10,11 @@ export function HistoryList({ entries, className }: { entries: HistoryEntry[]; c
   if (entries.length === 0) {
     return (
       <p className={cn("rounded-2xl border border-dashed border-white/15 p-6 text-center text-ink-300", className)}>
-        Todavía no has terminado ninguna partida. <Link href="/jugar" className="font-semibold text-turquoise-300">Juega la de hoy</Link>.
+        Todavía no has terminado ninguna partida.{" "}
+        <Link href="/jugar" className="font-semibold text-turquoise-300">
+          Juega la de hoy
+        </Link>
+        .
       </p>
     );
   }
@@ -30,7 +34,8 @@ export function HistoryList({ entries, className }: { entries: HistoryEntry[]; c
             </span>
             <span className="min-w-0 flex-1">
               <span className="block font-semibold text-ink-50">
-                {formatChallengeDate(e.date, { weekday: false })} · {e.kind === "duel" ? "1 vs 1" : "Individual"} · {modeLabel(e.mode)}
+                {formatChallengeDate(e.date, { weekday: false })} · {e.kind === "duel" ? "1 vs 1" : "Individual"} ·{" "}
+                {modeLabel(e.mode)}
               </span>
               <span className="block text-sm text-ink-300">
                 ✓ {e.correct} · ✕ {e.wrong} · sin resolver {e.unanswered} · {formatClock(e.timeUsedMs)}
@@ -60,7 +65,10 @@ export function HistoryList({ entries, className }: { entries: HistoryEntry[]; c
         return (
           <li key={e.id}>
             {e.link ? (
-              <Link href={e.link} className="panel-soft flex items-center gap-3 p-3 transition hover:border-turquoise-400/40">
+              <Link
+                href={e.link}
+                className="panel-soft flex items-center gap-3 p-3 transition hover:border-turquoise-400/40"
+              >
                 {body}
               </Link>
             ) : (

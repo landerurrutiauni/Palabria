@@ -48,7 +48,11 @@ function PlayerPanel({
   const note = statusNote(player);
   return (
     <section
-      className={cn("panel flex flex-col gap-4 p-4 transition-shadow sm:p-5", active ? "turn-glow" : "opacity-95", className)}
+      className={cn(
+        "panel flex flex-col gap-4 p-4 transition-shadow sm:p-5",
+        active ? "turn-glow" : "opacity-95",
+        className,
+      )}
       aria-label={`${player.isYou ? "Tu marcador" : `Marcador de ${player.name}`}${active ? ", tiene el turno" : ""}`}
     >
       <div className="flex items-center justify-between gap-3">
@@ -88,9 +92,15 @@ function PlayerPanel({
           {note ? <p className="text-sm font-semibold text-gold-300">{note}</p> : null}
         </div>
       </div>
-      {!isRosco && player.phaseOutcomes.length > 0 ? <ItemDots items={player.phaseOutcomes.map((o) => ({ outcome: o }))} current={null} /> : null}
+      {!isRosco && player.phaseOutcomes.length > 0 ? (
+        <ItemDots items={player.phaseOutcomes.map((o) => ({ outcome: o }))} current={null} />
+      ) : null}
       <div className="mx-auto w-full max-w-[22rem]">
-        <Rosco letters={player.letters} label={player.isYou ? "Tu rosco" : `Rosco de ${player.name}`} paused={!active || !isRosco} />
+        <Rosco
+          letters={player.letters}
+          label={player.isYou ? "Tu rosco" : `Rosco de ${player.name}`}
+          paused={!active || !isRosco}
+        />
       </div>
     </section>
   );
@@ -134,10 +144,12 @@ export function DuelBoard({
     if (!isRosco || activeSeat !== seat || startedAt === null) return p.bankMs;
     return Math.max(0, p.bankMs - Math.max(0, now - startedAt));
   };
-  const shotRemaining = !isRosco && startedAt !== null && view.turn.shotClockMs !== null
-    ? Math.max(0, view.turn.shotClockMs - Math.max(0, now - startedAt))
-    : null;
-  const activeExpired = !inCountdown && activeSeat !== null && (isRosco ? remainingOf(activeSeat) <= 0 : shotRemaining === 0);
+  const shotRemaining =
+    !isRosco && startedAt !== null && view.turn.shotClockMs !== null
+      ? Math.max(0, view.turn.shotClockMs - Math.max(0, now - startedAt))
+      : null;
+  const activeExpired =
+    !inCountdown && activeSeat !== null && (isRosco ? remainingOf(activeSeat) <= 0 : shotRemaining === 0);
 
   // Reloj vencido: se pide al servidor que aplique el cambio de turno.
   useEffect(() => {
@@ -155,11 +167,18 @@ export function DuelBoard({
     const la = view.lastAction;
     const nextIsMe = view.turn.seat === you;
     const title =
-      la?.outcome === "passed" ? "¡Pasapalabra!" : la?.outcome === "wrong" ? "¡Fallo!" : la?.outcome === "timeout" ? "¡Tiempo!" : stageTitle(view.stage.kind);
+      la?.outcome === "passed"
+        ? "¡Pasapalabra!"
+        : la?.outcome === "wrong"
+          ? "¡Fallo!"
+          : la?.outcome === "timeout"
+            ? "¡Tiempo!"
+            : stageTitle(view.stage.kind);
     setFlash({
       title,
       subtitle: nextIsMe ? "¡Te toca!" : `Turno de ${rival.name}`,
-      tone: la?.outcome === "passed" ? "text-gold-300" : la?.outcome === "wrong" ? "text-bad-400" : "text-turquoise-300",
+      tone:
+        la?.outcome === "passed" ? "text-gold-300" : la?.outcome === "wrong" ? "text-bad-400" : "text-turquoise-300",
       key: view.turn.number,
     });
     if (nextIsMe) play("turn");
@@ -190,7 +209,8 @@ export function DuelBoard({
         : `Turno de ${rival.name}. Tu reloj está detenido en ${formatClock(remainingOf(you))}.`;
 
   const leave = () => {
-    if (window.confirm("¿Seguro que quieres abandonar? Contará como derrota y no recuperarás el intento de hoy.")) onLeave();
+    if (window.confirm("¿Seguro que quieres abandonar? Contará como derrota y no recuperarás el intento de hoy."))
+      onLeave();
   };
 
   return (
@@ -198,7 +218,9 @@ export function DuelBoard({
       {/* Cabecera */}
       <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="eyebrow">{view.stages.length > 1 ? `Prueba ${view.stage.index + 1} de ${view.stages.length}` : "Duelo"}</span>
+          <span className="eyebrow">
+            {view.stages.length > 1 ? `Prueba ${view.stage.index + 1} de ${view.stages.length}` : "Duelo"}
+          </span>
           <h1 className="font-display text-xl font-bold text-ink-50">{view.stage.title}</h1>
         </div>
         <div className="flex items-center gap-2">
@@ -227,7 +249,12 @@ export function DuelBoard({
               </div>
               <div className="min-w-0">
                 <p className="truncate text-sm font-bold text-ink-50">{p.isYou ? "Tú" : p.name}</p>
-                <p className={cn("score-digits text-2xl leading-none", active && isRosco ? "text-ink-50" : "text-ink-300")}>
+                <p
+                  className={cn(
+                    "score-digits text-2xl leading-none",
+                    active && isRosco ? "text-ink-50" : "text-ink-300",
+                  )}
+                >
                   {formatClock(remainingOf(p.seat))}
                 </p>
                 <p className="text-xs font-semibold">
@@ -282,7 +309,11 @@ export function DuelBoard({
             role="status"
             aria-live="assertive"
           >
-            {inCountdown ? `Empieza en ${Math.ceil(countdownMs / 1000)}…` : myTurn ? "¡Tu turno!" : `Turno de ${rival.name}`}
+            {inCountdown
+              ? `Empieza en ${Math.ceil(countdownMs / 1000)}…`
+              : myTurn
+                ? "¡Tu turno!"
+                : `Turno de ${rival.name}`}
           </div>
 
           {!isRosco && shotRemaining !== null && !inCountdown ? (
@@ -329,7 +360,9 @@ export function DuelBoard({
               disabledReason={myTurn ? undefined : inCountdown ? "Preparados…" : "Turno de tu rival"}
               busy={busy}
               passLabel={isRosco ? "Pasapalabra" : "Paso"}
-              onAnswer={(text) => prompt && onAction({ type: "answer", stage: view.stage.index, item: prompt.index, text })}
+              onAnswer={(text) =>
+                prompt && onAction({ type: "answer", stage: view.stage.index, item: prompt.index, text })
+              }
               onPass={() => prompt && onAction({ type: "pass", stage: view.stage.index, item: prompt.index })}
               extra={
                 prompt?.kind === "clues" ? (
@@ -360,8 +393,13 @@ export function DuelBoard({
 
       {flash ? (
         <div className="pointer-events-none fixed inset-0 z-40 grid place-items-center" aria-hidden="true">
-          <div key={flash.key} className="animate-flash rounded-3xl border border-white/15 bg-night-950/85 px-10 py-6 text-center shadow-panel backdrop-blur">
-            <p className={cn("font-display text-4xl font-extrabold uppercase tracking-wider sm:text-5xl", flash.tone)}>{flash.title}</p>
+          <div
+            key={flash.key}
+            className="animate-flash rounded-3xl border border-white/15 bg-night-950/85 px-10 py-6 text-center shadow-panel backdrop-blur"
+          >
+            <p className={cn("font-display text-4xl font-extrabold uppercase tracking-wider sm:text-5xl", flash.tone)}>
+              {flash.title}
+            </p>
             <p className="mt-2 text-lg font-semibold text-ink-100">{flash.subtitle}</p>
           </div>
         </div>

@@ -49,8 +49,8 @@ export default async function DuelPage() {
         <p className="eyebrow">1 vs 1 · sala privada</p>
         <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">Desafía a un amigo</h1>
         <p className="mt-3 text-ink-200">
-          Crea una sala, comparte el enlace por WhatsApp, Telegram o como quieras y jugad desde vuestros dispositivos. Sin
-          registro: cada navegador tiene su identidad anónima.
+          Crea una sala, comparte el enlace por WhatsApp, Telegram o como quieras y jugad desde vuestros dispositivos.
+          Sin registro: cada navegador tiene su identidad anónima.
         </p>
         {duel.openRoomCode ? (
           <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-gold-400/40 bg-gold-400/10 p-4 sm:flex-row sm:items-center sm:justify-between">

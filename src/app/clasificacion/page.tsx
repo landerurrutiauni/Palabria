@@ -14,7 +14,11 @@ import { maybeSweep } from "@/lib/server/sweeper";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Clasificación" };
 
-export default async function LeaderboardPage({ searchParams }: { searchParams: Promise<{ fecha?: string; modo?: string }> }) {
+export default async function LeaderboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ fecha?: string; modo?: string }>;
+}) {
   const sp = await searchParams;
   const db = await getDb();
   const today = todayKey(await serverNow(db));
@@ -44,19 +48,32 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
               href={link(date, m)}
               role="tab"
               aria-selected={mode === m}
-              className={cn("rounded-full px-4 py-2 text-sm font-semibold", mode === m ? "bg-turquoise-400 text-night-950" : "text-ink-200 hover:text-ink-50")}
+              className={cn(
+                "rounded-full px-4 py-2 text-sm font-semibold",
+                mode === m ? "bg-turquoise-400 text-night-950" : "text-ink-200 hover:text-ink-50",
+              )}
             >
               {m === "rosco" ? "Solo El Rosco" : "Programa completo"}
             </Link>
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <Link href={link(addDays(date, -1), mode)} className="btn btn-ghost !min-h-10 !px-3" aria-label="Día anterior">
+          <Link
+            href={link(addDays(date, -1), mode)}
+            className="btn btn-ghost !min-h-10 !px-3"
+            aria-label="Día anterior"
+          >
             <ChevronLeft className="size-4" aria-hidden="true" />
           </Link>
-          <span className="min-w-44 text-center text-sm font-semibold text-ink-100">{formatChallengeDate(date, { weekday: false })}</span>
+          <span className="min-w-44 text-center text-sm font-semibold text-ink-100">
+            {formatChallengeDate(date, { weekday: false })}
+          </span>
           {date < today ? (
-            <Link href={link(addDays(date, 1), mode)} className="btn btn-ghost !min-h-10 !px-3" aria-label="Día siguiente">
+            <Link
+              href={link(addDays(date, 1), mode)}
+              className="btn btn-ghost !min-h-10 !px-3"
+              aria-label="Día siguiente"
+            >
               <ChevronRight className="size-4" aria-hidden="true" />
             </Link>
           ) : (
@@ -70,12 +87,15 @@ export default async function LeaderboardPage({ searchParams }: { searchParams: 
         {board ? (
           <LeaderboardTable board={board} limit={50} />
         ) : (
-          <p className="text-ink-300">La clasificación no está disponible ahora mismo. El juego sigue funcionando con normalidad.</p>
+          <p className="text-ink-300">
+            La clasificación no está disponible ahora mismo. El juego sigue funcionando con normalidad.
+          </p>
         )}
       </div>
       {board?.you ? (
         <p className="mt-4 text-sm text-ink-200">
-          Tu posición: <strong className="text-ink-50">#{board.you.rank}</strong> de {board.total} con {board.you.score} puntos.
+          Tu posición: <strong className="text-ink-50">#{board.you.rank}</strong> de {board.total} con {board.you.score}{" "}
+          puntos.
         </p>
       ) : null}
     </div>

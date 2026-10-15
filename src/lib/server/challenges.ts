@@ -125,7 +125,10 @@ export function buildChallengeCandidate(dateKey: string): { candidate: Candidate
       const selection = selectChallengeContent(bank, dateKey, salt);
       const issues = validateChallenge(selection.content);
       if (issues.length === 0) {
-        return { candidate: { source: "bank", seed: publicSeed(env.challengeSalt, dateKey, variant), version, selection }, rejected };
+        return {
+          candidate: { source: "bank", seed: publicSeed(env.challengeSalt, dateKey, variant), version, selection },
+          rejected,
+        };
       }
       rejected.push(issues);
     } catch (error) {
@@ -183,7 +186,10 @@ async function insertQuestions(tx: Queryable, challengeId: string, content: Chal
 }
 
 /** Publica el desafío de una fecha si aún no existe (operación idempotente). */
-export async function publishChallenge(db: Queryable & { transaction?: unknown }, dateKey: string): Promise<ChallengeRecord> {
+export async function publishChallenge(
+  db: Queryable & { transaction?: unknown },
+  dateKey: string,
+): Promise<ChallengeRecord> {
   if (!isDateKey(dateKey)) throw new Error(`Fecha no válida: ${dateKey}`);
   const existing = await db.query<ChallengeRow>(SELECT_CHALLENGE, [dateKey]);
   if (existing.rows[0]) return toRecord(existing.rows[0]);
@@ -246,7 +252,11 @@ interface QuestionRow {
 const setCache = new Map<string, QuestionSet>();
 
 /** Preguntas de un jugador (con respuestas): uso exclusivo del servidor. */
-export async function loadQuestionSet(db: Queryable, challengeId: string, setKey: QuestionSetKey): Promise<QuestionSet> {
+export async function loadQuestionSet(
+  db: Queryable,
+  challengeId: string,
+  setKey: QuestionSetKey,
+): Promise<QuestionSet> {
   const cacheKey = `${challengeId}:${setKey}`;
   const cached = setCache.get(cacheKey);
   if (cached) return cached;
@@ -258,7 +268,12 @@ export async function loadQuestionSet(db: Queryable, challengeId: string, setKey
   );
   const set: QuestionSet = { rosco: [], quick: [], clues: [], saying: [], link: [] };
   for (const row of res.rows) {
-    const item: ContentItem = { id: row.bank_item_id, prompt: row.prompt, answers: row.answers, difficulty: row.difficulty };
+    const item: ContentItem = {
+      id: row.bank_item_id,
+      prompt: row.prompt,
+      answers: row.answers,
+      difficulty: row.difficulty,
+    };
     (set[row.phase] as ContentItem[])[row.position] = item;
   }
   if (set.rosco.length !== ALPHABET.length) throw new Error(`Desafío ${challengeId} incompleto (${setKey})`);

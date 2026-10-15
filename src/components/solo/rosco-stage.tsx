@@ -31,11 +31,21 @@ export function RoscoStage({
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-start lg:gap-8">
       <div className="mx-auto w-full max-w-[19rem] sm:max-w-[24rem] lg:max-w-[34rem]">
         <Rosco letters={view.stage.letters} label="Tu rosco">
-          <div className="flex flex-col items-center" role="timer" aria-label={`Tiempo restante ${formatClock(remainingMs)}`}>
-            <span className={cn("score-digits text-[19cqw] leading-none", low ? "text-bad-400" : "text-ink-50")} aria-hidden="true">
+          <div
+            className="flex flex-col items-center"
+            role="timer"
+            aria-label={`Tiempo restante ${formatClock(remainingMs)}`}
+          >
+            <span
+              className={cn("score-digits text-[19cqw] leading-none", low ? "text-bad-400" : "text-ink-50")}
+              aria-hidden="true"
+            >
               {formatClock(remainingMs)}
             </span>
-            <span className="mt-1 font-display text-[3cqw] uppercase tracking-[0.25em] text-turquoise-300" aria-hidden="true">
+            <span
+              className="mt-1 font-display text-[3cqw] uppercase tracking-[0.25em] text-turquoise-300"
+              aria-hidden="true"
+            >
               {view.totals.correct} aciertos
             </span>
           </div>
@@ -44,7 +54,13 @@ export function RoscoStage({
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-3">
           <StatChips correct={view.totals.correct} wrong={view.totals.wrong} open={view.totals.open} compact />
-          <TimerDisplay remainingMs={remainingMs} totalMs={view.stage.timeLimitMs} running size="sm" className="hidden sm:grid lg:hidden" />
+          <TimerDisplay
+            remainingMs={remainingMs}
+            totalMs={view.stage.timeLimitMs}
+            running
+            size="sm"
+            className="hidden sm:grid lg:hidden"
+          />
         </div>
         {prompt ? <QuestionCard prompt={prompt} /> : null}
         <FeedbackBanner feedback={feedback?.fb ?? null} stamp={feedback?.stamp ?? 0} />

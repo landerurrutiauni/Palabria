@@ -43,7 +43,10 @@ export function QuestionCard({ prompt, className }: { prompt: PromptView; classN
               <span key={i}>
                 {part}
                 {i < arr.length - 1 && (
-                  <span className="mx-1 inline-block min-w-20 border-b-4 border-dashed border-gold-400 align-baseline text-gold-300" aria-label="palabra que falta">
+                  <span
+                    className="mx-1 inline-block min-w-20 border-b-4 border-dashed border-gold-400 align-baseline text-gold-300"
+                    aria-label="palabra que falta"
+                  >
                     &nbsp;
                   </span>
                 )}

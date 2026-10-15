@@ -26,7 +26,11 @@ export function SoloResult({ result, showActions = true }: { result: SoloResultV
     { label: "Aciertos", value: result.correct, tone: "text-ok-400" },
     { label: "Errores", value: result.wrong, tone: "text-bad-400" },
     { label: "Sin resolver", value: result.unanswered, tone: "text-ink-200" },
-    { label: "Tiempo", value: formatDuration(result.mode === "rosco" ? result.roscoTimeUsedMs : result.totalTimeUsedMs), tone: "text-ink-50" },
+    {
+      label: "Tiempo",
+      value: formatDuration(result.mode === "rosco" ? result.roscoTimeUsedMs : result.totalTimeUsedMs),
+      tone: "text-ink-50",
+    },
     { label: "Acierto", value: `${result.accuracy}%`, tone: "text-turquoise-300" },
     ...(result.mode === "program"
       ? [

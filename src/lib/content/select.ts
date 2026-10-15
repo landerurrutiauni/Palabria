@@ -127,7 +127,8 @@ export function selectChallengeContent(bank: QuestionBank, dateKey: string, salt
     const rule = PHASE_RULES[kind];
     const pool = seededShuffle(bank[kind] as ContentItem[], `${salt}:${kind}`);
     const perDay = rule.soloItems + rule.duelItemsPerPlayer * 2;
-    if (pool.length < perDay) throw new ContentSelectionError(`La prueba ${kind} necesita al menos ${perDay} elementos`);
+    if (pool.length < perDay)
+      throw new ContentSelectionError(`La prueba ${kind} necesita al menos ${perDay} elementos`);
     let cursor = mod(day * perDay, pool.length);
     for (let i = 0; i < rule.duelItemsPerPlayer; i++) {
       const a = sel.pick(pool, cursor++, "duel_a", []);

@@ -38,7 +38,10 @@ export function clockSeconds(text: string | null): number {
 
 /** Letra de un rosco concreto (por su etiqueta accesible). */
 export function letter(page: Page, roscoLabel: string, l: string) {
-  return page.getByRole("list", { name: roscoLabel }).first().getByRole("listitem", { name: new RegExp(`^${l}:`) });
+  return page
+    .getByRole("list", { name: roscoLabel })
+    .first()
+    .getByRole("listitem", { name: new RegExp(`^${l}:`) });
 }
 
 export async function today(page: Page): Promise<string> {

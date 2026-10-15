@@ -27,7 +27,8 @@ function Seat({ player, seatLabel, waiting }: { player?: DuelPlayerView; seatLab
         {player ? (
           <>
             <p className="truncate font-bold text-ink-50">
-              {player.name} {player.isYou ? <span className="text-sm font-semibold text-turquoise-300">(tú)</span> : null}
+              {player.name}{" "}
+              {player.isYou ? <span className="text-sm font-semibold text-turquoise-300">(tú)</span> : null}
             </p>
             <PresenceDot connected={player.connected} />
           </>
@@ -102,14 +103,24 @@ export function Lobby({
                 {waitingForGuest ? "Ya no empezar automáticamente" : "Cancelar «listo»"}
               </button>
             ) : (
-              <button type="button" className="btn btn-gold min-h-14 px-8 text-lg" onClick={() => onReady(true)} disabled={busy}>
+              <button
+                type="button"
+                className="btn btn-gold min-h-14 px-8 text-lg"
+                onClick={() => onReady(true)}
+                disabled={busy}
+              >
                 <UserPlus className="size-5" aria-hidden="true" />
                 {waitingForGuest ? "Empezar en cuanto llegue" : "¡Empezar duelo!"}
               </button>
             )
           ) : null}
           {me && !view.isHost && !me.ready ? (
-            <button type="button" className="btn btn-gold min-h-14 px-8 text-lg" onClick={() => onReady(true)} disabled={busy}>
+            <button
+              type="button"
+              className="btn btn-gold min-h-14 px-8 text-lg"
+              onClick={() => onReady(true)}
+              disabled={busy}
+            >
               ¡Estoy listo!
             </button>
           ) : null}
@@ -125,13 +136,18 @@ export function Lobby({
           <Clock className="size-3.5" aria-hidden="true" />
           {view.expiresAt ? (
             <>
-              La sala caduca en <Countdown target={view.expiresAt} serverNow={view.serverNow} /> si no empieza el duelo. Al empezar,
-              ambos gastáis vuestro intento 1 vs 1 de hoy.
+              La sala caduca en <Countdown target={view.expiresAt} serverNow={view.serverNow} /> si no empieza el duelo.
+              Al empezar, ambos gastáis vuestro intento 1 vs 1 de hoy.
             </>
           ) : null}
         </p>
       </section>
-      <DuelRules roscoSeconds={view.rules.roscoSeconds} programRoscoSeconds={view.rules.roscoSeconds} graceSeconds={view.rules.graceSeconds} mode={view.mode} />
+      <DuelRules
+        roscoSeconds={view.rules.roscoSeconds}
+        programRoscoSeconds={view.rules.roscoSeconds}
+        graceSeconds={view.rules.graceSeconds}
+        mode={view.mode}
+      />
     </div>
   );
 }
@@ -142,15 +158,18 @@ export function Invitation({ view, busy, onJoin }: { view: DuelView; busy: boole
     <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <section className="panel stage-lights relative overflow-hidden p-6 text-center sm:p-10">
         <p className="eyebrow">Invitación a un duelo 1 vs 1</p>
-        <h1 className="mt-3 font-display text-3xl font-extrabold text-ink-50 sm:text-5xl">
-          {view.hostName} te reta
-        </h1>
+        <h1 className="mt-3 font-display text-3xl font-extrabold text-ink-50 sm:text-5xl">{view.hostName} te reta</h1>
         <p className="mt-3 text-lg text-ink-200">
           Modalidad: <strong className="text-gold-300">{modeLabel(view.mode)}</strong>. Mismo desafío del día, roscos
           distintos y equivalentes, turnos con reloj propio.
         </p>
         {view.canJoin ? (
-          <button type="button" className="btn btn-gold mx-auto mt-8 min-h-14 px-10 text-lg" onClick={onJoin} disabled={busy}>
+          <button
+            type="button"
+            className="btn btn-gold mx-auto mt-8 min-h-14 px-10 text-lg"
+            onClick={onJoin}
+            disabled={busy}
+          >
             <Swords className="size-5" aria-hidden="true" />
             {busy ? "Entrando…" : "Aceptar el desafío"}
           </button>
@@ -160,14 +179,19 @@ export function Invitation({ view, busy, onJoin }: { view: DuelView; busy: boole
           </p>
         )}
         <p className="mt-4 text-sm text-ink-400">
-          Sin registro: entrarás con tu identidad anónima de este navegador. Aceptar no gasta tu intento hasta que empiece el
-          duelo.
+          Sin registro: entrarás con tu identidad anónima de este navegador. Aceptar no gasta tu intento hasta que
+          empiece el duelo.
         </p>
         <Link href="/" className="mt-6 inline-block text-sm font-semibold text-turquoise-300 hover:underline">
           ¿Qué es Palabría?
         </Link>
       </section>
-      <DuelRules roscoSeconds={view.rules.roscoSeconds} programRoscoSeconds={view.rules.roscoSeconds} graceSeconds={view.rules.graceSeconds} mode={view.mode} />
+      <DuelRules
+        roscoSeconds={view.rules.roscoSeconds}
+        programRoscoSeconds={view.rules.roscoSeconds}
+        graceSeconds={view.rules.graceSeconds}
+        mode={view.mode}
+      />
     </div>
   );
 }

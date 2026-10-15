@@ -58,7 +58,11 @@ test.describe("modo individual", () => {
     // La partida terminada no admite más respuestas.
     const session = (await (await page.request.get("/api/solo")).json()) as { session: { sessionId: string } };
     const late = await page.request.post("/api/solo/action", {
-      data: { sessionId: session.session.sessionId, actionId: crypto.randomUUID(), action: { type: "pass", stage: 0, item: 3 } },
+      data: {
+        sessionId: session.session.sessionId,
+        actionId: crypto.randomUUID(),
+        action: { type: "pass", stage: 0, item: 3 },
+      },
     });
     expect(late.status()).toBe(409);
   });

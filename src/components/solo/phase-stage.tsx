@@ -8,7 +8,13 @@ import { formatClock } from "@/lib/game/clock";
 import { cn } from "@/lib/client/cn";
 import type { FeedbackView, PhaseItemView, SoloView } from "@/lib/views";
 
-export function ItemDots({ items, current }: { items: { outcome: PhaseItemView["outcome"] }[]; current: number | null }) {
+export function ItemDots({
+  items,
+  current,
+}: {
+  items: { outcome: PhaseItemView["outcome"] }[];
+  current: number | null;
+}) {
   return (
     <ol className="flex gap-1.5" aria-label="Progreso de la prueba">
       {items.map((it, i) => (
@@ -56,8 +62,15 @@ export function PhaseStage({
             <p className="eyebrow">{view.stage.tagline}</p>
             <h2 className="mt-1 font-display text-xl font-bold text-ink-50">{view.stage.title}</h2>
           </div>
-          <div className="text-right" role="timer" aria-label={`Tiempo restante de la prueba ${formatClock(remainingMs)}`}>
-            <span className={cn("score-digits block text-4xl leading-none", low ? "text-bad-400" : "text-ink-50")} aria-hidden="true">
+          <div
+            className="text-right"
+            role="timer"
+            aria-label={`Tiempo restante de la prueba ${formatClock(remainingMs)}`}
+          >
+            <span
+              className={cn("score-digits block text-4xl leading-none", low ? "text-bad-400" : "text-ink-50")}
+              aria-hidden="true"
+            >
               {formatClock(remainingMs)}
             </span>
             <span className="text-xs font-semibold uppercase tracking-wider text-ink-300">
@@ -67,7 +80,10 @@ export function PhaseStage({
         </div>
         <div className="h-2 overflow-hidden rounded-full bg-white/10" aria-hidden="true">
           <div
-            className={cn("h-full rounded-full transition-[width] duration-200 ease-linear", low ? "bg-bad-500" : "bg-turquoise-400")}
+            className={cn(
+              "h-full rounded-full transition-[width] duration-200 ease-linear",
+              low ? "bg-bad-500" : "bg-turquoise-400",
+            )}
             style={{ width: `${Math.max(0, Math.min(1, fraction)) * 100}%` }}
           />
         </div>

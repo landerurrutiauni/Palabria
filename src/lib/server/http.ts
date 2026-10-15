@@ -13,7 +13,10 @@ export function json<T>(data: T, init?: ResponseInit): NextResponse<T> {
 
 export function errorResponse(error: unknown): NextResponse<ApiErrorBody> {
   if (error instanceof AppError) {
-    return json({ error: { code: error.code, message: error.message, details: error.details } }, { status: error.status });
+    return json(
+      { error: { code: error.code, message: error.message, details: error.details } },
+      { status: error.status },
+    );
   }
   if (error instanceof GameRuleError) {
     return json({ error: { code: error.code, message: error.message } }, { status: 409 });
@@ -71,7 +74,8 @@ export function rateLimit(key: string, limit: number, windowMs: number): void {
     return;
   }
   entry.count += 1;
-  if (entry.count > limit) throw new AppError(429, "rate_limited", "Demasiadas peticiones seguidas. Espera un momento.");
+  if (entry.count > limit)
+    throw new AppError(429, "rate_limited", "Demasiadas peticiones seguidas. Espera un momento.");
 }
 
 /** Acciones de juego permitidas por jugador cada 10 s (configurable). */
@@ -83,7 +87,12 @@ export function actionRateLimit(): number {
 export const modeSchema = z.enum(["rosco", "program"]);
 
 export const actionSchema = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("answer"), stage: z.number().int().min(0).max(10), item: z.number().int().min(0).max(40), text: z.string().max(120) }),
+  z.object({
+    type: z.literal("answer"),
+    stage: z.number().int().min(0).max(10),
+    item: z.number().int().min(0).max(40),
+    text: z.string().max(120),
+  }),
   z.object({ type: z.literal("pass"), stage: z.number().int().min(0).max(10), item: z.number().int().min(0).max(40) }),
   z.object({ type: z.literal("clue"), stage: z.number().int().min(0).max(10), item: z.number().int().min(0).max(40) }),
 ]);

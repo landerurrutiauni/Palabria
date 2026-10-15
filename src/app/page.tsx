@@ -46,8 +46,16 @@ export default async function HomePage() {
 
   const solo = me?.attempts.solo;
   const duel = me?.attempts.duel;
-  const soloState: AttemptState = !solo?.used ? "available" : solo.status === "in_progress" ? "in_progress" : "completed";
-  const duelState: AttemptState = !duel?.used ? "available" : duel.status === "in_progress" ? "in_progress" : "completed";
+  const soloState: AttemptState = !solo?.used
+    ? "available"
+    : solo.status === "in_progress"
+      ? "in_progress"
+      : "completed";
+  const duelState: AttemptState = !duel?.used
+    ? "available"
+    : duel.status === "in_progress"
+      ? "in_progress"
+      : "completed";
   const soloHref = solo?.mode === "program" ? "/jugar/programa" : "/jugar/rosco";
 
   return (
@@ -67,15 +75,17 @@ export default async function HomePage() {
             </span>
           </h1>
           <p className="mt-4 max-w-xl text-lg text-ink-200">
-            {capitalize(formatChallengeDate(date))}. Juega El Rosco del día en solitario o reta a un
-            amigo a un duelo por turnos con reloj propio.
+            {capitalize(formatChallengeDate(date))}. Juega El Rosco del día en solitario o reta a un amigo a un duelo
+            por turnos con reloj propio.
           </p>
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <span className="chip">
               <Sparkles className="size-3.5 text-gold-400" aria-hidden="true" />
               Dificultad {difficultyLabel(challenge.difficulty).toLowerCase()}
             </span>
-            <span className="chip">{27 - containsCount} «empieza por» · {containsCount} «contiene»</span>
+            <span className="chip">
+              {27 - containsCount} «empieza por» · {containsCount} «contiene»
+            </span>
             <span className="chip">
               <Timer className="size-3.5 text-turquoise-300" aria-hidden="true" />
               Nuevo desafío en <Countdown target={nextChallengeStart(now)} serverNow={now} className="text-ink-50" />
@@ -95,7 +105,9 @@ export default async function HomePage() {
           <Rosco letters={letters} label="Letras del rosco de hoy" paused>
             <div className="flex flex-col items-center">
               <span className="score-digits text-[15cqw] leading-none text-ink-50">27</span>
-              <span className="mt-1 font-display text-[3.2cqw] uppercase tracking-[0.3em] text-turquoise-300">letras</span>
+              <span className="mt-1 font-display text-[3.2cqw] uppercase tracking-[0.3em] text-turquoise-300">
+                letras
+              </span>
               <span className="mt-2 text-[3cqw] text-ink-300">A · Ñ · Z</span>
             </div>
           </Rosco>
@@ -122,21 +134,33 @@ export default async function HomePage() {
           </div>
           {soloState === "available" ? (
             <div className="mt-6 grid gap-3">
-              <Link href="/jugar/programa" className="group panel-soft flex items-center justify-between gap-4 p-4 transition hover:border-turquoise-400/50">
+              <Link
+                href="/jugar/programa"
+                className="group panel-soft flex items-center justify-between gap-4 p-4 transition hover:border-turquoise-400/50"
+              >
                 <span>
                   <span className="block font-bold text-ink-50">Programa completo</span>
                   <span className="text-sm text-ink-300">
                     {PROGRAM_PHASES.length} pruebas + El Rosco · unos 8 minutos
                   </span>
                 </span>
-                <ArrowRight className="size-5 text-turquoise-300 transition group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRight
+                  className="size-5 text-turquoise-300 transition group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
               </Link>
-              <Link href="/jugar/rosco" className="group panel-soft flex items-center justify-between gap-4 p-4 transition hover:border-turquoise-400/50">
+              <Link
+                href="/jugar/rosco"
+                className="group panel-soft flex items-center justify-between gap-4 p-4 transition hover:border-turquoise-400/50"
+              >
                 <span>
                   <span className="block font-bold text-ink-50">Solo El Rosco</span>
                   <span className="text-sm text-ink-300">27 letras · 3 minutos</span>
                 </span>
-                <ArrowRight className="size-5 text-turquoise-300 transition group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRight
+                  className="size-5 text-turquoise-300 transition group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
               </Link>
               <p className="text-xs text-ink-400">
                 Ambas opciones comparten el mismo intento: al empezar una, la otra queda bloqueada hasta mañana.
@@ -214,8 +238,18 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <StatTile icon={<Flame className="size-5 text-gold-400" aria-hidden="true" />} label="Racha actual" value={me?.streak.current ?? 0} suffix="días" />
-          <StatTile icon={<Medal className="size-5 text-turquoise-300" aria-hidden="true" />} label="Mejor racha" value={me?.streak.best ?? 0} suffix="días" />
+          <StatTile
+            icon={<Flame className="size-5 text-gold-400" aria-hidden="true" />}
+            label="Racha actual"
+            value={me?.streak.current ?? 0}
+            suffix="días"
+          />
+          <StatTile
+            icon={<Medal className="size-5 text-turquoise-300" aria-hidden="true" />}
+            label="Mejor racha"
+            value={me?.streak.best ?? 0}
+            suffix="días"
+          />
           <StatTile
             icon={<Sparkles className="size-5 text-violet-400" aria-hidden="true" />}
             label="Mejor rosco"
@@ -277,7 +311,17 @@ function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-function StatTile({ icon, label, value, suffix }: { icon: React.ReactNode; label: string; value: number | string; suffix?: string }) {
+function StatTile({
+  icon,
+  label,
+  value,
+  suffix,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number | string;
+  suffix?: string;
+}) {
   return (
     <div className="panel-soft p-4">
       <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-ink-300">

@@ -8,7 +8,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // Imagen Docker compacta: NEXT_OUTPUT=standalone (ver Dockerfile). Por defecto, `next start`.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   poweredByHeader: false,
   reactStrictMode: true,
   // Drivers de base de datos: se cargan desde node_modules en el servidor.

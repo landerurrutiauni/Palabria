@@ -30,7 +30,11 @@ export function Countdown({ target, serverNow, className }: { target: number; se
   }, [left, router]);
   const [h, m, s] = parts(left);
   return (
-    <span className={className} role="timer" aria-label={`Faltan ${h} horas, ${m} minutos y ${s} segundos para el próximo desafío`}>
+    <span
+      className={className}
+      role="timer"
+      aria-label={`Faltan ${h} horas, ${m} minutos y ${s} segundos para el próximo desafío`}
+    >
       <span aria-hidden="true" className="score-digits">
         {h}:{m}:{s}
       </span>

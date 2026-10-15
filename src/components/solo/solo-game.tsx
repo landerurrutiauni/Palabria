@@ -184,7 +184,13 @@ export function SoloGame({
     return (
       <div className="flex flex-col gap-4">
         {errorNotice}
-        <SoloPrep mode={mode} roscoSeconds={roscoSeconds} programRoscoSeconds={programRoscoSeconds} busy={busy} onStart={start} />
+        <SoloPrep
+          mode={mode}
+          roscoSeconds={roscoSeconds}
+          programRoscoSeconds={programRoscoSeconds}
+          busy={busy}
+          onStart={start}
+        />
       </div>
     );
   }
@@ -194,7 +200,9 @@ export function SoloGame({
     const href = session.mode === "program" ? "/jugar/programa" : "/jugar/rosco";
     return (
       <StateScreen
-        icon={inProgress ? <Hourglass className="size-9 text-gold-300" /> : <CheckCircle2 className="size-9 text-ok-400" />}
+        icon={
+          inProgress ? <Hourglass className="size-9 text-gold-300" /> : <CheckCircle2 className="size-9 text-ok-400" />
+        }
         eyebrow="Desafío individual"
         title={inProgress ? "Ya tienes una partida en curso" : "Desafío ya completado"}
         actions={
@@ -208,9 +216,9 @@ export function SoloGame({
           </>
         }
       >
-        Hoy ya has usado tu intento individual con «{modeLabel(session.mode)}». El programa completo y El Rosco comparten
-        un único intento al día. Mañana a las 00:00 (hora de España) tendrás un desafío nuevo. Tu duelo 1 vs 1 es
-        independiente.
+        Hoy ya has usado tu intento individual con «{modeLabel(session.mode)}». El programa completo y El Rosco
+        comparten un único intento al día. Mañana a las 00:00 (hora de España) tendrás un desafío nuevo. Tu duelo 1 vs 1
+        es independiente.
       </StateScreen>
     );
   }
@@ -229,7 +237,11 @@ export function SoloGame({
       <ProgramStepper stages={session.stages} current={session.stageIndex} />
       {errorNotice}
       {session.stage.status === "ready" ? (
-        <StageIntro view={session} busy={busy} onStart={() => send({ type: "start_stage", stage: session.stageIndex })} />
+        <StageIntro
+          view={session}
+          busy={busy}
+          onStart={() => send({ type: "start_stage", stage: session.stageIndex })}
+        />
       ) : session.stage.kind === "rosco" ? (
         <RoscoStage
           view={session}

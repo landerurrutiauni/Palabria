@@ -11,7 +11,13 @@ function StatusIcon({ status }: { status: RevealedLetter["status"] | PhaseReview
 }
 
 /** Soluciones del rosco (solo se muestran al terminar la partida). */
-export function RoscoSolutions({ letters, title = "Soluciones del rosco" }: { letters: RevealedLetter[]; title?: string }) {
+export function RoscoSolutions({
+  letters,
+  title = "Soluciones del rosco",
+}: {
+  letters: RevealedLetter[];
+  title?: string;
+}) {
   return (
     <details className="panel group p-5 sm:p-6" open>
       <summary className="cursor-pointer list-none font-display text-lg font-bold text-ink-50">
@@ -26,7 +32,8 @@ export function RoscoSolutions({ letters, title = "Soluciones del rosco" }: { le
                 "grid size-10 place-items-center rounded-full font-display font-bold",
                 l.status === "correct" && "bg-ok-500 text-white",
                 l.status === "wrong" && "bg-bad-500 text-white",
-                (l.status === "pending" || l.status === "passed") && "border-2 border-dashed border-ink-400/60 text-ink-300",
+                (l.status === "pending" || l.status === "passed") &&
+                  "border-2 border-dashed border-ink-400/60 text-ink-300",
               )}
             >
               {l.letter}

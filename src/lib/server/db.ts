@@ -140,10 +140,14 @@ export async function runMigrations(db: Database, dir = migrationsDir()): Promis
   return applied;
 }
 
-export async function openDatabase(options: { url?: string | null; pgliteDir?: string | null; migrate?: boolean } = {}): Promise<Database> {
+export async function openDatabase(
+  options: { url?: string | null; pgliteDir?: string | null; migrate?: boolean } = {},
+): Promise<Database> {
   const env = serverEnv();
   const url = options.url === undefined ? env.databaseUrl : options.url;
-  const db = url ? await createPostgres(url) : await createPglite(options.pgliteDir === undefined ? env.pgliteDir : options.pgliteDir);
+  const db = url
+    ? await createPostgres(url)
+    : await createPglite(options.pgliteDir === undefined ? env.pgliteDir : options.pgliteDir);
   if (options.migrate ?? process.env.AUTO_MIGRATE !== "false") await runMigrations(db);
   return db;
 }

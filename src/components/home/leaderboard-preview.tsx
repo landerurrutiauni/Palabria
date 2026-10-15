@@ -4,7 +4,15 @@ import { formatClock } from "@/lib/game/clock";
 import { cn } from "@/lib/client/cn";
 import type { LeaderboardView } from "@/lib/views";
 
-export function LeaderboardTable({ board, limit = 5, className }: { board: LeaderboardView; limit?: number; className?: string }) {
+export function LeaderboardTable({
+  board,
+  limit = 5,
+  className,
+}: {
+  board: LeaderboardView;
+  limit?: number;
+  className?: string;
+}) {
   if (board.entries.length === 0) {
     return (
       <p className={cn("rounded-2xl border border-dashed border-white/15 p-4 text-sm text-ink-300", className)}>
@@ -20,11 +28,21 @@ export function LeaderboardTable({ board, limit = 5, className }: { board: Leade
       <caption className="sr-only">Clasificación del día</caption>
       <thead className="text-xs uppercase tracking-wider text-ink-400">
         <tr>
-          <th scope="col" className="py-2 pr-2 font-semibold">#</th>
-          <th scope="col" className="py-2 pr-2 font-semibold">Jugador</th>
-          <th scope="col" className="py-2 pr-2 text-right font-semibold">Aciertos</th>
-          <th scope="col" className="hidden py-2 pr-2 text-right font-semibold sm:table-cell">Tiempo</th>
-          <th scope="col" className="py-2 text-right font-semibold">Puntos</th>
+          <th scope="col" className="py-2 pr-2 font-semibold">
+            #
+          </th>
+          <th scope="col" className="py-2 pr-2 font-semibold">
+            Jugador
+          </th>
+          <th scope="col" className="py-2 pr-2 text-right font-semibold">
+            Aciertos
+          </th>
+          <th scope="col" className="hidden py-2 pr-2 text-right font-semibold sm:table-cell">
+            Tiempo
+          </th>
+          <th scope="col" className="py-2 text-right font-semibold">
+            Puntos
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -38,7 +56,9 @@ export function LeaderboardTable({ board, limit = 5, className }: { board: Leade
               {e.isYou && <span className="ml-2 text-xs font-bold text-turquoise-300">(tú)</span>}
             </td>
             <td className="score-digits py-2.5 pr-2 text-right text-lg">{e.correct}</td>
-            <td className="score-digits hidden py-2.5 pr-2 text-right text-lg sm:table-cell">{formatClock(e.timeUsedMs)}</td>
+            <td className="score-digits hidden py-2.5 pr-2 text-right text-lg sm:table-cell">
+              {formatClock(e.timeUsedMs)}
+            </td>
             <td className="score-digits py-2.5 text-right text-lg text-gold-300">{e.score}</td>
           </tr>
         ))}

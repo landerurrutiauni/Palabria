@@ -186,7 +186,9 @@ export function buildSoloView(
     },
     upcomingRoscoMs,
     readyDeadline:
-      stage.status === "ready" && state.readySince !== null ? state.readySince + state.rules.intermissionTimeoutMs : null,
+      stage.status === "ready" && state.readySince !== null
+        ? state.readySince + state.rules.intermissionTimeoutMs
+        : null,
     totals: {
       phasePoints,
       bonusSeconds: Math.round(bonusMs / 1000),
@@ -229,7 +231,13 @@ async function persistState(
   return res.rows[0]!;
 }
 
-async function logEvent(tx: Queryable, playerId: string, sessionId: string, actionId: string, event: GameEvent): Promise<void> {
+async function logEvent(
+  tx: Queryable,
+  playerId: string,
+  sessionId: string,
+  actionId: string,
+  event: GameEvent,
+): Promise<void> {
   await tx.query(
     `insert into game_answers
        (player_id, session_id, action_id, stage_index, stage_kind, item_index, action, outcome, given_answer, clock_ms)

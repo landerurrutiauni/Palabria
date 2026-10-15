@@ -38,7 +38,11 @@ export function tokenHash(random: string): string {
 
 export function identitySecret(): string {
   const secret = process.env.APP_SECRET ?? "";
-  return secret.length >= 32 ? secret : "palabria-dev-secret-change-me-0123456789abcdef";
+  if (secret.length >= 32) return secret;
+  if (process.env.NODE_ENV === "production" && process.env.ALLOW_INSECURE_DEV_SECRET !== "1") {
+    throw new Error("APP_SECRET debe tener al menos 32 caracteres en producción.");
+  }
+  return "palabria-dev-secret-change-me-0123456789abcdef";
 }
 
 export function secureCookies(): boolean {

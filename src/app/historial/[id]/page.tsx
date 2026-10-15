@@ -15,10 +15,10 @@ export default async function HistoryDetailPage({ params }: { params: Promise<{ 
   if (!z.uuid().safeParse(id).success) notFound();
   const player = await requirePlayerForPage();
   const db = await getDb();
-  const res = await db.query<{ session_id: string | null }>("select session_id from game_results where id = $1 and player_id = $2", [
-    id,
-    player.id,
-  ]);
+  const res = await db.query<{ session_id: string | null }>(
+    "select session_id from game_results where id = $1 and player_id = $2",
+    [id, player.id],
+  );
   const sessionId = res.rows[0]?.session_id;
   if (!sessionId) notFound();
   const session = await getSoloSession(player, sessionId, db);

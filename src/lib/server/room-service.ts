@@ -125,7 +125,9 @@ function initialProgress(rules: DuelRules): Progress {
 }
 
 async function lockRoomByCode(tx: Queryable, code: string): Promise<RoomRow> {
-  const res = await tx.query<RoomRow>(`select ${ROOM_COLUMNS} from multiplayer_rooms where code = $1 for update`, [code]);
+  const res = await tx.query<RoomRow>(`select ${ROOM_COLUMNS} from multiplayer_rooms where code = $1 for update`, [
+    code,
+  ]);
   const room = res.rows[0];
   if (!room) throw Errors.roomNotFound();
   return room;
@@ -261,7 +263,10 @@ async function logDuelEvents(
 }
 
 async function loadSets(tx: Queryable, challengeId: string): Promise<Record<Seat, QuestionSet>> {
-  const [a, b] = await Promise.all([loadQuestionSet(tx, challengeId, "duel_a"), loadQuestionSet(tx, challengeId, "duel_b")]);
+  const [a, b] = await Promise.all([
+    loadQuestionSet(tx, challengeId, "duel_a"),
+    loadQuestionSet(tx, challengeId, "duel_b"),
+  ]);
   return { 1: a, 2: b };
 }
 
@@ -278,10 +283,10 @@ async function expireIfStale(tx: Queryable, room: RoomRow, now: number): Promise
 }
 
 async function duelAttemptUsed(tx: Queryable, playerId: string, date: string): Promise<boolean> {
-  const res = await tx.query("select 1 from daily_attempts where player_id = $1 and challenge_date = $2 and kind = 'duel'", [
-    playerId,
-    date,
-  ]);
+  const res = await tx.query(
+    "select 1 from daily_attempts where player_id = $1 and challenge_date = $2 and kind = 'duel'",
+    [playerId, date],
+  );
   return res.rowCount > 0;
 }
 
@@ -309,7 +314,10 @@ function playerView(ctx: ViewContext, p: ParticipantRow): DuelPlayerView {
   const finished = room.status === "completed" || room.status === "abandoned";
   const kind = state ? stageKindOf(state) : room.stages[room.stage_index]!;
   const running =
-    room.status === "in_progress" && room.turn_seat === seat && room.turn_started_at_ms !== null && now >= room.turn_started_at_ms;
+    room.status === "in_progress" &&
+    room.turn_seat === seat &&
+    room.turn_started_at_ms !== null &&
+    now >= room.turn_started_at_ms;
   const set = sets?.[seat];
   return {
     seat,
@@ -347,7 +355,8 @@ function buildDuelView(ctx: ViewContext): DuelView {
   if (state && sets && you && state.status === "in_progress" && state.turnSeat === you) {
     const pl = state.players[you];
     if (kind === "rosco") {
-      if (pl.rosco.cursor !== null && pl.status === "playing") prompt = roscoPrompt(sets[you].rosco[pl.rosco.cursor]!, pl.rosco.cursor);
+      if (pl.rosco.cursor !== null && pl.status === "playing")
+        prompt = roscoPrompt(sets[you].rosco[pl.rosco.cursor]!, pl.rosco.cursor);
     } else {
       const idx = currentItemIndex(pl.phases[kind]);
       if (idx !== null) prompt = phasePrompt(kind, sets[you][kind][idx]!, idx, pl.phases[kind][idx]!);
@@ -368,9 +377,12 @@ function buildDuelView(ctx: ViewContext): DuelView {
         mine && you
           ? {
               letters: fullLetters(sets[you], mine.rosco, mine.roscoGiven),
-              phases: room.mode === "program"
-                ? (["quick", "clues", "saying", "link"] as PhaseKind[]).map((k) => phaseReview(k, sets[you], mine.phases[k]))
-                : [],
+              phases:
+                room.mode === "program"
+                  ? (["quick", "clues", "saying", "link"] as PhaseKind[]).map((k) =>
+                      phaseReview(k, sets[you], mine.phases[k]),
+                    )
+                  : [],
             }
           : null,
       rival: rival && rivalSeat ? { letters: fullLetters(sets[rivalSeat], rival.rosco, rival.roscoGiven) } : null,
@@ -426,7 +438,10 @@ function buildDuelView(ctx: ViewContext): DuelView {
       roscoSeconds: Math.round(room.rules.roscoBaseMs / 1000),
       graceSeconds: Math.round(room.rules.reconnectGraceMs / 1000),
       shotClocks: Object.fromEntries(
-        (Object.keys(room.rules.shotClockMs) as PhaseKind[]).map((k) => [k, Math.round(room.rules.shotClockMs[k] / 1000)]),
+        (Object.keys(room.rules.shotClockMs) as PhaseKind[]).map((k) => [
+          k,
+          Math.round(room.rules.shotClockMs[k] / 1000),
+        ]),
       ) as Record<PhaseKind, number>,
     },
     result,
@@ -520,7 +535,14 @@ export async function createRoom(player: Player, mode: GameMode, dbArg?: Databas
       `insert into multiplayer_participants
          (room_id, player_id, seat, display_name, question_set, is_ready, status, time_bank_ms, progress, last_seen_at_ms)
        values ($1, $2, 1, $3, 'duel_a', false, 'joined', $4, $5, $6)`,
-      [inserted.rows[0]!.id, player.id, player.displayName, rules.roscoBaseMs, JSON.stringify(initialProgress(rules)), now],
+      [
+        inserted.rows[0]!.id,
+        player.id,
+        player.displayName,
+        rules.roscoBaseMs,
+        JSON.stringify(initialProgress(rules)),
+        now,
+      ],
     );
     return { code };
   });
@@ -609,11 +631,19 @@ export async function joinRoom(player: Player, code: string, dbArg?: Database): 
         `insert into multiplayer_participants
            (room_id, player_id, seat, display_name, question_set, is_ready, status, time_bank_ms, progress, last_seen_at_ms)
          values ($1, $2, 2, $3, 'duel_b', true, 'joined', $4, $5, $6)`,
-        [room.id, player.id, player.displayName, room.rules.roscoBaseMs, JSON.stringify(initialProgress(room.rules)), now],
+        [
+          room.id,
+          player.id,
+          player.displayName,
+          room.rules.roscoBaseMs,
+          JSON.stringify(initialProgress(room.rules)),
+          now,
+        ],
       );
-      await tx.query(`update multiplayer_rooms set status = 'ready', version = version + 1, updated_at = now() where id = $1`, [
-        room.id,
-      ]);
+      await tx.query(
+        `update multiplayer_rooms set status = 'ready', version = version + 1, updated_at = now() where id = $1`,
+        [room.id],
+      );
       if (host?.is_ready) {
         const fresh = await lockRoomByCode(tx, code);
         await startMatch(tx, fresh, await loadParticipants(tx, room.id, true), now);
@@ -670,9 +700,10 @@ export async function leaveRoom(player: Player, code: string, dbArg?: Database):
         );
       } else {
         await tx.query("delete from multiplayer_participants where id = $1", [me.id]);
-        await tx.query(`update multiplayer_rooms set status = 'waiting', version = version + 1, updated_at = now() where id = $1`, [
-          room.id,
-        ]);
+        await tx.query(
+          `update multiplayer_rooms set status = 'waiting', version = version + 1, updated_at = now() where id = $1`,
+          [room.id],
+        );
       }
       return;
     }
@@ -719,14 +750,28 @@ export async function roomAction(
     const me = parts.find((p) => p.player_id === player.id);
     if (!me) throw Errors.notParticipant();
     const sets = await loadSets(tx, room.challenge_id);
-    const dup = await tx.query("select 1 from game_answers where player_id = $1 and action_id = $2", [player.id, input.actionId]);
+    const dup = await tx.query("select 1 from game_answers where player_id = $1 and action_id = $2", [
+      player.id,
+      input.actionId,
+    ]);
     if (dup.rowCount > 0 || room.status !== "in_progress") {
       const state = room.status === "waiting" || room.status === "ready" ? null : toDuelState(room, parts);
-      if (dup.rowCount === 0) return { rejected: new AppError(409, "finished", "La partida no está en curso.") } as const;
+      if (dup.rowCount === 0)
+        return { rejected: new AppError(409, "finished", "La partida no está en curso.") } as const;
       const extras = await lastActions(tx, room, parts, player, sets);
       return {
         result: {
-          view: buildDuelView({ room, parts, state, sets, viewer: player, now, ...extras, canJoin: false, joinBlockedReason: null }),
+          view: buildDuelView({
+            room,
+            parts,
+            state,
+            sets,
+            viewer: player,
+            now,
+            ...extras,
+            canJoin: false,
+            joinBlockedReason: null,
+          }),
           feedback: null,
           duplicate: true,
         },
@@ -743,7 +788,12 @@ export async function roomAction(
       const settled = settleDuel(state, now, sets);
       if (settled.state !== state) {
         await persistDuel(tx, room, parts, settled.state);
-        await logDuelEvents(tx, room.id, parts, settled.events.map((event) => ({ event, actionId: randomUUID() })));
+        await logDuelEvents(
+          tx,
+          room.id,
+          parts,
+          settled.events.map((event) => ({ event, actionId: randomUUID() })),
+        );
       }
       return { rejected: new AppError(409, error.code, error.message) } as const;
     }
@@ -802,7 +852,12 @@ async function settleRoomIfNeeded(db: Database, room: RoomRow, parts: Participan
     const settled = settleDuel(lockedState, lockNow, sets);
     if (settled.state === lockedState) return;
     await persistDuel(tx, lockedRoom, lockedParts, settled.state);
-    await logDuelEvents(tx, lockedRoom.id, lockedParts, settled.events.map((event) => ({ event, actionId: randomUUID() })));
+    await logDuelEvents(
+      tx,
+      lockedRoom.id,
+      lockedParts,
+      settled.events.map((event) => ({ event, actionId: randomUUID() })),
+    );
   });
   return true;
 }
@@ -839,7 +894,10 @@ export async function getRoomView(player: Player, code: string, dbArg?: Database
   if (!me && parts.length >= 2) throw Errors.roomFull();
 
   if (me) await touchPresence(db, room.id, player.id, now);
-  if ((room.status === "waiting" || room.status === "ready") && (now > room.expires_at_ms || room.challenge_date !== todayKey(now))) {
+  if (
+    (room.status === "waiting" || room.status === "ready") &&
+    (now > room.expires_at_ms || room.challenge_date !== todayKey(now))
+  ) {
     await db.transaction(async (tx) => {
       const locked = await lockRoomByCode(tx, code);
       await expireIfStale(tx, locked, await serverNow(tx));

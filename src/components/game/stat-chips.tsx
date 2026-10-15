@@ -37,7 +37,10 @@ export function StatChips({
             {value}
           </span>
           {!compact && (
-            <span className="hidden text-xs font-semibold uppercase tracking-wider opacity-80 sm:inline" aria-hidden="true">
+            <span
+              className="hidden text-xs font-semibold uppercase tracking-wider opacity-80 sm:inline"
+              aria-hidden="true"
+            >
               {label}
             </span>
           )}

@@ -27,7 +27,12 @@ export function CreateRoomForm() {
   };
 
   const options: { value: GameMode; title: string; text: string; icon: React.ReactNode }[] = [
-    { value: "rosco", title: "Solo El Rosco", text: "Directos al rosco · unos 6 minutos", icon: <Timer className="size-5" aria-hidden="true" /> },
+    {
+      value: "rosco",
+      title: "Solo El Rosco",
+      text: "Directos al rosco · unos 6 minutos",
+      icon: <Timer className="size-5" aria-hidden="true" />,
+    },
     {
       value: "program",
       title: "Programa completo",
@@ -68,12 +73,23 @@ export function CreateRoomForm() {
           ))}
         </div>
       </fieldset>
-      {error ? <Notice tone="error" title="No se ha podido crear la sala" className="mt-4">{error.message}</Notice> : null}
-      <button type="button" className="btn btn-gold mt-6 min-h-14 w-full px-8 text-lg sm:w-auto" onClick={create} disabled={busy}>
+      {error ? (
+        <Notice tone="error" title="No se ha podido crear la sala" className="mt-4">
+          {error.message}
+        </Notice>
+      ) : null}
+      <button
+        type="button"
+        className="btn btn-gold mt-6 min-h-14 w-full px-8 text-lg sm:w-auto"
+        onClick={create}
+        disabled={busy}
+      >
         <Swords className="size-5" aria-hidden="true" />
         {busy ? "Creando sala…" : "Crear sala y obtener enlace"}
       </button>
-      <p className="mt-3 text-xs text-ink-400">Crear la sala no gasta tu intento: se consume cuando empieza el duelo.</p>
+      <p className="mt-3 text-xs text-ink-400">
+        Crear la sala no gasta tu intento: se consume cuando empieza el duelo.
+      </p>
     </div>
   );
 }

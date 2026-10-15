@@ -56,8 +56,8 @@ export function SoloPrep({
               <div>
                 <p className="font-bold text-ink-50">El Rosco</p>
                 <p className="mt-1 text-sm text-ink-200">
-                  Empieza con {programRoscoSeconds} segundos más los que hayas ganado en las pruebas. Entre prueba y prueba
-                  el reloj se detiene: tú decides cuándo seguir (máximo 30 minutos).
+                  Empieza con {programRoscoSeconds} segundos más los que hayas ganado en las pruebas. Entre prueba y
+                  prueba el reloj se detiene: tú decides cuándo seguir (máximo 30 minutos).
                 </p>
               </div>
             </li>
@@ -91,7 +91,10 @@ export function SoloPrep({
 function Rule({ icon, title, children }: { icon: React.ReactNode; title: string; children: React.ReactNode }) {
   return (
     <li className="flex gap-4">
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-turquoise-400/15 text-turquoise-300" aria-hidden="true">
+      <span
+        className="grid size-10 shrink-0 place-items-center rounded-xl bg-turquoise-400/15 text-turquoise-300"
+        aria-hidden="true"
+      >
         {icon}
       </span>
       <div>

@@ -23,7 +23,9 @@ async function main() {
     for (let d = 0; d < days; d++) {
       const date = addDays(from, d);
       const c = await publishChallenge(db, date);
-      console.log(`${date}  ${c.publicId}  ${difficultyLabel(c.difficulty).padEnd(7)}  ${c.source.padEnd(8)}  ${c.contentVersion}`);
+      console.log(
+        `${date}  ${c.publicId}  ${difficultyLabel(c.difficulty).padEnd(7)}  ${c.source.padEnd(8)}  ${c.contentVersion}`,
+      );
     }
   } finally {
     await db.close();

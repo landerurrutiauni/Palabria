@@ -14,9 +14,50 @@ export interface ValidationIssue {
 
 const ALLOWED_TEXT = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ0-9\s.,;:¿?¡!«»"'()\-–—…/_]+$/u;
 const SPANISH_FUNCTION_WORDS = new Set([
-  "de", "la", "el", "que", "en", "y", "a", "los", "las", "un", "una", "del", "se", "por", "con", "para", "al", "su",
-  "lo", "es", "o", "sin", "sobre", "como", "te", "tu", "le", "no", "mas", "muy", "hay", "sus", "cuyo", "cuya",
-  "cuyos", "cuyas", "entre", "desde", "hasta", "mitad", "este", "esta", "ese", "esa",
+  "de",
+  "la",
+  "el",
+  "que",
+  "en",
+  "y",
+  "a",
+  "los",
+  "las",
+  "un",
+  "una",
+  "del",
+  "se",
+  "por",
+  "con",
+  "para",
+  "al",
+  "su",
+  "lo",
+  "es",
+  "o",
+  "sin",
+  "sobre",
+  "como",
+  "te",
+  "tu",
+  "le",
+  "no",
+  "mas",
+  "muy",
+  "hay",
+  "sus",
+  "cuyo",
+  "cuya",
+  "cuyos",
+  "cuyas",
+  "entre",
+  "desde",
+  "hasta",
+  "mitad",
+  "este",
+  "esta",
+  "ese",
+  "esa",
 ]);
 
 /** Palabras normalizadas de un texto. */
@@ -137,7 +178,10 @@ export function validateQuestionSet(set: QuestionSet, key: QuestionSetKey): Vali
     if (!item) {
       issues.push({ where: `${key}/rosco/${letter}`, message: `Falta la pregunta de la letra ${letter}` });
     } else if (item.prompt.letter !== letter) {
-      issues.push({ where: `${key}/rosco/${letter}`, message: `Posición ${i} ocupada por la letra ${item.prompt.letter}` });
+      issues.push({
+        where: `${key}/rosco/${letter}`,
+        message: `Posición ${i} ocupada por la letra ${item.prompt.letter}`,
+      });
     }
   });
   const req = requirementsFor(key);
@@ -179,7 +223,10 @@ export function validateChallenge(content: ChallengeContent): ValidationIssue[] 
         const norm = normalizeAnswer(answer);
         const previous = seen.get(norm);
         if (previous && previous !== `${key}/${item.id}`) {
-          issues.push({ where: `${key}/${item.id}`, message: `Respuesta duplicada en el desafío: «${answer}» (también en ${previous})` });
+          issues.push({
+            where: `${key}/${item.id}`,
+            message: `Respuesta duplicada en el desafío: «${answer}» (también en ${previous})`,
+          });
         } else {
           seen.set(norm, `${key}/${item.id}`);
         }

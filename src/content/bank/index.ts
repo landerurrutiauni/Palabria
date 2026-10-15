@@ -1,12 +1,5 @@
 import { isLetter, type Letter } from "@/lib/game/alphabet";
-import type {
-  CluesItem,
-  Difficulty,
-  LinkItem,
-  QuickItem,
-  RoscoItem,
-  SayingItem,
-} from "@/lib/game/content-types";
+import type { CluesItem, Difficulty, LinkItem, QuickItem, RoscoItem, SayingItem } from "@/lib/game/content-types";
 import { normalizeAnswer } from "@/lib/game/normalize";
 import { shortHash } from "@/lib/content/hash";
 import { CLUES_BANK } from "./clues";

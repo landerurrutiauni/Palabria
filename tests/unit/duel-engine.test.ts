@@ -44,14 +44,22 @@ describe("duelo: inicio", () => {
 
   it("rechaza respuestas durante la cuenta atrás", () => {
     const s = roscoDuel();
-    expect(() => applyDuelAction(s, 2, { type: "pass", stage: 0, item: 0 }, content, T0 + 1000)).toThrow(/no ha empezado/);
+    expect(() => applyDuelAction(s, 2, { type: "pass", stage: 0, item: 0 }, content, T0 + 1000)).toThrow(
+      /no ha empezado/,
+    );
   });
 });
 
 describe("duelo: relojes y turnos", () => {
   it("Prueba A: tras un acierto el turno continúa y el reloj sigue corriendo", () => {
     let s = present(roscoDuel(), START);
-    const r = applyDuelAction(s, 2, { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) }, content, START + 5_000);
+    const r = applyDuelAction(
+      s,
+      2,
+      { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) },
+      content,
+      START + 5_000,
+    );
     s = r.state;
     expect(r.event.outcome).toBe("correct");
     expect(r.event.turnChanged).toBe(false);
@@ -98,7 +106,13 @@ describe("duelo: relojes y turnos", () => {
   it("Prueba D: rechaza respuestas fuera de turno", () => {
     const s = present(roscoDuel(), START);
     expect(() =>
-      applyDuelAction(s, 1, { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[1], 0) }, content, START + 1000),
+      applyDuelAction(
+        s,
+        1,
+        { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[1], 0) },
+        content,
+        START + 1000,
+      ),
     ).toThrow(GameRuleError);
     try {
       applyDuelAction(s, 1, { type: "pass", stage: 0, item: 0 }, content, START + 1000);
@@ -109,14 +123,26 @@ describe("duelo: relojes y turnos", () => {
 
   it("Prueba E: recalcular el estado (reconexión) no devuelve segundos ni duplica respuestas", () => {
     let s = present(roscoDuel(), START);
-    s = applyDuelAction(s, 2, { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) }, content, START + 4_000).state;
+    s = applyDuelAction(
+      s,
+      2,
+      { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) },
+      content,
+      START + 4_000,
+    ).state;
     // El jugador recarga: el servidor vuelve a calcular a partir del estado persistido.
     const reloaded = settleDuel(JSON.parse(JSON.stringify(s)) as DuelState, START + 20_000).state;
     expect(playerRemainingMs(reloaded, 2, START + 20_000)).toBe(160_000);
     expect(reloaded.players[2].rosco.statuses[0]).toBe("correct");
     // Reenviar la misma respuesta a la misma letra se rechaza.
     expect(() =>
-      applyDuelAction(reloaded, 2, { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) }, content, START + 20_000),
+      applyDuelAction(
+        reloaded,
+        2,
+        { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) },
+        content,
+        START + 20_000,
+      ),
     ).toThrow(/ya no está activa/);
   });
 
@@ -131,7 +157,9 @@ describe("duelo: relojes y turnos", () => {
     expect(s.players[2].bankMs).toBe(0);
     expect(s.turnSeat).toBe(1);
     expect(s.turnStartedAt).toBe(after);
-    expect(() => applyDuelAction(s, 2, { type: "pass", stage: 0, item: 1 }, content, after + 10)).toThrow(GameRuleError);
+    expect(() => applyDuelAction(s, 2, { type: "pass", stage: 0, item: 1 }, content, after + 10)).toThrow(
+      GameRuleError,
+    );
     // El rival sigue jugando con su propio banco de tiempo, también tras pasar.
     s = applyDuelAction(s, 1, { type: "pass", stage: 0, item: 0 }, content, after + 5_000).state;
     expect(s.turnSeat).toBe(1);
@@ -141,14 +169,26 @@ describe("duelo: relojes y turnos", () => {
 
   it("los roscos son independientes", () => {
     let s = present(roscoDuel(), START);
-    s = applyDuelAction(s, 2, { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) }, content, START + 1000).state;
+    s = applyDuelAction(
+      s,
+      2,
+      { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) },
+      content,
+      START + 1000,
+    ).state;
     s = applyDuelAction(s, 2, { type: "pass", stage: 0, item: 1 }, content, START + 2000).state;
     expect(s.players[2].rosco.statuses.slice(0, 2)).toEqual(["correct", "passed"]);
     expect(s.players[1].rosco.statuses.slice(0, 2)).toEqual(["pending", "pending"]);
     expect(cursorOf(s, 1)).toBe(0);
     // La respuesta del asiento 2 no vale para el rosco del asiento 1 (preguntas distintas).
     s = present(s, START + 3000);
-    const r = applyDuelAction(s, 1, { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) }, content, START + 3000);
+    const r = applyDuelAction(
+      s,
+      1,
+      { type: "answer", stage: 0, item: 0, text: roscoAnswer(content[2], 0) },
+      content,
+      START + 3000,
+    );
     expect(r.event.outcome).toBe("wrong");
   });
 
@@ -157,7 +197,13 @@ describe("duelo: relojes y turnos", () => {
     let now = START;
     // Asiento 2 acierta todo seguido.
     for (let i = 0; i < 27; i++) {
-      s = applyDuelAction(s, 2, { type: "answer", stage: 0, item: i, text: roscoAnswer(content[2], i) }, content, (now += 500)).state;
+      s = applyDuelAction(
+        s,
+        2,
+        { type: "answer", stage: 0, item: i, text: roscoAnswer(content[2], i) },
+        content,
+        (now += 500),
+      ).state;
     }
     expect(s.players[2].status).toBe("finished");
     expect(s.turnSeat).toBe(1);
@@ -220,9 +266,17 @@ describe("duelo: programa completo", () => {
   });
 
   it("criterio de desempate", () => {
-    expect(duelWinner({ correct: 20, wrong: 3, timeUsedMs: 100_000 }, { correct: 19, wrong: 0, timeUsedMs: 1 })).toBe(1);
-    expect(duelWinner({ correct: 20, wrong: 3, timeUsedMs: 100_000 }, { correct: 20, wrong: 2, timeUsedMs: 170_000 })).toBe(2);
-    expect(duelWinner({ correct: 20, wrong: 2, timeUsedMs: 100_000 }, { correct: 20, wrong: 2, timeUsedMs: 120_000 })).toBe(1);
-    expect(duelWinner({ correct: 20, wrong: 2, timeUsedMs: 100_200 }, { correct: 20, wrong: 2, timeUsedMs: 99_900 })).toBeNull();
+    expect(duelWinner({ correct: 20, wrong: 3, timeUsedMs: 100_000 }, { correct: 19, wrong: 0, timeUsedMs: 1 })).toBe(
+      1,
+    );
+    expect(
+      duelWinner({ correct: 20, wrong: 3, timeUsedMs: 100_000 }, { correct: 20, wrong: 2, timeUsedMs: 170_000 }),
+    ).toBe(2);
+    expect(
+      duelWinner({ correct: 20, wrong: 2, timeUsedMs: 100_000 }, { correct: 20, wrong: 2, timeUsedMs: 120_000 }),
+    ).toBe(1);
+    expect(
+      duelWinner({ correct: 20, wrong: 2, timeUsedMs: 100_200 }, { correct: 20, wrong: 2, timeUsedMs: 99_900 }),
+    ).toBeNull();
   });
 });

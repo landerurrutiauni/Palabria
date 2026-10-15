@@ -38,10 +38,15 @@ export default async function PlaySelectionPage() {
             <p className="text-ink-200">
               {state === "in_progress" ? "Tienes en marcha" : "Hoy ya has jugado"}{" "}
               <strong className="text-ink-50">{modeLabel(solo.mode ?? "rosco")}</strong>.{" "}
-              {state === "in_progress" ? "Termina tu partida: el reloj sigue corriendo." : "Vuelve mañana para el nuevo desafío."}
+              {state === "in_progress"
+                ? "Termina tu partida: el reloj sigue corriendo."
+                : "Vuelve mañana para el nuevo desafío."}
             </p>
           </div>
-          <Link href={solo.mode === "program" ? "/jugar/programa" : "/jugar/rosco"} className="btn btn-primary shrink-0">
+          <Link
+            href={solo.mode === "program" ? "/jugar/programa" : "/jugar/rosco"}
+            className="btn btn-primary shrink-0"
+          >
             {state === "in_progress" ? "Continuar" : "Ver resultado"}
           </Link>
         </div>
@@ -94,7 +99,9 @@ function ModeCard({
   const body = (
     <>
       <div className="flex items-center gap-3">
-        <span className="grid size-12 place-items-center rounded-2xl bg-turquoise-400/15 text-turquoise-300">{icon}</span>
+        <span className="grid size-12 place-items-center rounded-2xl bg-turquoise-400/15 text-turquoise-300">
+          {icon}
+        </span>
         <div>
           <h2 className="font-display text-xl font-bold text-ink-50">{title}</h2>
           <p className="text-sm text-ink-300">{subtitle}</p>

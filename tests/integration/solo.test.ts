@@ -43,25 +43,53 @@ describe("partida individual en el servidor", () => {
     for (const item of set.rosco.slice(1)) expect(json).not.toContain(`"${item.answers[0]}"`);
 
     clock.advance(4_000);
-    let r = await soloAction(player, { sessionId: view.sessionId, actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: set.rosco[0]!.answers[0]! } }, db);
+    let r = await soloAction(
+      player,
+      {
+        sessionId: view.sessionId,
+        actionId: randomUUID(),
+        action: { type: "answer", stage: 0, item: 0, text: set.rosco[0]!.answers[0]! },
+      },
+      db,
+    );
     expect(r.feedback?.outcome).toBe("correct");
     clock.advance(3_000);
-    r = await soloAction(player, { sessionId: view.sessionId, actionId: randomUUID(), action: { type: "answer", stage: 0, item: 1, text: "zzzz" } }, db);
+    r = await soloAction(
+      player,
+      {
+        sessionId: view.sessionId,
+        actionId: randomUUID(),
+        action: { type: "answer", stage: 0, item: 1, text: "zzzz" },
+      },
+      db,
+    );
     expect(r.feedback?.outcome).toBe("wrong");
     expect(r.feedback?.answer).toBe(set.rosco[1]!.answers[0]);
     const passId = randomUUID();
-    r = await soloAction(player, { sessionId: view.sessionId, actionId: passId, action: { type: "pass", stage: 0, item: 2 } }, db);
+    r = await soloAction(
+      player,
+      { sessionId: view.sessionId, actionId: passId, action: { type: "pass", stage: 0, item: 2 } },
+      db,
+    );
     expect(r.view.stage.letters[2]!.state).toBe("passed");
     expect(r.view.stage.prompt).toMatchObject({ kind: "rosco", index: 3 });
 
     // Reenvío de la misma acción: no se aplica dos veces.
-    const dup = await soloAction(player, { sessionId: view.sessionId, actionId: passId, action: { type: "pass", stage: 0, item: 2 } }, db);
+    const dup = await soloAction(
+      player,
+      { sessionId: view.sessionId, actionId: passId, action: { type: "pass", stage: 0, item: 2 } },
+      db,
+    );
     expect(dup.duplicate).toBe(true);
     expect(dup.view.totals).toEqual(r.view.totals);
 
     // Respuesta a una letra que ya no está activa (doble clic): se rechaza.
     await expect(
-      soloAction(player, { sessionId: view.sessionId, actionId: randomUUID(), action: { type: "answer", stage: 0, item: 1, text: "x" } }, db),
+      soloAction(
+        player,
+        { sessionId: view.sessionId, actionId: randomUUID(), action: { type: "answer", stage: 0, item: 1, text: "x" } },
+        db,
+      ),
     ).rejects.toMatchObject({ code: "stale" });
 
     // Recarga: mismo estado, el reloj sigue desde el inicio original.
@@ -84,7 +112,15 @@ describe("partida individual en el servidor", () => {
     const set = await answersFor(view.date);
     for (let i = 0; i < 5; i++) {
       clock.advance(1_000);
-      await soloAction(player, { sessionId: view.sessionId, actionId: randomUUID(), action: { type: "answer", stage: 0, item: i, text: set.rosco[i]!.answers[0]! } }, db);
+      await soloAction(
+        player,
+        {
+          sessionId: view.sessionId,
+          actionId: randomUUID(),
+          action: { type: "answer", stage: 0, item: i, text: set.rosco[i]!.answers[0]! },
+        },
+        db,
+      );
     }
     clock.advance(200_000);
     const finished = await getTodaySolo(player, db);
@@ -94,10 +130,16 @@ describe("partida individual en el servidor", () => {
     // Se puede releer sin duplicar resultados.
     await getTodaySolo(player, db);
     await sweepSoloSessions(db);
-    const results = await db.query<{ n: number }>("select count(*)::int as n from game_results where player_id = $1", [player.id]);
+    const results = await db.query<{ n: number }>("select count(*)::int as n from game_results where player_id = $1", [
+      player.id,
+    ]);
     expect(results.rows[0]!.n).toBe(1);
     await expect(
-      soloAction(player, { sessionId: view.sessionId, actionId: randomUUID(), action: { type: "answer", stage: 0, item: 6, text: "x" } }, db),
+      soloAction(
+        player,
+        { sessionId: view.sessionId, actionId: randomUUID(), action: { type: "answer", stage: 0, item: 6, text: "x" } },
+        db,
+      ),
     ).rejects.toMatchObject({ code: "finished" });
     const stats = await getStats(db, player);
     expect(stats.solo).toMatchObject({ played: 1, completed: 1, correct: 5, bestScoreRosco: 50 });
@@ -110,9 +152,15 @@ describe("partida individual en el servidor", () => {
     const results = await Promise.allSettled([startSolo(player, "rosco", db), startSolo(player, "program", db)]);
     const ok = results.filter((r) => r.status === "fulfilled");
     expect(ok).toHaveLength(1);
-    const sessions = await db.query<{ n: number }>("select count(*)::int as n from game_sessions where player_id = $1", [player.id]);
+    const sessions = await db.query<{ n: number }>(
+      "select count(*)::int as n from game_sessions where player_id = $1",
+      [player.id],
+    );
     expect(sessions.rows[0]!.n).toBe(1);
-    const attempts = await db.query<{ n: number }>("select count(*)::int as n from daily_attempts where player_id = $1", [player.id]);
+    const attempts = await db.query<{ n: number }>(
+      "select count(*)::int as n from daily_attempts where player_id = $1",
+      [player.id],
+    );
     expect(attempts.rows[0]!.n).toBe(1);
   });
 

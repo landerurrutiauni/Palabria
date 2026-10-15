@@ -71,7 +71,9 @@ describe("selección diaria", () => {
     expect(Math.abs(sumA - sumB)).toBeLessThanOrEqual(4);
     const answersA = new Set(content.duel_a.rosco.map((i) => normalizeAnswer(i.answers[0]!)));
     expect(content.duel_b.rosco.some((i) => answersA.has(normalizeAnswer(i.answers[0]!)))).toBe(false);
-    const sameMode = content.duel_a.rosco.filter((i, idx) => i.prompt.mode === content.duel_b.rosco[idx]!.prompt.mode).length;
+    const sameMode = content.duel_a.rosco.filter(
+      (i, idx) => i.prompt.mode === content.duel_b.rosco[idx]!.prompt.mode,
+    ).length;
     expect(sameMode).toBeGreaterThanOrEqual(25);
   });
 });

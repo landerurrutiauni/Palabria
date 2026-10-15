@@ -9,9 +9,7 @@ let override: (() => number) | null = null;
 
 export async function serverNow(db: Queryable): Promise<number> {
   if (override) return override();
-  const res = await db.query<{ now: number }>(
-    "select (extract(epoch from clock_timestamp()) * 1000)::bigint as now",
-  );
+  const res = await db.query<{ now: number }>("select (extract(epoch from clock_timestamp()) * 1000)::bigint as now");
   return Number(res.rows[0]?.now ?? Date.now());
 }
 

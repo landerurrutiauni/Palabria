@@ -22,7 +22,12 @@ export function roscoPrompt(item: RoscoItem, index: number): PromptView {
   };
 }
 
-export function phasePrompt(kind: PhaseKind, item: ContentItem, index: number, progress: PhaseItemProgress): PromptView {
+export function phasePrompt(
+  kind: PhaseKind,
+  item: ContentItem,
+  index: number,
+  progress: PhaseItemProgress,
+): PromptView {
   const hint = phaseHint(kind, item.answers[0] ?? "");
   const p = item.prompt;
   switch (p.kind) {
@@ -64,7 +69,11 @@ export function revealedClosedLetters(set: QuestionSet, rosco: RoscoProgress): R
   return out;
 }
 
-export function phaseItemsView(kind: PhaseKind, set: QuestionSet, items: readonly PhaseItemProgress[]): PhaseItemView[] {
+export function phaseItemsView(
+  kind: PhaseKind,
+  set: QuestionSet,
+  items: readonly PhaseItemProgress[],
+): PhaseItemView[] {
   return items.map((it, index) => ({
     index,
     outcome: it.outcome,
@@ -74,7 +83,11 @@ export function phaseItemsView(kind: PhaseKind, set: QuestionSet, items: readonl
   }));
 }
 
-export function fullLetters(set: QuestionSet, rosco: RoscoProgress, given: readonly (string | null)[]): RevealedLetter[] {
+export function fullLetters(
+  set: QuestionSet,
+  rosco: RoscoProgress,
+  given: readonly (string | null)[],
+): RevealedLetter[] {
   return ALPHABET.map((letter, i) => {
     const item = set.rosco[i]!;
     return {

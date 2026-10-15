@@ -101,12 +101,22 @@ describe("salas 1 vs 1", () => {
 
     // Prueba D: fuera de turno.
     await expect(
-      roomAction(host, code, { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[1].rosco[0]!.answers[0]! } }, db),
+      roomAction(
+        host,
+        code,
+        { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[1].rosco[0]!.answers[0]! } },
+        db,
+      ),
     ).rejects.toMatchObject({ code: "not_your_turn" });
 
     // Prueba A: acierto → sigue el turno y el reloj.
     clock.advance(5_000);
-    let r = await roomAction(guest, code, { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[2].rosco[0]!.answers[0]! } }, db);
+    let r = await roomAction(
+      guest,
+      code,
+      { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[2].rosco[0]!.answers[0]! } },
+      db,
+    );
     expect(r.feedback?.outcome).toBe("correct");
     expect(r.view.turn.seat).toBe(2);
     expect(remaining(r.view, 2)).toBe(175_000);
@@ -125,7 +135,12 @@ describe("salas 1 vs 1", () => {
 
     // Prueba B: el anfitrión falla tras 20 s → su reloj se para en 160 s y vuelve el del invitado.
     clock.advance(20_000);
-    r = await roomAction(host, code, { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: "nada" } }, db);
+    r = await roomAction(
+      host,
+      code,
+      { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: "nada" } },
+      db,
+    );
     expect(r.feedback).toMatchObject({ outcome: "wrong", answer: s[1].rosco[0]!.answers[0] });
     expect(r.view.players[1]!.bankMs).toBe(160_000);
     expect(r.view.turn.seat).toBe(2);
@@ -140,8 +155,18 @@ describe("salas 1 vs 1", () => {
     // Prueba E: recarga del jugador activo → mismo turno, mismo reloj, sin duplicados.
     const actionId = randomUUID();
     clock.advance(1_000);
-    r = await roomAction(guest, code, { actionId, action: { type: "answer", stage: 0, item: 2, text: s[2].rosco[2]!.answers[0]! } }, db);
-    const dup = await roomAction(guest, code, { actionId, action: { type: "answer", stage: 0, item: 2, text: s[2].rosco[2]!.answers[0]! } }, db);
+    r = await roomAction(
+      guest,
+      code,
+      { actionId, action: { type: "answer", stage: 0, item: 2, text: s[2].rosco[2]!.answers[0]! } },
+      db,
+    );
+    const dup = await roomAction(
+      guest,
+      code,
+      { actionId, action: { type: "answer", stage: 0, item: 2, text: s[2].rosco[2]!.answers[0]! } },
+      db,
+    );
     expect(dup.duplicate).toBe(true);
     expect(dup.view.players[2]!.correct).toBe(2);
     const reload = (await getRoomView(guest, code, db)).view;
@@ -170,7 +195,12 @@ describe("salas 1 vs 1", () => {
       roomAction(guest, code, { actionId: randomUUID(), action: { type: "pass", stage: 0, item: 0 } }, db),
     ).rejects.toMatchObject({ status: 409, code: "not_your_turn" });
     // El anfitrión acierta dos y pasa: sigue jugando porque el rival ya no puede.
-    let r = await roomAction(host, code, { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[1].rosco[0]!.answers[0]! } }, db);
+    let r = await roomAction(
+      host,
+      code,
+      { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[1].rosco[0]!.answers[0]! } },
+      db,
+    );
     r = await roomAction(host, code, { actionId: randomUUID(), action: { type: "pass", stage: 0, item: 1 } }, db);
     expect(r.view.turn.seat).toBe(1);
     // Se agota también su tiempo → partida terminada y resultados guardados.
@@ -227,7 +257,11 @@ describe("salas 1 vs 1", () => {
   it("solicitudes simultáneas de inicio no crean intentos duplicados", async () => {
     const { host, guest, code } = await startedDuel();
     await joinRoom(guest, code, db);
-    await Promise.allSettled([setReady(host, code, true, db), setReady(host, code, true, db), setReady(guest, code, true, db)]);
+    await Promise.allSettled([
+      setReady(host, code, true, db),
+      setReady(host, code, true, db),
+      setReady(guest, code, true, db),
+    ]);
     const attempts = await db.query<{ n: number }>("select count(*)::int as n from daily_attempts where kind = 'duel'");
     expect(attempts.rows[0]!.n).toBe(2);
     expect((await getRoomView(host, code, db)).view.status).toBe("in_progress");
@@ -242,7 +276,12 @@ describe("salas 1 vs 1", () => {
     let gv = (await getRoomView(guest, code, db)).view;
     expect(gv.stage.kind).toBe("quick");
     expect(gv.prompt).toMatchObject({ kind: "quick", index: 0 });
-    const r = await roomAction(guest, code, { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[2].quick[0]!.answers[0]! } }, db);
+    const r = await roomAction(
+      guest,
+      code,
+      { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[2].quick[0]!.answers[0]! } },
+      db,
+    );
     expect(r.view.turn.seat).toBe(1); // en las pruebas el turno alterna tras cada pregunta
     expect(r.view.players[2]!.bonusSeconds).toBe(3);
     // Los demás turnos caducan por tiempo de jugada con ambos conectados.

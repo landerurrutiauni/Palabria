@@ -31,7 +31,9 @@ export default function RulesPage() {
           <li>· Cada letra tiene una definición: la respuesta empieza por esa letra o la contiene.</li>
           <li>· Las tildes y mayúsculas no importan; la Ñ sí (no es lo mismo «año» que «ano»).</li>
           <li>· «Pasapalabra» deja la letra para la siguiente vuelta. Un fallo la cierra.</li>
-          <li>· Tiempo individual: {Math.round(timing.soloRoscoMs / 1000)} s. El reloj no se detiene aunque recargues.</li>
+          <li>
+            · Tiempo individual: {Math.round(timing.soloRoscoMs / 1000)} s. El reloj no se detiene aunque recargues.
+          </li>
           <li>· Puntos: +10 por acierto, −5 por fallo y, si resuelves todas las letras, +1 por segundo sobrante.</li>
         </ul>
         <RoscoLegend className="mt-6" />
@@ -48,14 +50,15 @@ export default function RulesPage() {
               <p className="mt-1 text-sm text-ink-200">{PHASE_RULES[kind].howTo}</p>
               <p className="mt-2 text-xs text-ink-400">
                 Individual: {PHASE_RULES[kind].soloItems} preguntas en {PHASE_RULES[kind].soloTimeMs / 1000} s · Duelo:{" "}
-                {PHASE_RULES[kind].duelItemsPerPlayer} por jugador, {PHASE_RULES[kind].duelShotClockMs / 1000} s por turno
+                {PHASE_RULES[kind].duelItemsPerPlayer} por jugador, {PHASE_RULES[kind].duelShotClockMs / 1000} s por
+                turno
               </p>
             </li>
           ))}
         </ol>
         <p className="mt-4 text-ink-200">
-          5. <strong className="text-ink-50">El Rosco</strong>: empieza con {Math.round(timing.programRoscoBaseMs / 1000)} s más
-          los segundos que hayas ganado en las pruebas.
+          5. <strong className="text-ink-50">El Rosco</strong>: empieza con{" "}
+          {Math.round(timing.programRoscoBaseMs / 1000)} s más los segundos que hayas ganado en las pruebas.
         </p>
       </section>
 

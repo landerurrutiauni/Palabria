@@ -9,7 +9,17 @@ import { api, ApiError } from "@/lib/client/api";
 import { sound } from "@/lib/client/sound";
 import { cn } from "@/lib/client/cn";
 
-function Toggle({ label, description, checked, onChange }: { label: string; description: string; checked: boolean; onChange: (v: boolean) => void }) {
+function Toggle({
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  label: string;
+  description: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
   return (
     <label className="flex cursor-pointer items-center justify-between gap-4 py-4">
       <span>
@@ -17,7 +27,13 @@ function Toggle({ label, description, checked, onChange }: { label: string; desc
         <span className="block text-sm text-ink-300">{description}</span>
       </span>
       <span className="relative inline-flex shrink-0">
-        <input type="checkbox" role="switch" className="peer sr-only" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+        <input
+          type="checkbox"
+          role="switch"
+          className="peer sr-only"
+          checked={checked}
+          onChange={(e) => onChange(e.target.checked)}
+        />
         <span className="h-8 w-14 rounded-full bg-white/15 transition peer-checked:bg-turquoise-400 peer-focus-visible:outline peer-focus-visible:outline-3 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-400" />
         <span className="absolute left-1 top-1 size-6 rounded-full bg-white shadow transition peer-checked:translate-x-6" />
       </span>
@@ -81,8 +97,16 @@ export function SettingsForm({ displayName }: { displayName: string }) {
         <p id="name-help" className="mt-2 text-xs text-ink-400">
           Entre 2 y 20 caracteres: letras, números, espacios, puntos y guiones.
         </p>
-        {nameError ? <Notice tone="error" title="Nombre no válido" className="mt-3">{nameError}</Notice> : null}
-        {saved ? <p className="mt-3 text-sm font-semibold text-ok-400" role="status">Nombre guardado.</p> : null}
+        {nameError ? (
+          <Notice tone="error" title="Nombre no válido" className="mt-3">
+            {nameError}
+          </Notice>
+        ) : null}
+        {saved ? (
+          <p className="mt-3 text-sm font-semibold text-ok-400" role="status">
+            Nombre guardado.
+          </p>
+        ) : null}
       </section>
 
       <section className="panel p-6" aria-labelledby="sonido">
@@ -97,7 +121,11 @@ export function SettingsForm({ displayName }: { displayName: string }) {
             onChange={(v) => update({ soundEnabled: v })}
           />
           <div className="flex items-center gap-4 py-4">
-            {prefs.soundVolume === 0 ? <VolumeX className="size-5 text-ink-300" aria-hidden="true" /> : <Volume2 className="size-5 text-ink-300" aria-hidden="true" />}
+            {prefs.soundVolume === 0 ? (
+              <VolumeX className="size-5 text-ink-300" aria-hidden="true" />
+            ) : (
+              <Volume2 className="size-5 text-ink-300" aria-hidden="true" />
+            )}
             <label htmlFor="volume" className="sr-only">
               Volumen
             </label>
@@ -144,7 +172,10 @@ export function SettingsForm({ displayName }: { displayName: string }) {
             ).map(([value, label, text]) => (
               <label
                 key={value}
-                className={cn("panel-soft flex cursor-pointer gap-3 p-3", prefs.motion === value && "border-turquoise-400/60")}
+                className={cn(
+                  "panel-soft flex cursor-pointer gap-3 p-3",
+                  prefs.motion === value && "border-turquoise-400/60",
+                )}
               >
                 <input
                   type="radio"

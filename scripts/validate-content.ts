@@ -26,7 +26,9 @@ failures += bankIssues.length;
 
 const perLetter = ALPHABET.map((l) => `${l}:${bank.rosco.filter((i) => i.prompt.letter === l).length}`).join(" ");
 console.log(`Banco: ${bank.rosco.length} definiciones de rosco (${perLetter})`);
-console.log(`Pruebas: ${bank.quick.length} rápidas · ${bank.clues.length} pistas · ${bank.saying.length} dichos · ${bank.link.length} eslabones`);
+console.log(
+  `Pruebas: ${bank.quick.length} rápidas · ${bank.clues.length} pistas · ${bank.saying.length} dichos · ${bank.link.length} eslabones`,
+);
 
 const reserve = reserveContent(bank, salt);
 const reserveIssues = validateChallenge(reserve.content);

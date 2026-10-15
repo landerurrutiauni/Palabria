@@ -23,7 +23,10 @@ export default async function StatsPage() {
     { label: "Roscos perfectos", value: stats.solo.perfectRoscos },
     { label: "Mejor puntuación · Rosco", value: stats.solo.bestScoreRosco ?? "—" },
     { label: "Mejor puntuación · Programa", value: stats.solo.bestScoreProgram ?? "—" },
-    { label: "Mejor tiempo (rosco resuelto)", value: stats.solo.bestTimeMs ? formatDuration(stats.solo.bestTimeMs) : "—" },
+    {
+      label: "Mejor tiempo (rosco resuelto)",
+      value: stats.solo.bestTimeMs ? formatDuration(stats.solo.bestTimeMs) : "—",
+    },
   ];
   const duel = [
     { label: "Duelos jugados", value: stats.duel.played },
@@ -38,14 +41,29 @@ export default async function StatsPage() {
       <p className="eyebrow">Sin cuentas · guardado en este navegador</p>
       <h1 className="mt-2 font-display text-3xl font-bold text-ink-50 sm:text-4xl">Tus estadísticas</h1>
       <p className="mt-2 max-w-2xl text-ink-300">
-        Calculadas en el servidor a partir de tus resultados verificados. Están ligadas a tu identidad anónima: si borras las
-        cookies o cambias de navegador empezarás de cero.
+        Calculadas en el servidor a partir de tus resultados verificados. Están ligadas a tu identidad anónima: si
+        borras las cookies o cambias de navegador empezarás de cero.
       </p>
 
       <section className="mt-8 grid gap-4 sm:grid-cols-3">
-        <Highlight icon={<Flame className="size-6 text-gold-400" />} label="Racha actual" value={`${stats.streak.current}`} note="días seguidos completando el desafío individual" />
-        <Highlight icon={<Medal className="size-6 text-turquoise-300" />} label="Mejor racha" value={`${stats.streak.best}`} note="días" />
-        <Highlight icon={<Trophy className="size-6 text-ok-400" />} label="Duelos ganados" value={`${stats.duel.wins}`} note={`de ${stats.duel.played} jugados`} />
+        <Highlight
+          icon={<Flame className="size-6 text-gold-400" />}
+          label="Racha actual"
+          value={`${stats.streak.current}`}
+          note="días seguidos completando el desafío individual"
+        />
+        <Highlight
+          icon={<Medal className="size-6 text-turquoise-300" />}
+          label="Mejor racha"
+          value={`${stats.streak.best}`}
+          note="días"
+        />
+        <Highlight
+          icon={<Trophy className="size-6 text-ok-400" />}
+          label="Duelos ganados"
+          value={`${stats.duel.wins}`}
+          note={`de ${stats.duel.played} jugados`}
+        />
       </section>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
@@ -66,13 +84,24 @@ export default async function StatsPage() {
       </section>
       <p className="mt-6 flex items-center gap-2 text-xs text-ink-400">
         <Timer className="size-3.5" aria-hidden="true" />
-        La racha suma un día cada vez que completas tu desafío individual (Rosco o programa) y se rompe si un día no lo haces.
+        La racha suma un día cada vez que completas tu desafío individual (Rosco o programa) y se rompe si un día no lo
+        haces.
       </p>
     </div>
   );
 }
 
-function Highlight({ icon, label, value, note }: { icon: React.ReactNode; label: string; value: string; note: string }) {
+function Highlight({
+  icon,
+  label,
+  value,
+  note,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  note: string;
+}) {
   return (
     <div className="panel p-5">
       <div className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-ink-300">
@@ -85,7 +114,15 @@ function Highlight({ icon, label, value, note }: { icon: React.ReactNode; label:
   );
 }
 
-function StatGroup({ title, icon, items }: { title: string; icon: React.ReactNode; items: { label: string; value: string | number }[] }) {
+function StatGroup({
+  title,
+  icon,
+  items,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  items: { label: string; value: string | number }[];
+}) {
   return (
     <section className="panel p-5 sm:p-6">
       <h2 className="flex items-center gap-2 font-display text-lg font-bold text-ink-50">

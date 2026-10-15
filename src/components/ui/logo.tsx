@@ -20,7 +20,14 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
         <circle key={d.i} cx={d.x} cy={d.y} r={d.i === 0 ? 2.6 : 1.9} fill={color(d.i)} />
       ))}
       <circle cx="24" cy="24" r="12.5" fill="url(#lm-core)" stroke="rgba(255,255,255,0.35)" strokeWidth="0.8" />
-      <path d="M20 31.5V17h5.2a4.6 4.6 0 0 1 0 9.2H20" fill="none" stroke="#f5f7ff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+      <path
+        d="M20 31.5V17h5.2a4.6 4.6 0 0 1 0 9.2H20"
+        fill="none"
+        stroke="#f5f7ff"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
     </svg>
   );
 }
@@ -30,7 +37,10 @@ export function Logo({ className, compact = false }: { className?: string; compa
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)} aria-label="Palabría">
       <LogoMark size={compact ? 32 : 40} className="size-8 sm:size-10" />
-      <span aria-hidden="true" className="font-display text-[0.95rem] font-extrabold tracking-[0.1em] text-ink-50 sm:text-xl sm:tracking-[0.12em]">
+      <span
+        aria-hidden="true"
+        className="font-display text-[0.95rem] font-extrabold tracking-[0.1em] text-ink-50 sm:text-xl sm:tracking-[0.12em]"
+      >
         PALABR
         <span className="relative inline-block">
           I

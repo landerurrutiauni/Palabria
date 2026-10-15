@@ -2,6 +2,7 @@
  * Alfabeto español completo de 27 letras (incluye Ñ, K y W).
  * El orden define el recorrido del rosco.
  */
+// prettier-ignore
 export const ALPHABET = [
   "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N",
   "Ñ", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",

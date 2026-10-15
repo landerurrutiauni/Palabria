@@ -260,7 +260,15 @@ export interface StatsView {
     roscosCompleted: number;
     perfectRoscos: number;
   };
-  duel: { played: number; wins: number; losses: number; draws: number; correct: number; wrong: number; accuracy: number };
+  duel: {
+    played: number;
+    wins: number;
+    losses: number;
+    draws: number;
+    correct: number;
+    wrong: number;
+    accuracy: number;
+  };
   streak: { current: number; best: number; lastDate: string | null };
   history: HistoryEntry[];
 }

@@ -34,7 +34,9 @@ interface StatsRow {
 }
 
 async function lockStats(tx: Queryable, playerId: string): Promise<StatsRow> {
-  await tx.query("insert into player_statistics (player_id) values ($1) on conflict (player_id) do nothing", [playerId]);
+  await tx.query("insert into player_statistics (player_id) values ($1) on conflict (player_id) do nothing", [
+    playerId,
+  ]);
   const res = await tx.query<StatsRow>("select * from player_statistics where player_id = $1 for update", [playerId]);
   return res.rows[0]!;
 }

@@ -4,7 +4,15 @@ import { Check, Share2 } from "lucide-react";
 import { useState } from "react";
 
 /** Comparte el resultado con la hoja nativa del dispositivo o lo copia al portapapeles. */
-export function ShareButton({ text, title = "Mi resultado en Palabría", className = "btn btn-gold" }: { text: string; title?: string; className?: string }) {
+export function ShareButton({
+  text,
+  title = "Mi resultado en Palabría",
+  className = "btn btn-gold",
+}: {
+  text: string;
+  title?: string;
+  className?: string;
+}) {
   const [copied, setCopied] = useState(false);
   const share = async () => {
     const url = typeof window !== "undefined" ? window.location.origin : "";

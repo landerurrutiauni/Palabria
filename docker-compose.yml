@@ -1,0 +1,28 @@
+# Entorno completo con PostgreSQL local:  docker compose up --build
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: palabria
+      POSTGRES_PASSWORD: palabria
+      POSTGRES_DB: palabria
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U palabria"]
+      interval: 5s
+      retries: 10
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://palabria:palabria@db:5432/palabria
+      APP_SECRET: ${APP_SECRET:-cambia-este-secreto-por-uno-de-32-caracteres-o-mas}
+      CHALLENGE_SALT: ${CHALLENGE_SALT:-palabria-docker}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    ports:
+      - "3000:3000"
+volumes:
+  pgdata:
