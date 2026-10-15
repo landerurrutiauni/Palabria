@@ -1,25 +1,25 @@
 import { cn } from "@/lib/client/cn";
 
-/** Emblema: un plato de cerámica con las 27 letras como puntos de cobalto y la P de Palabria. */
+/** Emblema: una bola azul del rosco con la P de Palabria. */
 export function LogoMark({ size = 40, className }: { size?: number; className?: string }) {
-  const dots = Array.from({ length: 27 }, (_, i) => {
-    const angle = ((-90 + (i * 360) / 27) * Math.PI) / 180;
-    return { x: 24 + 19 * Math.cos(angle), y: 24 + 19 * Math.sin(angle), i };
-  });
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" aria-hidden="true" className={className}>
-      <circle cx="24" cy="24" r="23" fill="#ffffff" stroke="#1d3fa6" strokeWidth="2" />
-      {dots.map((d) => (
-        <circle key={d.i} cx={d.x} cy={d.y} r={d.i === 0 ? 2.4 : 1.55} fill={d.i === 0 ? "#e9b331" : "#1d3fa6"} />
-      ))}
+      <defs>
+        <radialGradient id="logo-ball" cx="34%" cy="28%" r="75%">
+          <stop offset="0%" stopColor="#8af59a" />
+          <stop offset="40%" stopColor="#2fc24c" />
+          <stop offset="100%" stopColor="#148028" />
+        </radialGradient>
+      </defs>
+      <circle cx="24" cy="24" r="21.5" fill="url(#logo-ball)" stroke="#ffffff" strokeWidth="3" />
       <text
         x="24"
-        y="31.5"
+        y="32"
         textAnchor="middle"
-        fontFamily="'Ibarra Real Nova', Georgia, serif"
-        fontWeight="700"
-        fontSize="22"
-        fill="#1d3fa6"
+        fontFamily="'Nunito Variable', system-ui, sans-serif"
+        fontWeight="900"
+        fontSize="24"
+        fill="#ffffff"
       >
         P
       </text>
@@ -27,14 +27,14 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
   );
 }
 
-/** Logotipo: «Palabria» en la tipografía de Ibarra. */
+/** Logotipo: «Palabria». */
 export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)} aria-label="Palabria">
       <LogoMark size={compact ? 32 : 40} className="size-9 sm:size-10" />
       <span
         aria-hidden="true"
-        className="font-display text-[1.6rem] font-bold leading-none text-ink-900 sm:text-[1.85rem]"
+        className="text-[1.55rem] font-black leading-none tracking-tight text-white [text-shadow:0_2px_0_rgb(0_0_0/0.25)] sm:text-[1.75rem]"
       >
         Palabria
       </span>

@@ -50,12 +50,12 @@ export function HomeView({ data }: { data: HomeData }) {
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
       {/* ── Cabecera del desafío: placa de calle + rosco del día ── */}
       <section className="grid items-center gap-10 pt-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:pt-14">
-        <div className="plaque px-6 py-7 sm:px-10 sm:py-10">
+        <div className="py-2">
           <p className="eyebrow flex items-center gap-2">
             <CalendarDays className="size-4" aria-hidden="true" />
             Desafío {challenge.publicId}
           </p>
-          <h1 className="mt-3 font-display text-[2.6rem] font-bold leading-[0.98] tracking-[-0.015em] text-cobalt-700 sm:text-6xl">
+          <h1 className="mt-3 text-[2.7rem] font-black leading-[0.98] tracking-[-0.02em] text-white [text-shadow:0_3px_0_rgb(0_20_80/0.35)] sm:text-6xl">
             Veintisiete letras, un solo intento.
           </h1>
           <p className="mt-5 max-w-[34rem] text-lg leading-relaxed text-ink-700">
@@ -112,8 +112,10 @@ export function HomeView({ data }: { data: HomeData }) {
         <div className="relative mx-auto w-full max-w-[28rem]">
           <Rosco letters={letters} label="Letras del rosco de hoy" paused>
             <div className="flex flex-col items-center">
-              <span className="font-display text-[17cqw] font-bold leading-none text-cobalt-700">27</span>
-              <span className="mt-1 font-display text-[4.4cqw] italic text-ink-700">letras, de la A a la Z</span>
+              <span className="text-[17cqw] font-black leading-none text-white [text-shadow:0_0.8cqw_0_rgb(0_0_0/0.3)]">
+                27
+              </span>
+              <span className="mt-1 text-[4.4cqw] font-extrabold text-ink-700">letras, de la A a la Z</span>
             </div>
           </Rosco>
         </div>

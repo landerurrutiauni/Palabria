@@ -42,7 +42,7 @@ export function RoscoStage({
             >
               {formatClock(remainingMs)}
             </span>
-            <span className="mt-1 font-display text-[4.6cqw] italic text-cobalt-600" aria-hidden="true">
+            <span className="mt-1 text-[4.6cqw] font-extrabold text-ink-700" aria-hidden="true">
               {view.totals.correct} aciertos
             </span>
           </div>

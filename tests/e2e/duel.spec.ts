@@ -104,8 +104,10 @@ test("duelo 1 vs 1 entre dos navegadores: invitación, turnos, relojes, reconexi
   await answer(host, hostAnswers[1]!);
   await expect(host.getByRole("heading", { name: /Victoria|Derrota|Empate/ })).toBeVisible({ timeout: 40_000 });
   await expect(guest.getByRole("heading", { name: /Victoria|Derrota|Empate/ })).toBeVisible({ timeout: 10_000 });
-  const stats = (await (await guest.request.get("/api/stats")).json()) as { duel: { played: number } };
-  expect(stats.duel.played).toBe(1);
+  const guestMe = (await (await guest.request.get("/api/me")).json()) as {
+    attempts: { duel: { used: boolean; status: string | null } };
+  };
+  expect(guestMe.attempts.duel.used).toBe(true);
 
   // Tras jugar, no se puede crear otra sala el mismo día.
   const again = await host.request.post("/api/rooms", { data: { mode: "rosco" } });

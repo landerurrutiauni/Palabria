@@ -64,7 +64,7 @@ function PlayerPanel({
           <PresenceDot connected={player.connected} />
         </div>
         {active ? (
-          <span className="rounded-full bg-cobalt-600 px-3 py-1 text-xs font-bold text-white">Turno</span>
+          <span className="rounded-full bg-cobalt-600 px-3 py-1 text-xs font-black text-night">Turno</span>
         ) : (
           <span className="flex items-center gap-1 rounded-full bg-ink-900/[0.04] px-3 py-1 text-xs font-bold text-ink-600">
             <Pause className="size-3" aria-hidden="true" /> En pausa
@@ -287,7 +287,7 @@ export function DuelBoard({
                   <span className="score-digits text-[17cqw] leading-none text-ink-900">
                     {formatClock(isRosco ? remainingOf(activeSeat) : (shotRemaining ?? 0))}
                   </span>
-                  <span className="mt-1 font-display text-[4.6cqw] italic text-cobalt-600">
+                  <span className="mt-1 text-[4.6cqw] font-extrabold text-ink-700">
                     {activeSeat === you ? "Tu turno" : "Su turno"}
                   </span>
                 </div>
@@ -301,7 +301,7 @@ export function DuelBoard({
               inCountdown
                 ? "bg-saffron-400/20 text-saffron-700"
                 : myTurn
-                  ? "bg-cobalt-600 text-white shadow-glow-turn"
+                  ? "bg-cobalt-600 text-night shadow-glow-turn"
                   : "bg-ink-900/[0.04] text-ink-600",
             )}
             role="status"

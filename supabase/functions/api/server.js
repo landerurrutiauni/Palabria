@@ -23235,7 +23235,7 @@ function emojiGrid(rosco) {
 }
 function soloShareText(args) {
   const lines = [
-    `Palabr\xEDa \xB7 ${formatShortDate(args.date)} \xB7 ${modeLabel(args.mode)}`,
+    `Palabria \xB7 ${formatShortDate(args.date)} \xB7 ${modeLabel(args.mode)}`,
     `\u2705 ${args.correct}  \u274C ${args.wrong}  \u23F3 ${args.unanswered}  \u23F1 ${formatClock(args.timeMs)}`,
     emojiGrid(args.rosco),
     `Puntuaci\xF3n: ${args.score}`
@@ -23482,7 +23482,7 @@ function buildDuelView(ctx) {
       } : null,
       rival: rival && rivalSeat ? { letters: fullLetters(sets[rivalSeat], rival.rosco, rival.roscoGiven) } : null,
       shareText: you && rivalSeat && room.status !== "expired" ? [
-        `Palabr\xEDa \xB7 1 vs 1 \xB7 ${formatShortDate(room.challenge_date)} \xB7 ${modeLabel(room.mode)}`,
+        `Palabria \xB7 1 vs 1 \xB7 ${formatShortDate(room.challenge_date)} \xB7 ${modeLabel(room.mode)}`,
         `${outcome === "win" ? "\u{1F3C6} \xA1Victoria!" : outcome === "loss" ? "Derrota por la m\xEDnima\u2026 o no" : "\u{1F91D} Empate"}`,
         `Yo: \u2705 ${duelLine(state, you).correct} \u274C ${duelLine(state, you).wrong}`,
         `Rival: \u2705 ${duelLine(state, rivalSeat).correct} \u274C ${duelLine(state, rivalSeat).wrong}`
@@ -23509,7 +23509,7 @@ function buildDuelView(ctx) {
       index: room.stage_index,
       kind,
       title: stageTitle(kind),
-      howTo: kind === "rosco" ? "Acierto: sigues jugando. Fallo o \xABPasapalabra\xBB: tu reloj se detiene y empieza a correr el de tu rival." : PHASE_RULES[kind].howTo,
+      howTo: kind === "rosco" ? "Acierto: sigues jugando. Fallo o \xABPalabria\xBB: tu reloj se detiene y empieza a correr el de tu rival." : PHASE_RULES[kind].howTo,
       itemsPerPlayer: kind === "rosco" ? 27 : room.rules.itemsPerPlayer[kind]
     },
     turn: {
@@ -24063,7 +24063,7 @@ function buildSoloView(row, state, set2, now, streak) {
       kind: stage.kind,
       title: stageTitle(stage.kind),
       tagline: stageTagline(stage.kind),
-      howTo: stage.kind === "rosco" ? "Responde a la definici\xF3n de cada letra. Si no la sabes, di \xABPasapalabra\xBB y volver\xE1s a ella en la siguiente vuelta." : PHASE_RULES[stage.kind].howTo,
+      howTo: stage.kind === "rosco" ? "Responde a la definici\xF3n de cada letra. Si no la sabes, di \xABPalabria\xBB y volver\xE1s a ella en la siguiente vuelta." : PHASE_RULES[stage.kind].howTo,
       status: stage.status,
       startedAt: stage.startedAt,
       timeLimitMs: stage.kind === "rosco" && upcomingRoscoMs !== null ? upcomingRoscoMs : stage.timeLimitMs,
@@ -24296,7 +24296,6 @@ async function sweepSoloSessions(dbArg) {
 }
 
 // src/lib/server/stats-service.ts
-var LEADERBOARD_MIN_ENTRIES = 3;
 var DEFAULT_PREFS = {
   soundEnabled: true,
   soundVolume: 70,
@@ -24375,97 +24374,6 @@ async function getMe(db, player) {
     preferences: await getPreferences(db, player.id)
   };
 }
-async function getStats(db, player) {
-  const now = await serverNow(db);
-  const today = todayKey(now);
-  const r = await statsRow(db, player.id);
-  const history = await db.query(
-    `select g.id, g.challenge_date, g.kind, g.mode, g.status, g.correct, g.wrong, g.unanswered, g.score, g.time_used_ms,
-            g.outcome, g.opponent_name, g.perfect, r.code as room_code
-       from game_results g left join multiplayer_rooms r on r.id = g.room_id
-      where g.player_id = $1
-      order by g.challenge_date desc, g.created_at desc
-      limit 120`,
-    [player.id]
-  );
-  return {
-    solo: {
-      played: r?.solo_played ?? 0,
-      completed: r?.solo_completed ?? 0,
-      correct: r?.solo_correct ?? 0,
-      wrong: r?.solo_wrong ?? 0,
-      accuracy: accuracy(r?.solo_correct ?? 0, r?.solo_wrong ?? 0),
-      bestScoreRosco: r?.best_score_rosco ?? null,
-      bestScoreProgram: r?.best_score_program ?? null,
-      bestTimeMs: r?.best_time_ms ?? null,
-      roscosCompleted: r?.roscos_completed ?? 0,
-      perfectRoscos: r?.perfect_roscos ?? 0
-    },
-    duel: {
-      played: r?.duel_played ?? 0,
-      wins: r?.duel_wins ?? 0,
-      losses: r?.duel_losses ?? 0,
-      draws: r?.duel_draws ?? 0,
-      correct: r?.duel_correct ?? 0,
-      wrong: r?.duel_wrong ?? 0,
-      accuracy: accuracy(r?.duel_correct ?? 0, r?.duel_wrong ?? 0)
-    },
-    streak: {
-      current: r ? effectiveStreak(r.current_streak, r.last_streak_date, today) : 0,
-      best: r?.best_streak ?? 0,
-      lastDate: r?.last_streak_date ?? null
-    },
-    history: history.rows.map((h) => ({
-      id: h.id,
-      date: h.challenge_date,
-      kind: h.kind,
-      mode: h.mode,
-      status: h.status,
-      correct: h.correct,
-      wrong: h.wrong,
-      unanswered: h.unanswered,
-      score: h.score,
-      timeUsedMs: h.time_used_ms,
-      outcome: h.outcome,
-      opponentName: h.opponent_name,
-      perfect: h.perfect,
-      roomCode: h.room_code
-    }))
-  };
-}
-async function getLeaderboard(db, args) {
-  const limit = Math.min(Math.max(args.limit ?? 20, 1), 100);
-  const res = await db.query(
-    `select player_id, display_name, score, correct, wrong, time_used_ms, perfect,
-            rank() over (order by score desc, correct desc, wrong asc, time_used_ms asc)::int as rank,
-            count(*) over ()::int as total
-       from game_results
-      where challenge_date = $1 and kind = 'solo' and mode = $2 and status = 'completed'
-      order by rank, finished_at_ms
-      limit 500`,
-    [args.date, args.mode]
-  );
-  const toEntry = (r) => ({
-    rank: r.rank,
-    name: r.display_name,
-    score: r.score,
-    correct: r.correct,
-    wrong: r.wrong,
-    timeUsedMs: r.time_used_ms,
-    perfect: r.perfect,
-    isYou: r.player_id === args.playerId
-  });
-  const total = res.rows[0]?.total ?? 0;
-  const mine = res.rows.find((r) => r.player_id === args.playerId);
-  return {
-    date: args.date,
-    mode: args.mode,
-    total,
-    minEntries: LEADERBOARD_MIN_ENTRIES,
-    entries: total >= LEADERBOARD_MIN_ENTRIES ? res.rows.slice(0, limit).map(toEntry) : [],
-    you: mine ? toEntry(mine) : null
-  };
-}
 
 // src/lib/server/api-handler.ts
 var preferencesSchema = external_exports.object({
@@ -24496,6 +24404,10 @@ function createApiHandler(options) {
   });
   route("GET", /^\/challenge$/, async ({ db, respond }) => {
     const now = await serverNow(db);
+    if (options.background && Date.now() - lastSweep > 6e4) {
+      lastSweep = Date.now();
+      options.background(Promise.all([sweepSoloSessions(db), sweepRooms(db)]).catch(() => void 0));
+    }
     const date5 = todayKey(now);
     const challenge = await getChallengeForDate(db, date5);
     return respond({
@@ -24548,17 +24460,6 @@ function createApiHandler(options) {
     if (!session) throw new AppError(404, "not_found", "Partida no encontrada.");
     return respond({ session });
   });
-  route("GET", /^\/results\/([0-9a-f-]{36})$/, async ({ db, params, player, respond }) => {
-    const me = await player();
-    const res = await db.query(
-      "select session_id from game_results where id = $1 and player_id = $2",
-      [params[0], me.id]
-    );
-    const sessionId = res.rows[0]?.session_id;
-    const session = sessionId ? await getSoloSession(me, sessionId, db) : null;
-    if (!session?.result) throw new AppError(404, "not_found", "Resultado no encontrado.");
-    return respond({ session });
-  });
   route("POST", /^\/rooms$/, async ({ db, request, player, respond }) => {
     const me = await player();
     rateLimit(`room-create:${me.id}`, 10, 6e4);
@@ -24593,20 +24494,6 @@ function createApiHandler(options) {
     rateLimit(`room-action:${me.id}`, actionRateLimit(), 1e4);
     const body = await readJson(request, external_exports.object({ actionId: actionIdSchema, action: actionSchema }));
     return respond(await roomAction(me, params[0], body, db));
-  });
-  route("GET", /^\/stats$/, async ({ db, player, respond }) => respond(await getStats(db, await player())));
-  route("GET", /^\/leaderboard$/, async ({ db, url: url2, optionalPlayer, respond }) => {
-    const now = await serverNow(db);
-    const date5 = url2.searchParams.get("date") ?? todayKey(now);
-    const mode = url2.searchParams.get("mode") === "program" ? "program" : "rosco";
-    const limit = Math.min(50, Math.max(1, Math.trunc(Number(url2.searchParams.get("limit"))) || 50));
-    if (!isDateKey(date5) || date5 > todayKey(now)) throw Errors.badRequest("Fecha no v\xE1lida.");
-    if (options.background && Date.now() - lastSweep > 6e4) {
-      lastSweep = Date.now();
-      options.background(Promise.all([sweepSoloSessions(db), sweepRooms(db)]).catch(() => void 0));
-    }
-    const me = await optionalPlayer();
-    return respond(await getLeaderboard(db, { date: date5, mode, playerId: me?.id ?? null, limit }));
   });
   const corsHeaders = (origin) => {
     const allowed = options.allowedOrigins === "*" ? origin ?? "*" : origin && options.allowedOrigins.includes(origin) ? origin : null;

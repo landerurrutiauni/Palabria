@@ -10,7 +10,7 @@ export function QuestionCard({ prompt, className }: { prompt: PromptView; classN
       {prompt.kind === "rosco" && (
         <div className="flex items-start gap-4">
           <div
-            className="grid size-16 shrink-0 place-items-center rounded-full border-2 border-glaze-0 bg-[radial-gradient(circle_at_35%_30%,var(--color-cobalt-500),var(--color-cobalt-700)_70%)] font-display text-3xl font-bold text-white shadow-glow-turn sm:size-20 sm:text-4xl"
+            className="ball ball-blue size-16 shrink-0 text-3xl ring-4 ring-cobalt-600/70 sm:size-20 sm:text-4xl"
             aria-hidden="true"
           >
             {prompt.letter}

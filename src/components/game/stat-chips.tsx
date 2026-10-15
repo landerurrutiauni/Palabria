@@ -36,7 +36,7 @@ export function StatChips({
       {items.map(({ label, value, icon: Icon, tone }) => (
         <li
           key={label}
-          className={cn("flex items-center gap-2 rounded-lg border px-3", compact ? "h-9" : "h-11", tone)}
+          className={cn("flex items-center gap-2 rounded-full border-2 px-3.5", compact ? "h-9" : "h-11", tone)}
           aria-label={`${label}: ${value}`}
         >
           <Icon className="size-4" strokeWidth={3} aria-hidden="true" />

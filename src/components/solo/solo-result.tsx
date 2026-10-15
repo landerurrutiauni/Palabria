@@ -84,7 +84,7 @@ export function SoloResult({ result, showActions = true }: { result: SoloResultV
             <Rosco letters={letters} label="Rosco final">
               <div className="flex flex-col items-center">
                 <span className="score-digits text-[18cqw] leading-none text-ok-700">{result.correct}</span>
-                <span className="font-display text-[4.6cqw] italic text-ink-600">aciertos</span>
+                <span className="text-[4.6cqw] font-extrabold text-ink-600">aciertos</span>
               </div>
             </Rosco>
           </div>
