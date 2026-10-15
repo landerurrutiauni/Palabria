@@ -6,3 +6,4 @@ playwright-report
 .data
 supabase/migrations
 supabase/functions/api/server.js
+.claude/skills
