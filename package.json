@@ -1,0 +1,50 @@
+{
+  "name": "palabria",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Palabría — concurso diario de palabras con rosco individual, programa completo y duelos 1 vs 1 por turnos.",
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "content:validate": "tsx scripts/validate-content.ts",
+    "challenges:publish": "tsx scripts/publish-challenges.ts",
+    "challenges:show": "tsx scripts/show-challenge.ts",
+    "check": "npm run lint && npm run typecheck && npm run test && npm run content:validate"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.5.10",
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/unbounded": "5.3.0",
+    "@fontsource/barlow-condensed": "5.3.0",
+    "lucide-react": "1.57.0",
+    "next": "16.4.1",
+    "pg": "8.23.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/node": "^22",
+    "@types/pg": "8.23.1",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.1",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
+    "typescript": "^5",
+    "vitest": "5.0.4"
+  }
+}
