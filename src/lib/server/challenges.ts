@@ -73,9 +73,9 @@ interface Candidate {
 }
 
 function loadOverride(dateKey: string): ChallengeContent | null {
-  const file = path.join(process.cwd(), serverEnv().overridesDir, `${dateKey}.json`);
-  if (!fs.existsSync(file)) return null;
-  return JSON.parse(fs.readFileSync(file, "utf8")) as ChallengeContent;
+  const file = path.join(/*turbopackIgnore: true*/ process.cwd(), serverEnv().overridesDir, `${dateKey}.json`);
+  if (!fs.existsSync(/*turbopackIgnore: true*/ file)) return null;
+  return JSON.parse(fs.readFileSync(/*turbopackIgnore: true*/ file, "utf8")) as ChallengeContent;
 }
 
 function difficultyOf(content: ChallengeContent): Pick<SelectionResult, "difficulty" | "difficultyScore"> {

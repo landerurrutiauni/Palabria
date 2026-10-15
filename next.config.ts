@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   // Drivers de base de datos: se cargan desde node_modules en el servidor.
   serverExternalPackages: ["@electric-sql/pglite", "pg"],
+  // Ficheros que el servidor lee en tiempo de ejecución (migraciones y ediciones manuales).
+  outputFileTracingIncludes: {
+    "/**": ["./supabase/migrations/**/*", "./content/overrides/**/*"],
+  },
   turbopack: {
     rules: {
       "*.css": {

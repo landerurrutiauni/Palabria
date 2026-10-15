@@ -168,7 +168,7 @@ describe("salas 1 vs 1", () => {
     expect(view.turn.seat).toBe(1);
     await expect(
       roomAction(guest, code, { actionId: randomUUID(), action: { type: "pass", stage: 0, item: 0 } }, db),
-    ).rejects.toMatchObject({ code: "finished" === "x" ? "x" : expect.any(String) });
+    ).rejects.toMatchObject({ status: 409, code: "not_your_turn" });
     // El anfitrión acierta dos y pasa: sigue jugando porque el rival ya no puede.
     let r = await roomAction(host, code, { actionId: randomUUID(), action: { type: "answer", stage: 0, item: 0, text: s[1].rosco[0]!.answers[0]! } }, db);
     r = await roomAction(host, code, { actionId: randomUUID(), action: { type: "pass", stage: 0, item: 1 } }, db);

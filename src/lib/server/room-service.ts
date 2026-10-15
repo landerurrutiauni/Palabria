@@ -880,13 +880,30 @@ export async function getRoomView(player: Player, code: string, dbArg?: Database
 export async function roomPulse(
   db: Queryable,
   roomId: string,
-): Promise<{ version: number; status: RoomStatus; turnSeat: Seat | null; turnStartedAt: number | null } | null> {
-  const res = await db.query<{ version: number; status: RoomStatus; turn_seat: Seat | null; turn_started_at_ms: number | null }>(
-    "select version, status, turn_seat, turn_started_at_ms from multiplayer_rooms where id = $1",
+): Promise<{ version: number; status: RoomStatus; expiresAt: number | null } | null> {
+  const res = await db.query<{
+    version: number;
+    status: RoomStatus;
+    turn_started_at_ms: number | null;
+    stage_kind: StageKind | null;
+    active_bank_ms: number | null;
+    shot_clock_ms: number | null;
+  }>(
+    `select r.version, r.status, r.turn_started_at_ms,
+            r.stages[r.stage_index + 1] as stage_kind,
+            (select p.time_bank_ms from multiplayer_participants p where p.room_id = r.id and p.seat = r.turn_seat) as active_bank_ms,
+            (r.rules -> 'shotClockMs' ->> r.stages[r.stage_index + 1])::int as shot_clock_ms
+       from multiplayer_rooms r where r.id = $1`,
     [roomId],
   );
   const r = res.rows[0];
-  return r ? { version: r.version, status: r.status, turnSeat: r.turn_seat, turnStartedAt: r.turn_started_at_ms } : null;
+  if (!r) return null;
+  let expiresAt: number | null = null;
+  if (r.status === "in_progress" && r.turn_started_at_ms !== null) {
+    const limit = r.stage_kind === "rosco" ? r.active_bank_ms : r.shot_clock_ms;
+    if (limit !== null) expiresAt = Number(r.turn_started_at_ms) + Number(limit);
+  }
+  return { version: r.version, status: r.status, expiresAt };
 }
 
 /** Sala abierta (sin empezar) creada hoy por el jugador, si existe. */

@@ -77,7 +77,7 @@ async function createPostgres(url: string): Promise<Database> {
 
 async function createPglite(dataDir: string | null): Promise<Database> {
   const { PGlite } = await import("@electric-sql/pglite");
-  if (dataDir) fs.mkdirSync(dataDir, { recursive: true });
+  if (dataDir) fs.mkdirSync(/*turbopackIgnore: true*/ dataDir, { recursive: true });
   const parsers = {
     [OID_INT8]: (v: string) => Number(v),
     [OID_DATE]: (v: string) => v,
@@ -112,7 +112,7 @@ async function createPglite(dataDir: string | null): Promise<Database> {
 }
 
 export function migrationsDir(): string {
-  return path.join(process.cwd(), "supabase", "migrations");
+  return path.join(/*turbopackIgnore: true*/ process.cwd(), "supabase", "migrations");
 }
 
 /** Aplica las migraciones pendientes (idempotente y seguro ante procesos concurrentes). */
@@ -121,12 +121,12 @@ export async function runMigrations(db: Database, dir = migrationsDir()): Promis
     "create table if not exists schema_migrations (name text primary key, applied_at timestamptz not null default now())",
   );
   const files = fs
-    .readdirSync(dir)
+    .readdirSync(/*turbopackIgnore: true*/ dir)
     .filter((f) => f.endsWith(".sql"))
     .sort();
   const applied: string[] = [];
   for (const file of files) {
-    const sql = fs.readFileSync(path.join(dir, file), "utf8");
+    const sql = fs.readFileSync(/*turbopackIgnore: true*/ path.join(dir, file), "utf8");
     const done = await db.transaction(async (tx) => {
       if (db.kind === "postgres") await tx.query("select pg_advisory_xact_lock(727274)");
       const exists = await tx.query("select 1 from schema_migrations where name = $1", [file]);

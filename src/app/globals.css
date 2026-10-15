@@ -1,0 +1,421 @@
+@import "tailwindcss";
+
+/* ───────────────────────── Identidad visual de Palabría ─────────────────────────
+   Plató nocturno: azul noche y azul profundo, degradados controlados hacia el
+   violeta, acentos turquesa (turno activo) y dorado (Pasapalabra / premios). */
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded Variable", "Inter Variable", ui-sans-serif, sans-serif;
+  --font-score: "Barlow Condensed", "Inter Variable", ui-sans-serif, sans-serif;
+
+  --color-night-950: #04061a;
+  --color-night-900: #070b26;
+  --color-night-850: #0a1033;
+  --color-night-800: #0e1641;
+  --color-night-700: #152056;
+  --color-night-600: #1d2c70;
+  --color-royal-500: #2f4fd8;
+  --color-royal-400: #5574ff;
+  --color-violet-600: #5a37d1;
+  --color-violet-500: #7652f0;
+  --color-violet-400: #9b82ff;
+  --color-turquoise-300: #8ff7ee;
+  --color-turquoise-400: #33e6d7;
+  --color-turquoise-500: #14c6b8;
+  --color-gold-300: #ffe08f;
+  --color-gold-400: #ffc94a;
+  --color-gold-500: #f2a91c;
+  --color-ok-400: #4fe39a;
+  --color-ok-500: #1fc777;
+  --color-ok-600: #12985a;
+  --color-bad-400: #ff7a90;
+  --color-bad-500: #ff4d6d;
+  --color-bad-600: #d42a4c;
+  --color-ink-50: #f5f7ff;
+  --color-ink-100: #e8ecff;
+  --color-ink-200: #c9d1f5;
+  --color-ink-300: #a5b0e2;
+  --color-ink-400: #7c88c2;
+
+  --shadow-glow-turquoise: 0 0 0 1px rgb(51 230 215 / 0.55), 0 0 28px -4px rgb(51 230 215 / 0.55);
+  --shadow-glow-gold: 0 0 0 1px rgb(255 201 74 / 0.6), 0 0 30px -6px rgb(255 201 74 / 0.6);
+  --shadow-panel: 0 1px 0 0 rgb(255 255 255 / 0.06) inset, 0 24px 60px -24px rgb(0 0 0 / 0.7);
+
+  --animate-pulse-ring: pulse-ring 1.4s ease-out infinite;
+  --animate-pop: pop 260ms cubic-bezier(0.2, 1.4, 0.4, 1);
+  --animate-shake: shake 360ms ease-in-out;
+  --animate-rise: rise 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-flash: flash 900ms ease-out both;
+  --animate-sweep: sweep 3.2s linear infinite;
+  --animate-blink: blink 1s steps(2, start) infinite;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgb(51 230 215 / 0.55); }
+  100% { box-shadow: 0 0 0 14px rgb(51 230 215 / 0); }
+}
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+@keyframes rise {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes flash {
+  0% { opacity: 0; transform: scale(0.96); }
+  15% { opacity: 1; transform: scale(1); }
+  75% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes sweep {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes blink {
+  to { visibility: hidden; }
+}
+
+/* ───────────────────────── Base ───────────────────────── */
+:root {
+  color-scheme: dark;
+  --focus-ring: var(--color-gold-400);
+  --text-strong: var(--color-ink-50);
+  --text-muted: var(--color-ink-300);
+  --panel-border: rgb(132 152 255 / 0.18);
+}
+
+html {
+  background: var(--color-night-950);
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+html[data-text="large"] {
+  font-size: 112.5%;
+}
+
+body {
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 600px at 50% -10%, rgb(90 55 209 / 0.38), transparent 60%),
+    radial-gradient(900px 500px at 100% 20%, rgb(47 79 216 / 0.22), transparent 60%),
+    radial-gradient(700px 500px at 0% 80%, rgb(20 198 184 / 0.1), transparent 60%),
+    linear-gradient(180deg, var(--color-night-900), var(--color-night-950) 70%);
+  background-attachment: fixed;
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+  overflow-x: clip;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+::selection {
+  background: rgb(51 230 215 / 0.35);
+  color: white;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Alto contraste: textos más brillantes y bordes más marcados. */
+html[data-contrast="high"] {
+  --text-muted: var(--color-ink-100);
+  --panel-border: rgb(255 255 255 / 0.55);
+}
+html[data-contrast="high"] body {
+  background: var(--color-night-950);
+}
+html[data-contrast="high"] .text-ink-300,
+html[data-contrast="high"] .text-ink-400 {
+  color: var(--color-ink-100);
+}
+
+/* Movimiento reducido: por preferencia del sistema o del jugador. */
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion="full"]) *,
+  html:not([data-motion="full"]) *::before,
+  html:not([data-motion="full"]) *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+html[data-motion="reduce"] *,
+html[data-motion="reduce"] *::before,
+html[data-motion="reduce"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ───────────────────────── Paneles y botones ───────────────────────── */
+@layer components {
+  .panel {
+    background: linear-gradient(180deg, rgb(21 32 86 / 0.72), rgb(10 16 51 / 0.82));
+    border: 1px solid var(--panel-border);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-panel);
+    backdrop-filter: blur(10px);
+  }
+
+  .panel-soft {
+    background: rgb(14 22 65 / 0.6);
+    border: 1px solid rgb(132 152 255 / 0.12);
+    border-radius: 1.25rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0 1.25rem;
+    border-radius: 999px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    transition: transform 120ms ease, box-shadow 160ms ease, background 160ms ease, opacity 160ms ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(1px) scale(0.98);
+  }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .btn-primary {
+    color: var(--color-night-950);
+    background: linear-gradient(180deg, var(--color-turquoise-300), var(--color-turquoise-500));
+    box-shadow: 0 10px 30px -10px rgb(51 230 215 / 0.7), inset 0 1px 0 rgb(255 255 255 / 0.5);
+  }
+  .btn-primary:hover:not(:disabled) {
+    box-shadow: 0 14px 36px -10px rgb(51 230 215 / 0.85), inset 0 1px 0 rgb(255 255 255 / 0.5);
+  }
+
+  .btn-gold {
+    color: #2a1600;
+    background: linear-gradient(180deg, var(--color-gold-300), var(--color-gold-500));
+    box-shadow: 0 10px 30px -10px rgb(255 201 74 / 0.75), inset 0 1px 0 rgb(255 255 255 / 0.55);
+  }
+
+  .btn-ghost {
+    color: var(--color-ink-100);
+    background: rgb(255 255 255 / 0.06);
+    border: 1px solid rgb(165 176 226 / 0.25);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    background: rgb(255 255 255 / 0.1);
+  }
+
+  .btn-danger {
+    color: var(--color-ink-50);
+    background: rgb(255 77 109 / 0.16);
+    border: 1px solid rgb(255 77 109 / 0.45);
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: rgb(255 255 255 / 0.07);
+    border: 1px solid rgb(165 176 226 / 0.2);
+    color: var(--color-ink-200);
+  }
+
+  .field {
+    width: 100%;
+    min-height: 3.5rem;
+    border-radius: 1rem;
+    padding: 0 1.1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-ink-50);
+    background: rgb(4 6 26 / 0.65);
+    border: 2px solid rgb(132 152 255 / 0.3);
+    transition: border-color 140ms ease, box-shadow 140ms ease;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-turquoise-400);
+    box-shadow: 0 0 0 4px rgb(51 230 215 / 0.18);
+  }
+  .field:disabled {
+    opacity: 0.5;
+  }
+
+  .eyebrow {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-turquoise-300);
+  }
+
+  .score-digits {
+    font-family: var(--font-score);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+}
+
+/* ───────────────────────── El Rosco ─────────────────────────
+   Las letras se colocan sobre un círculo con unidades de contenedor (cqw)
+   para que el rosco escale sin solapamientos en cualquier tamaño. */
+.rosco {
+  container-type: inline-size;
+  position: relative;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+}
+
+.rosco-ring {
+  position: absolute;
+  inset: 6.5%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, rgb(10 16 51 / 0.95) 54%, transparent 55%),
+    conic-gradient(from 180deg, rgb(90 55 209 / 0.45), rgb(47 79 216 / 0.45), rgb(20 198 184 / 0.35), rgb(90 55 209 / 0.45));
+  box-shadow: inset 0 0 0 1px rgb(132 152 255 / 0.25), 0 0 60px -10px rgb(90 55 209 / 0.6);
+}
+
+.rosco-letter {
+  --size: 8.6cqw;
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  margin-left: calc(var(--size) / -2);
+  margin-top: calc(var(--size) / -2);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 3.7cqw;
+  line-height: 1;
+  color: var(--color-ink-50);
+  background: radial-gradient(circle at 35% 30%, #2a3a92, #16205a 70%);
+  border: 0.45cqw solid rgb(120 145 255 / 0.55);
+  box-shadow: 0 0.6cqw 1.6cqw -0.6cqw rgb(0 0 0 / 0.8);
+  transition: transform 220ms cubic-bezier(0.2, 1.2, 0.4, 1), background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.rosco-letter .badge {
+  position: absolute;
+  right: -0.8cqw;
+  bottom: -0.8cqw;
+  width: 3.6cqw;
+  height: 3.6cqw;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--color-night-950);
+  border: 0.3cqw solid currentColor;
+}
+.rosco-letter .badge svg {
+  width: 2.4cqw;
+  height: 2.4cqw;
+}
+
+.rosco-letter[data-state="active"] {
+  color: var(--color-night-950);
+  background: radial-gradient(circle at 35% 30%, var(--color-turquoise-300), var(--color-turquoise-500) 70%);
+  border-color: white;
+  transform: scale(1.16);
+  z-index: 2;
+  box-shadow: 0 0 0 0.6cqw rgb(51 230 215 / 0.35), 0 0 4cqw rgb(51 230 215 / 0.8);
+  animation: var(--animate-pulse-ring);
+}
+
+.rosco-letter[data-state="correct"] {
+  background: radial-gradient(circle at 35% 30%, var(--color-ok-400), var(--color-ok-600) 75%);
+  border-color: rgb(255 255 255 / 0.85);
+  color: white;
+}
+.rosco-letter[data-state="correct"] .badge {
+  color: var(--color-ok-400);
+}
+
+.rosco-letter[data-state="wrong"] {
+  background: radial-gradient(circle at 35% 30%, var(--color-bad-400), var(--color-bad-600) 75%);
+  border-color: rgb(255 255 255 / 0.85);
+  color: white;
+}
+.rosco-letter[data-state="wrong"] .badge {
+  color: var(--color-bad-400);
+}
+
+.rosco-letter[data-state="passed"] {
+  background: radial-gradient(circle at 35% 30%, #4a3a12, #2a2008 75%);
+  border: 0.45cqw dashed var(--color-gold-400);
+  color: var(--color-gold-300);
+}
+.rosco-letter[data-state="passed"] .badge {
+  color: var(--color-gold-400);
+}
+
+.rosco-letter[data-state="unplayed"] {
+  background: rgb(14 22 65 / 0.9);
+  border: 0.45cqw dashed rgb(165 176 226 / 0.45);
+  color: var(--color-ink-400);
+}
+.rosco-letter[data-state="unplayed"] .badge {
+  color: var(--color-ink-400);
+}
+
+.rosco[data-paused="true"] .rosco-letter {
+  filter: saturate(0.55) brightness(0.8);
+}
+.rosco[data-paused="true"] .rosco-letter[data-state="active"] {
+  animation: none;
+  transform: scale(1.08);
+}
+
+.rosco-center {
+  position: absolute;
+  inset: 22%;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+/* Etiqueta de turno activo en el duelo: borde luminoso. */
+.turn-glow {
+  box-shadow: var(--shadow-glow-turquoise), var(--shadow-panel);
+  border-color: rgb(51 230 215 / 0.7) !important;
+}
+
+.stage-lights::before {
+  content: "";
+  position: absolute;
+  inset: -40% -10% auto -10%;
+  height: 120%;
+  background:
+    conic-gradient(from 200deg at 20% 0%, transparent 0 8deg, rgb(155 130 255 / 0.12) 10deg 16deg, transparent 18deg),
+    conic-gradient(from 150deg at 80% 0%, transparent 0 8deg, rgb(51 230 215 / 0.1) 10deg 16deg, transparent 18deg);
+  pointer-events: none;
+  filter: blur(6px);
+}
