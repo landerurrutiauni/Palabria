@@ -182,7 +182,7 @@ export function Invitation({ view, busy, onJoin }: { view: DuelView; busy: boole
           empiece el duelo.
         </p>
         <Link href="/" className="mt-6 inline-block text-sm font-semibold text-cobalt-600 hover:underline">
-          ¿Qué es Palabría?
+          ¿Qué es Palabria?
         </Link>
       </section>
       <DuelRules

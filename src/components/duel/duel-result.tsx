@@ -80,11 +80,7 @@ export function DuelResult({ view }: { view: DuelView }) {
           {me.correct} <span className="text-ink-500">—</span> {rival.correct}
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          {view.result?.shareText ? <ShareButton text={view.result.shareText} title="Mi duelo en Palabría" /> : null}
-          <Link href="/estadisticas" className="btn btn-ghost">
-            <Trophy className="size-4" aria-hidden="true" />
-            Mis estadísticas
-          </Link>
+          {view.result?.shareText ? <ShareButton text={view.result.shareText} title="Mi duelo en Palabria" /> : null}
           <Link href="/" className="btn btn-ghost">
             <Home className="size-4" aria-hidden="true" />
             Portada

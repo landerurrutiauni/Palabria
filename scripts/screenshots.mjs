@@ -28,7 +28,7 @@ for (const [label, viewport] of [
   await page.getByLabel("Tu respuesta").fill("prueba");
   await page.getByLabel("Tu respuesta").press("Enter");
   await page.waitForTimeout(400);
-  await page.getByRole("button", { name: "Pasapalabra" }).click();
+  await page.getByRole("button", { name: "Palabria" }).click();
   await shoot(page, `${label}-rosco`);
   await page.goto(`${base}/duelo`);
   await shoot(page, `${label}-duelo`);

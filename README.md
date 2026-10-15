@@ -1,4 +1,4 @@
-# Palabría · el concurso diario de palabras
+# Palabria · el concurso diario de palabras
 
 Aplicación web de concursos de palabras en español, inspirada en la experiencia de los concursos de televisión,
 con identidad visual propia. Cada día hay un desafío nuevo y estable para todo el mundo:
@@ -14,7 +14,7 @@ Se puede desplegar de dos formas con el mismo código de juego:
 
 1. **Servidor Node.js** (Next.js completo con su API en `/api`): ver [Despliegue](#12-despliegue).
 2. **GitHub Pages + Supabase**: interfaz estática en GitHub Pages y lógica autoritativa en una Supabase Edge Function.
-   Publicada en **https://landerurrutiauni.github.io/Pasapalabra/**. Ver
+   Publicada en **https://landerurrutiauni.github.io/Palabria/**. Ver
    [Versión GitHub Pages + Supabase](#13-versión-github-pages--supabase).
 
 ---
@@ -45,11 +45,11 @@ la hora del navegador no influye en nada.
 ## 2. Funcionalidades implementadas
 
 - Portada con fecha y código del desafío (`PAL-AAAAMMDD`), presentación del rosco del día (letras y modos, sin
-  definiciones), tarjetas de juego individual y 1 vs 1 con el estado de cada intento, racha, mejores resultados,
-  clasificaciones diarias y cuenta atrás hasta el próximo desafío.
+  definiciones), acceso al juego individual y al 1 vs 1 con el estado de cada intento y cuenta atrás hasta el próximo
+  desafío.
 - **El Rosco**: 27 letras (A–Z con Ñ, K y W), «empieza por» / «contiene», estados pendiente, activa, acertada,
   fallada, pasada (pendiente de recuperar) y no jugada; cada estado se distingue por color, forma del borde e icono.
-  Vueltas sucesivas, «Pasapalabra», feedback inmediato, recuperación tras recarga sin reiniciar el reloj.
+  Vueltas sucesivas, «Palabria», feedback inmediato, recuperación tras recarga sin reiniciar el reloj.
 - **Programa completo** (4 pruebas + rosco):
   1. _Palabras al vuelo_ — definiciones rápidas con pista de inicial y longitud.
   2. _La pista justa_ — hasta 4 pistas progresivas (40/30/20/10 puntos).
@@ -61,11 +61,11 @@ la hora del navegador no influye en nada.
   sala de espera, preparación, cuenta atrás sincronizada, turnos con reloj propio, roscos y preguntas independientes
   y equivalentes, indicador de turno muy visible, transición de relevo que no retrasa el juego, reconexión, abandono,
   pantalla de victoria/derrota/empate con soluciones. También en modalidad «Programa completo» (pruebas por turnos alternos).
-- Resultados (aciertos, errores, sin resolver, tiempo, % de acierto, puntuación, racha, soluciones) y botón de compartir
-  (hoja nativa del dispositivo o portapapeles).
-- Historial por fecha, estadísticas (individual y 1 vs 1 por separado), clasificación diaria por modalidad
-  (solo nombres visibles), ajustes de sonido (efectos sintetizados con Web Audio, volumen) y accesibilidad
-  (movimiento reducido, alto contraste, texto grande), nombre visible opcional validado en el servidor.
+- Resultado de cada partida (aciertos, errores, sin resolver, tiempo, % de acierto, puntuación, soluciones) y botón de
+  compartir (hoja nativa del dispositivo o portapapeles). Sin estadísticas, historial ni clasificaciones: el juego se
+  centra en el desafío del día.
+- Ajustes de sonido (efectos sintetizados con Web Audio, volumen) y accesibilidad (movimiento reducido, alto contraste,
+  texto grande), nombre visible opcional validado en el servidor.
 - Estados de error: error de conexión, sala caducada/cancelada, sala privada/completa, sala inexistente,
   desafío ya completado, partida abandonada, 404.
 - Responsive (escritorio, tablet, móvil), navegación por teclado, etiquetas ARIA, `prefers-reduced-motion`,
@@ -80,14 +80,14 @@ src/
     page.tsx                   Portada
     jugar/ , jugar/[modo]/     Selección y partida individual (rosco | programa)
     duelo/ , sala/[code]/      Crear sala y sala 1 vs 1 (invitación, espera, duelo, resultado)
-    historial/ estadisticas/ clasificacion/ ajustes/ como-se-juega/
+    ajustes/ como-se-juega/
     api/                       me, challenge, solo, rooms (+ events SSE), stats, leaderboard, health
   proxy.ts                     Asignación de la identidad anónima (cookie firmada)
   components/                  UI: game/ (Rosco, temporizador, formulario…), solo/, duel/, home/, stats/…
   content/bank/                Banco de preguntas original (editable a mano)
   lib/
     game/                      Motor puro: alfabeto, normalización, rosco, relojes, puntuación,
-                               fases, motor individual, motor del duelo, clasificación, fechas Madrid
+                               fases, motor individual, motor del duelo, desempates, fechas Madrid
     content/                   Validación y selección diaria determinista
     server/                    BD, identidad, desafíos, intentos, partidas, salas, resultados, SSE, HTTP
     client/                    API, sonido, reloj del servidor, sincronización de la sala
@@ -206,7 +206,7 @@ npm run challenges:show -- --date 2026-11-02 --json > content/overrides/2026-11-
 ### Rosco individual
 
 - 180 s por defecto, reloj continuo desde «Empezar» (no se detiene al recargar o cerrar la página).
-- Acierto: letra verde. Fallo: letra roja y se revela la solución. «Pasapalabra»: la letra vuelve en la siguiente vuelta.
+- Acierto: letra verde. Fallo: letra roja y se revela la solución. «Palabria»: la letra vuelve en la siguiente vuelta.
 - Termina al resolver todas las letras o al agotarse el tiempo. Las letras sin resolver no puntúan.
 - Puntuación: +10 por acierto, −5 por fallo (mínimo 0) y +1 por segundo sobrante si no queda ninguna letra sin resolver.
 
@@ -229,10 +229,10 @@ Entre pruebas el reloj está detenido; si no se continúa en 30 minutos el progr
 - Empieza el invitado (en «Programa completo», las pruebas alternan quién empieza y El Rosco lo empieza quien tenga menos
   segundos). Cuenta atrás de 3,5 s antes del primer turno.
 - **Acierto**: el turno continúa y el reloj sigue corriendo.
-- **Fallo** o **«Pasapalabra»**: el reloj del jugador se detiene en ese instante (se guarda lo que le queda) y empieza a
+- **Fallo** o **«Palabria»**: el reloj del jugador se detiene en ese instante (se guarda lo que le queda) y empieza a
   correr el del rival desde su tiempo restante. Nadie recupera segundos al volver a su turno.
 - Si un jugador termina su rosco o se queda sin tiempo, el rival sigue jugando con su propio tiempo hasta acabar.
-- Durante el turno del rival el campo de respuesta y «Pasapalabra» están deshabilitados y el servidor rechaza cualquier
+- Durante el turno del rival el campo de respuesta y «Palabria» están deshabilitados y el servidor rechaza cualquier
   acción fuera de turno, aunque se manipule la petición.
 - Programa completo 1 vs 1: 3/1/2/2 preguntas por jugador en las pruebas, por turnos alternos con tiempo de jugada
   (15/40/15/20 s); los aciertos suman segundos al rosco final (120 s de base). El ganador se decide en El Rosco.
@@ -275,7 +275,7 @@ Cobertura destacada:
 
 - Motor: normalización (Ñ ≠ N, tildes, variantes explícitas), recorrido del rosco y vueltas, puntuación, relojes por
   marcas de tiempo, fechas de Madrid alrededor de los cambios de hora, programa completo, **pruebas de reloj A–F**
-  (acierto, fallo, Pasapalabra con 112 s, fuera de turno, reconexión, fin de tiempo), abandono y desempates.
+  (acierto, fallo, Palabria con 112 s, fuera de turno, reconexión, fin de tiempo), abandono y desempates.
 - Integración (servicios + SQL): intentos atómicos, peticiones simultáneas, recarga, respuestas reenviadas,
   respuestas ocultas en las vistas, cambio de día, salas (crear, unirse, tercero bloqueado, misma identidad como
   rival, caducidad, cancelación, inicio concurrente), resultados únicos y estadísticas.
@@ -287,7 +287,7 @@ Cobertura destacada:
 
 - **Identidad anónima**: los límites se aplican por identidad persistente (cookie). Borrar las cookies o usar otro
   navegador/dispositivo genera una identidad nueva; sin cuentas no es posible impedirlo por completo y no se usan
-  técnicas invasivas de huella digital. Tampoco se puede trasladar el historial a otro dispositivo.
+  técnicas invasivas de huella digital. Tampoco se pueden trasladar las partidas a otro dispositivo.
 - **Contenido**: el banco cubre aproximadamente una semana sin repetir preguntas del rosco y en torno a tres semanas
   con repeticiones parciales; después se reciclan (en combinaciones distintas). Para producción conviene ampliarlo
   (el formato está pensado para editarse a mano y la validación es automática).
@@ -325,7 +325,7 @@ ninguna regla al navegador**:
 
 | Pieza         | Dónde                                                                       | Qué hace                                                                                                                                                                 |
 | ------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Interfaz      | GitHub Pages (`next build` con `output: "export"`, ficheros `*.static.tsx`) | Las mismas pantallas y componentes; cargan los datos desde la API en el navegador. Rutas con parámetros en la consulta: `/sala/?c=…`, `/historial/ver/?id=…`.            |
+| Interfaz      | GitHub Pages (`next build` con `output: "export"`, ficheros `*.static.tsx`) | Las mismas pantallas y componentes; cargan los datos desde la API en el navegador. Las salas usan un parámetro en la consulta: `/sala/?c=…`.                             |
 | API del juego | Supabase Edge Function `api` (`supabase/functions/api`)                     | `createApiHandler` (`src/lib/server/api-handler.ts`): las mismas rutas, servicios, transacciones y bloqueos que la API de Next.js. Empaquetada con `npm run build:edge`. |
 | Base de datos | PostgreSQL de Supabase (`SUPABASE_DB_URL`)                                  | Mismas migraciones. RLS activado y sin permisos para `anon`/`authenticated`: el navegador no puede leer ninguna tabla.                                                   |
 | Identidad     | Supabase Auth, inicio de sesión **anónimo**                                 | La función verifica el JWT (`auth.getClaims`) y asocia el `sub` a un jugador (`anonymous_players.auth_user_id`). Sin correo ni contraseña.                               |
@@ -359,12 +359,12 @@ función, tiene prioridad sobre la semilla guardada en la base de datos.
 ### Desarrollo y pruebas en local (sin Supabase)
 
 `scripts/api-server.ts` sirve la misma API en Node con identidades simuladas (`dev.<uuid>`, solo con `DEV_AUTH=1`) y
-`scripts/serve-static.mjs` imita GitHub Pages (prefijo `/Pasapalabra`, `404.html`):
+`scripts/serve-static.mjs` imita GitHub Pages (prefijo `/Palabria`, `404.html`):
 
 ```bash
-NEXT_PUBLIC_BASE_PATH=/Pasapalabra NEXT_PUBLIC_API_URL=http://localhost:3301 NEXT_PUBLIC_DEV_AUTH=1 \
+NEXT_PUBLIC_BASE_PATH=/Palabria NEXT_PUBLIC_API_URL=http://localhost:3301 NEXT_PUBLIC_DEV_AUTH=1 \
   npm run build:pages
-E2E_DATABASE_URL=postgres://… npm run test:e2e:static   # identidad, rosco, historial, clasificación y duelo
+E2E_DATABASE_URL=postgres://… npm run test:e2e:static   # identidad, rosco, ajustes y duelo
 ```
 
 La Edge Function empaquetada se ha ejecutado en Deno 2 contra PostgreSQL 16 (salud, CORS, rechazo de tokens y, con la

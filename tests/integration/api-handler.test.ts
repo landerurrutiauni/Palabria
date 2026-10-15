@@ -98,12 +98,9 @@ describe("API independiente (Edge Function)", () => {
     clock.advance(181_000);
     const end = await api("GET", "/solo");
     expect(end.json.session.status).toBe("completed");
-    const stats = await api("GET", "/stats");
-    const resultId = stats.json.history[0].id as string;
-    const detail = await api("GET", `/results/${resultId}`);
-    expect(detail.json.session.result.correct).toBe(1);
-    const board = await api("GET", "/leaderboard?mode=rosco");
-    expect(board.status).toBe(200);
+    expect(end.json.session.result.correct).toBe(1);
+    const gone = await api("GET", "/stats");
+    expect(gone.status).toBe(404);
   });
 
   it("duelo: crear, unirse, empezar y rechazar acciones fuera de turno", async () => {

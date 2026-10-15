@@ -22,13 +22,13 @@ export function SettingsPageView({ displayName }: { displayName: string }) {
             {IS_STATIC
               ? "No hay cuentas ni contraseñas. Al entrar por primera vez se creó una sesión anónima (sin correo ni datos personales) que se guarda en el almacenamiento de este navegador."
               : "No hay cuentas ni contraseñas. Al entrar por primera vez, el servidor te asignó un identificador aleatorio que se guarda en una cookie protegida (HttpOnly) de este navegador."}{" "}
-            Sirve para recordar tus intentos diarios, tu racha y tu historial. No usamos huellas digitales del
+            Sirve para recordar tus intentos diarios y tus partidas en curso. No usamos huellas digitales del
             dispositivo ni pedimos datos personales.
           </p>
           <p className="mt-2 text-ink-600">
-            Limitación: si borras los datos del sitio o juegas desde otro navegador tendrás una identidad nueva (sin
-            historial). Los límites diarios se aplican a cada identidad anónima; no es posible garantizar de forma
-            absoluta que una misma persona no use varias.
+            Limitación: si borras los datos del sitio o juegas desde otro navegador tendrás una identidad nueva. Los
+            límites diarios se aplican a cada identidad anónima; no es posible garantizar de forma absoluta que una
+            misma persona no use varias.
           </p>
         </div>
       </section>

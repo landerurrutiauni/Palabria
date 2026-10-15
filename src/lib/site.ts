@@ -3,10 +3,10 @@ import type { PreferencesView } from "@/lib/views";
 
 /** Metadatos compartidos por la versión con servidor y la versión estática. */
 export const siteMetadata: Metadata = {
-  title: { default: "Palabría · El concurso diario de palabras", template: "%s · Palabría" },
+  title: { default: "Palabria · El concurso diario de palabras", template: "%s · Palabria" },
   description:
     "Juega cada día a El Rosco y al programa completo, o reta a un amigo a un duelo 1 vs 1 por turnos. Sin registro.",
-  applicationName: "Palabría",
+  applicationName: "Palabria",
 };
 
 export const siteViewport: Viewport = {

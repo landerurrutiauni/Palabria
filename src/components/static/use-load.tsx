@@ -61,7 +61,7 @@ export function LoadError({ error, retry }: { error: Error; retry: () => void })
       }
     >
       {auth
-        ? "Palabría guarda tu identidad anónima en este navegador. Comprueba que no estás bloqueando el almacenamiento del sitio e inténtalo de nuevo."
+        ? "Palabria guarda tu identidad anónima en este navegador. Comprueba que no estás bloqueando el almacenamiento del sitio e inténtalo de nuevo."
         : error.message ||
           "Comprueba tu conexión a internet. Si tenías una partida en marcha, está guardada en el servidor."}
     </StateScreen>

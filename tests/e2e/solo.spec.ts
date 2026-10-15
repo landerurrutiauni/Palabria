@@ -16,7 +16,7 @@ test.describe("modo individual", () => {
     expect(me.ok()).toBe(true);
   });
 
-  test("rosco: aciertos, fallos, pasapalabra, recarga sin reiniciar y bloqueo del otro modo", async ({ page }) => {
+  test("rosco: aciertos, fallos, palabria, recarga sin reiniciar y bloqueo del otro modo", async ({ page }) => {
     await page.goto("/jugar/rosco");
     await page.getByRole("button", { name: "¡Empezar!" }).click();
     const date = await today(page);
@@ -30,7 +30,7 @@ test.describe("modo individual", () => {
     await expect(page.getByText(`Era «${solutions[1]}»`)).toBeVisible();
     await expect(letter(page, "Tu rosco", "B")).toHaveAttribute("data-state", "wrong");
 
-    await page.getByRole("button", { name: "Pasapalabra" }).click();
+    await page.getByRole("button", { name: "Palabria" }).click();
     await expect(letter(page, "Tu rosco", "C")).toHaveAttribute("data-state", "passed");
     await expect(letter(page, "Tu rosco", "D")).toHaveAttribute("data-state", "active");
 

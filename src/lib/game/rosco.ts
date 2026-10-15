@@ -3,7 +3,7 @@ import { ROSCO_SIZE } from "./alphabet";
 /**
  * Estado de cada letra del rosco.
  *  - pending: aún no se ha preguntado en esta partida.
- *  - passed: se dijo «Pasapalabra»; pendiente de recuperar en otra vuelta.
+ *  - passed: se dijo «Palabria»; pendiente de recuperar en otra vuelta.
  *  - correct / wrong: resuelta.
  * El estado visual «activa» se deriva del cursor y el estado «no jugada»
  * se deriva de las letras abiertas cuando el rosco ha terminado.

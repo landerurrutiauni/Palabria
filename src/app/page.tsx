@@ -4,19 +4,10 @@ import { getChallengeForDate, roscoPreview, todayKey } from "@/lib/server/challe
 import { serverNow } from "@/lib/server/clock";
 import { getDb } from "@/lib/server/db";
 import { currentPlayer } from "@/lib/server/identity";
-import { getLeaderboard, getMe, getStats } from "@/lib/server/stats-service";
+import { getMe } from "@/lib/server/stats-service";
 import { maybeSweep } from "@/lib/server/sweeper";
 
 export const dynamic = "force-dynamic";
-
-async function safe<T>(fn: () => Promise<T>): Promise<T | null> {
-  try {
-    return await fn();
-  } catch (error) {
-    console.error("[portada]", error);
-    return null;
-  }
-}
 
 export default async function HomePage() {
   const db = await getDb();
@@ -26,11 +17,6 @@ export default async function HomePage() {
   const letters = await roscoPreview(db, challenge.id);
   const player = await currentPlayer();
   const me = player ? await getMe(db, player) : null;
-  const stats = player ? await safe(() => getStats(db, player)) : null;
-  const [boardRosco, boardProgram] = await Promise.all([
-    safe(() => getLeaderboard(db, { date, mode: "rosco", playerId: player?.id ?? null, limit: 5 })),
-    safe(() => getLeaderboard(db, { date, mode: "program", playerId: player?.id ?? null, limit: 5 })),
-  ]);
   maybeSweep();
   return (
     <HomeView
@@ -44,9 +30,6 @@ export default async function HomePage() {
           letters,
         },
         me,
-        stats,
-        boardRosco,
-        boardProgram,
       }}
     />
   );

@@ -46,7 +46,7 @@ export function FeedbackBanner({
               </>
             )}
             {feedback.outcome === "passed" &&
-              (feedback.stageKind === "rosco" ? "Pasapalabra: volverás a esta letra." : "Pregunta pasada.")}
+              (feedback.stageKind === "rosco" ? "Palabria: volverás a esta letra." : "Pregunta pasada.")}
             {feedback.outcome === "timeout" && (
               <>
                 Se acabó el tiempo

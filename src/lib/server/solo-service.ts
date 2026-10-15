@@ -172,7 +172,7 @@ export function buildSoloView(
       tagline: stageTagline(stage.kind),
       howTo:
         stage.kind === "rosco"
-          ? "Responde a la definición de cada letra. Si no la sabes, di «Pasapalabra» y volverás a ella en la siguiente vuelta."
+          ? "Responde a la definición de cada letra. Si no la sabes, di «Palabria» y volverás a ella en la siguiente vuelta."
           : PHASE_RULES[stage.kind].howTo,
       status: stage.status,
       startedAt: stage.startedAt,

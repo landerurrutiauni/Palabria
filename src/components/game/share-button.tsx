@@ -7,7 +7,7 @@ import { BASE_PATH } from "@/lib/client/runtime";
 /** Comparte el resultado con la hoja nativa del dispositivo o lo copia al portapapeles. */
 export function ShareButton({
   text,
-  title = "Mi resultado en Palabría",
+  title = "Mi resultado en Palabria",
   className = "btn btn-gold",
 }: {
   text: string;

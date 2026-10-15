@@ -166,7 +166,7 @@ export function DuelBoard({
     const nextIsMe = view.turn.seat === you;
     const title =
       la?.outcome === "passed"
-        ? "¡Pasapalabra!"
+        ? "¡Palabria!"
         : la?.outcome === "wrong"
           ? "¡Fallo!"
           : la?.outcome === "timeout"
@@ -360,7 +360,7 @@ export function DuelBoard({
               disabled={!prompt}
               disabledReason={myTurn ? undefined : inCountdown ? "Preparados…" : "Turno de tu rival"}
               busy={busy}
-              passLabel={isRosco ? "Pasapalabra" : "Paso"}
+              passLabel={isRosco ? "Palabria" : "Paso"}
               onAnswer={(text) =>
                 prompt && onAction({ type: "answer", stage: view.stage.index, item: prompt.index, text })
               }

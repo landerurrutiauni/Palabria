@@ -83,9 +83,9 @@ describe("duelo: relojes y turnos", () => {
     expect(playerRemainingMs(s, 1, START + 17_000)).toBe(170_000);
   });
 
-  it("Prueba C: «Pasapalabra» congela el tiempo exacto y se recupera al volver el turno", () => {
+  it("Prueba C: «Palabria» congela el tiempo exacto y se recupera al volver el turno", () => {
     let s = present(roscoDuel(), START);
-    // B (asiento 2) consume 68 s → le quedan 112 s y pulsa Pasapalabra.
+    // B (asiento 2) consume 68 s → le quedan 112 s y pulsa Palabria.
     s = touchPlayer(s, 2, START + 40_000);
     s = applyDuelAction(s, 2, { type: "pass", stage: 0, item: 0 }, content, START + 68_000).state;
     expect(s.players[2].bankMs).toBe(112_000);

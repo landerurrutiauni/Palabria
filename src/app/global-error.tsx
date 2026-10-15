@@ -15,7 +15,7 @@ export default function GlobalError({ reset }: { error: Error; reset: () => void
         }}
       >
         <div style={{ textAlign: "center", padding: 24 }}>
-          <h1 style={{ fontSize: 28 }}>Palabría no está disponible ahora mismo</h1>
+          <h1 style={{ fontSize: 28 }}>Palabria no está disponible ahora mismo</h1>
           <p>Ha ocurrido un error inesperado. Tus partidas están guardadas en el servidor.</p>
           <button
             type="button"

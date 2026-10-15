@@ -12,7 +12,7 @@ export default function RulesPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6">
       <p className="eyebrow">Reglas</p>
-      <h1 className="mt-2 font-display text-3xl font-bold text-ink-900 sm:text-4xl">Cómo se juega a Palabría</h1>
+      <h1 className="mt-2 font-display text-3xl font-bold text-ink-900 sm:text-4xl">Cómo se juega a Palabria</h1>
 
       <section className="panel mt-8 p-6 sm:p-8">
         <h2 className="font-display text-xl font-bold text-ink-900">Intentos diarios</h2>
@@ -30,7 +30,7 @@ export default function RulesPage() {
           <li>27 letras del alfabeto español, de la A a la Z, incluida la Ñ.</li>
           <li>Cada letra tiene una definición: la respuesta empieza por esa letra o la contiene.</li>
           <li>Las tildes y mayúsculas no importan; la Ñ sí (no es lo mismo «año» que «ano»).</li>
-          <li>«Pasapalabra» deja la letra para la siguiente vuelta. Un fallo la cierra.</li>
+          <li>«Palabria» deja la letra para la siguiente vuelta. Un fallo la cierra.</li>
           <li>
             Tiempo individual: {Math.round(timing.soloRoscoMs / 1000)} s. El reloj no se detiene aunque recargues.
           </li>

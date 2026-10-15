@@ -11,7 +11,7 @@ import {
   setReady,
   sweepRooms,
 } from "@/lib/server/room-service";
-import { getMe, getStats } from "@/lib/server/stats-service";
+import { getMe } from "@/lib/server/stats-service";
 import type { QuestionSet } from "@/lib/game/content-types";
 import type { DuelView } from "@/lib/views";
 import { FakeClock, newPlayer, openTestDatabase, resetDatabase } from "../helpers/db";
@@ -82,7 +82,7 @@ describe("salas 1 vs 1", () => {
     await expect(createRoom(host, "rosco", db)).rejects.toMatchObject({ code: "duel_attempt_used" });
   });
 
-  it("turnos y relojes: acierto continúa, fallo y Pasapalabra ceden el turno, fuera de turno se rechaza", async () => {
+  it("turnos y relojes: acierto continúa, fallo y Palabria ceden el turno, fuera de turno se rechaza", async () => {
     const { host, guest, code } = await startedDuel();
     await joinRoom(guest, code, db);
     await setReady(host, code, true, db);
@@ -122,7 +122,7 @@ describe("salas 1 vs 1", () => {
     expect(remaining(r.view, 2)).toBe(175_000);
     expect(r.view.players[1]!.running).toBe(false);
 
-    // Prueba C: Pasapalabra con 112 s → se congela y arranca el rival.
+    // Prueba C: Palabria con 112 s → se congela y arranca el rival.
     clock.advance(63_000);
     await getRoomView(guest, code, db); // latido de presencia
     r = await roomAction(guest, code, { actionId: randomUUID(), action: { type: "pass", stage: 0, item: 1 } }, db);
@@ -214,10 +214,11 @@ describe("salas 1 vs 1", () => {
     expect(end.result?.rival?.letters).toHaveLength(27);
     const guestEnd = (await getRoomView(guest, code, db)).view;
     expect(guestEnd.result?.outcome).toBe("loss");
-    const hs = await getStats(db, host);
-    const gs = await getStats(db, guest);
-    expect(hs.duel).toMatchObject({ played: 1, wins: 1 });
-    expect(gs.duel).toMatchObject({ played: 1, losses: 1 });
+    const outcomes = await db.query<{ player_id: string; outcome: string }>(
+      "select player_id, outcome from game_results where kind = 'duel'",
+    );
+    expect(outcomes.rows.find((r) => r.player_id === host.id)?.outcome).toBe("win");
+    expect(outcomes.rows.find((r) => r.player_id === guest.id)?.outcome).toBe("loss");
     const n = await db.query<{ n: number }>("select count(*)::int as n from game_results where kind = 'duel'");
     expect(n.rows[0]!.n).toBe(2);
   });

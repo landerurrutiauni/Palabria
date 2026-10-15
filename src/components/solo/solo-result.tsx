@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Flame, Swords, Trophy } from "lucide-react";
+import { Swords } from "lucide-react";
 import { Rosco } from "@/components/game/rosco";
 import { ShareButton } from "@/components/game/share-button";
 import { PhaseSolutions, RoscoSolutions } from "@/components/game/solutions";
@@ -60,20 +60,10 @@ export function SoloResult({ result, showActions = true }: { result: SoloResultV
               <p className={`score-digits mt-1 text-3xl ${s.tone}`}>{s.value}</p>
             </li>
           ))}
-          <li className="panel-soft p-3">
-            <p className="flex items-center justify-center gap-1 text-xs font-semibold text-ink-600">
-              <Flame className="size-3.5 text-saffron-700" aria-hidden="true" /> Racha
-            </p>
-            <p className="score-digits mt-1 text-3xl text-saffron-700">{result.streak.current}</p>
-          </li>
         </ul>
         {showActions ? (
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <ShareButton text={result.shareText} />
-            <Link href="/clasificacion" className="btn btn-ghost">
-              <Trophy className="size-4" aria-hidden="true" />
-              Clasificación
-            </Link>
             <Link href="/duelo" className="btn btn-ghost">
               <Swords className="size-4" aria-hidden="true" />
               Desafiar a un amigo
@@ -83,7 +73,7 @@ export function SoloResult({ result, showActions = true }: { result: SoloResultV
         {result.status === "abandoned" ? (
           <p className="mx-auto mt-6 max-w-lg text-sm text-ink-600">
             El programa se dio por terminado porque pasaron más de 30 minutos sin continuar entre pruebas. Se guarda la
-            puntuación obtenida; la racha solo cuenta con partidas completadas.
+            puntuación obtenida.
           </p>
         ) : null}
       </section>

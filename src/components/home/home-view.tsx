@@ -1,14 +1,13 @@
 import Link from "next/link";
-import { ArrowRight, CalendarDays, Flame, History, Medal, Play, Sparkles, Swords, Timer, User } from "lucide-react";
+import { ArrowRight, CalendarDays, History, Play, Swords, Timer, User } from "lucide-react";
 import { Countdown } from "@/components/home/countdown";
-import { LeaderboardLink, LeaderboardTable } from "@/components/home/leaderboard-preview";
 import { Rosco } from "@/components/game/rosco";
 import { AttemptBadge, type AttemptState } from "@/components/ui/status-badge";
 import { roomHref } from "@/lib/client/runtime";
 import type { LetterMode } from "@/lib/game/alphabet";
 import { formatChallengeDate } from "@/lib/game/daily";
 import { difficultyLabel, PHASE_RULES, PROGRAM_PHASES } from "@/lib/game/phases";
-import type { LeaderboardView, LetterView, MeView, StatsView } from "@/lib/views";
+import type { LetterView, MeView } from "@/lib/views";
 
 export interface ChallengeInfo {
   date: string;
@@ -22,14 +21,11 @@ export interface ChallengeInfo {
 export interface HomeData {
   challenge: ChallengeInfo;
   me: MeView | null;
-  stats: StatsView | null;
-  boardRosco: LeaderboardView | null;
-  boardProgram: LeaderboardView | null;
 }
 
 /** Portada: desafío del día, modalidades, progreso y clasificación. */
 export function HomeView({ data }: { data: HomeData }) {
-  const { challenge, me, stats, boardRosco, boardProgram } = data;
+  const { challenge, me } = data;
   const now = challenge.serverNow;
   const date = challenge.date;
   const preview = challenge.letters;
@@ -205,7 +201,7 @@ export function HomeView({ data }: { data: HomeData }) {
           </div>
           <ul className="mt-6 list-disc space-y-2 pl-5 text-sm text-ink-700 marker:text-cobalt-600">
             <li>Cada jugador tiene su propio rosco, sus preguntas y su reloj.</li>
-            <li>Si aciertas, sigues. Si fallas o dices «Pasapalabra», tu reloj se para y arranca el del rival.</li>
+            <li>Si aciertas, sigues. Si fallas o dices «Palabria», tu reloj se para y arranca el del rival.</li>
             <li>Crear la sala no gasta tu intento: se consume al empezar el duelo.</li>
           </ul>
           <div className="mt-auto pt-6">
@@ -234,53 +230,6 @@ export function HomeView({ data }: { data: HomeData }) {
             )}
           </div>
         </article>
-      </section>
-
-      {/* ── Progreso personal ── */}
-      <section aria-labelledby="progreso" className="mt-10">
-        <div className="flex items-end justify-between gap-4">
-          <h2 id="progreso" className="font-display text-lg font-bold text-ink-900">
-            Tu progreso
-          </h2>
-          <Link href="/estadisticas" className="text-sm font-semibold text-cobalt-600 hover:text-cobalt-600">
-            Estadísticas e historial
-          </Link>
-        </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
-          <StatTile
-            icon={<Flame className="size-5 text-saffron-700" aria-hidden="true" />}
-            label="Racha actual"
-            value={me?.streak.current ?? 0}
-            suffix="días"
-          />
-          <StatTile
-            icon={<Medal className="size-5 text-cobalt-600" aria-hidden="true" />}
-            label="Mejor racha"
-            value={me?.streak.best ?? 0}
-            suffix="días"
-          />
-          <StatTile
-            icon={<Sparkles className="size-5 text-cobalt-500" aria-hidden="true" />}
-            label="Mejor rosco"
-            value={stats?.solo.bestScoreRosco ?? "—"}
-            suffix={stats?.solo.bestScoreRosco != null ? "pts" : ""}
-          />
-          <StatTile
-            icon={<Swords className="size-5 text-ok-700" aria-hidden="true" />}
-            label="Duelos ganados"
-            value={stats?.duel.wins ?? 0}
-            suffix={`de ${stats?.duel.played ?? 0}`}
-          />
-        </div>
-      </section>
-
-      {/* ── Clasificación del día ── */}
-      <section aria-labelledby="clasificacion" className="mt-10 grid gap-5 lg:grid-cols-2">
-        <h2 id="clasificacion" className="sr-only">
-          Clasificación del día
-        </h2>
-        <BoardCard title="Solo El Rosco" board={boardRosco} />
-        <BoardCard title="Programa completo" board={boardProgram} />
       </section>
 
       {/* ── Programa ── */}
@@ -318,50 +267,4 @@ export function HomeView({ data }: { data: HomeData }) {
 
 function capitalize(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
-}
-
-function StatTile({
-  icon,
-  label,
-  value,
-  suffix,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number | string;
-  suffix?: string;
-}) {
-  return (
-    <div className="panel-soft p-4">
-      <div className="flex items-center gap-2 text-sm font-medium text-ink-600">
-        {icon}
-        {label}
-      </div>
-      <p className="mt-2 flex items-baseline gap-1.5">
-        <span className="font-display text-4xl font-bold text-ink-900">{value}</span>
-        {suffix ? <span className="text-sm text-ink-600">{suffix}</span> : null}
-      </p>
-    </div>
-  );
-}
-
-function BoardCard({ title, board }: { title: string; board: LeaderboardView | null }) {
-  return (
-    <div className="panel p-5 sm:p-6">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="eyebrow">Clasificación de hoy</p>
-          <h3 className="font-display text-xl font-bold text-ink-900">{title}</h3>
-        </div>
-        <LeaderboardLink />
-      </div>
-      <div className="mt-4">
-        {board ? (
-          <LeaderboardTable board={board} />
-        ) : (
-          <p className="text-sm text-ink-600">La clasificación no está disponible en este momento.</p>
-        )}
-      </div>
-    </div>
-  );
 }

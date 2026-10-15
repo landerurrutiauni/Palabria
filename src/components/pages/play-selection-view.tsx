@@ -63,7 +63,7 @@ export function PlaySelectionView({ me, timing }: { me: MeView; timing: TimingCo
           icon={<Clock3 className="size-6" aria-hidden="true" />}
           points={[
             `${Math.round(timing.soloRoscoMs / 1000)} segundos de reloj continuo`,
-            "Pasapalabra para dejar letras para la siguiente vuelta",
+            "Palabria para dejar letras para la siguiente vuelta",
             "Soluciones y puntuación al terminar",
           ]}
         />

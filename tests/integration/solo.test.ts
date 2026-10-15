@@ -3,7 +3,7 @@ import { getChallengeForDate, loadQuestionSet, todayKey } from "@/lib/server/cha
 import type { Database } from "@/lib/server/db";
 import { AppError } from "@/lib/server/errors";
 import { getTodaySolo, soloAction, startSolo, sweepSoloSessions } from "@/lib/server/solo-service";
-import { getLeaderboard, getMe, getStats } from "@/lib/server/stats-service";
+import { getMe } from "@/lib/server/stats-service";
 import { createRoom } from "@/lib/server/room-service";
 import { FakeClock, newPlayer, openTestDatabase, resetDatabase } from "../helpers/db";
 import { randomUUID } from "node:crypto";
@@ -141,10 +141,12 @@ describe("partida individual en el servidor", () => {
         db,
       ),
     ).rejects.toMatchObject({ code: "finished" });
-    const stats = await getStats(db, player);
-    expect(stats.solo).toMatchObject({ played: 1, completed: 1, correct: 5, bestScoreRosco: 50 });
-    expect(stats.streak.current).toBe(1);
-    expect(stats.history).toHaveLength(1);
+    const saved = await db.query<{ correct: number; score: number }>(
+      "select correct, score from game_results where player_id = $1",
+      [player.id],
+    );
+    expect(saved.rows).toEqual([{ correct: 5, score: 50 }]);
+    expect((await getMe(db, player)).streak.current).toBe(1);
   });
 
   it("dos peticiones simultáneas no permiten dos partidas individuales", async () => {
@@ -235,24 +237,10 @@ describe("partida individual en el servidor", () => {
     expect(shared).toBeLessThan(4);
     clock.advance(30 * 60_000 + 61_000 * 5);
     for (let i = 0; i < 6; i++) await getTodaySolo(player, db);
-    const stats = await getStats(db, player);
-    expect(stats.streak.lastDate).toBe("2026-10-15");
-  });
-
-  it("la clasificación diaria solo aparece con datos suficientes y no expone identificadores", async () => {
-    const players = await Promise.all([newPlayer(db), newPlayer(db), newPlayer(db)]);
-    for (const p of players) {
-      await startSolo(p, "rosco", db);
-    }
-    clock.advance(181_000);
-    for (const p of players.slice(0, 2)) await getTodaySolo(p, db);
-    let board = await getLeaderboard(db, { date: "2026-10-15", mode: "rosco", playerId: players[0]!.id });
-    expect(board.total).toBe(2);
-    expect(board.entries).toEqual([]);
-    expect(board.you).not.toBeNull();
-    await getTodaySolo(players[2]!, db);
-    board = await getLeaderboard(db, { date: "2026-10-15", mode: "rosco", playerId: players[0]!.id });
-    expect(board.entries).toHaveLength(3);
-    expect(JSON.stringify(board)).not.toContain(players[0]!.id);
+    const row = await db.query<{ last_streak_date: string }>(
+      "select last_streak_date from player_statistics where player_id = $1",
+      [player.id],
+    );
+    expect(row.rows[0]?.last_streak_date).toBe("2026-10-15");
   });
 });

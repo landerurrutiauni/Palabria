@@ -88,7 +88,7 @@ await check("Identidad anónima", async () => {
 await check("Web en GitHub Pages", async () => {
   const res = await fetch(site);
   const html = await res.text();
-  if (!res.ok || !html.includes("Palabría")) throw new Error(`estado ${res.status}`);
+  if (!res.ok || !html.includes("Palabria")) throw new Error(`estado ${res.status}`);
   return site;
 });
 

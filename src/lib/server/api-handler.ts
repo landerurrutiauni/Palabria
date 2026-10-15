@@ -8,7 +8,7 @@
  */
 import { z } from "zod";
 import { timingFromEnv } from "@/lib/game/config";
-import { isDateKey, nextChallengeStart } from "@/lib/game/daily";
+import { nextChallengeStart } from "@/lib/game/daily";
 import {
   actionIdSchema,
   actionRateLimit,
@@ -21,12 +21,12 @@ import {
 import { getChallengeForDate, roscoPreview, todayKey } from "./challenges";
 import { serverNow } from "./clock";
 import type { Database } from "./db-core";
-import { AppError, Errors } from "./errors";
+import { AppError } from "./errors";
 import { sanitizeDisplayName } from "./names";
 import type { Player } from "./players";
 import { createRoom, getRoomView, joinRoom, leaveRoom, roomAction, setReady, sweepRooms } from "./room-service";
 import { getSoloSession, getTodaySolo, soloAction, startSolo, sweepSoloSessions } from "./solo-service";
-import { getLeaderboard, getMe, getStats, savePreferences } from "./stats-service";
+import { getMe, savePreferences } from "./stats-service";
 
 export interface ApiHandlerOptions {
   getDb: () => Promise<Database>;
@@ -85,6 +85,11 @@ export function createApiHandler(options: ApiHandlerOptions): (request: Request)
 
   route("GET", /^\/challenge$/, async ({ db, respond }) => {
     const now = await serverNow(db);
+    // Cierre periódico de partidas y salas caducadas, sin retrasar la respuesta.
+    if (options.background && Date.now() - lastSweep > 60_000) {
+      lastSweep = Date.now();
+      options.background(Promise.all([sweepSoloSessions(db), sweepRooms(db)]).catch(() => undefined));
+    }
     const date = todayKey(now);
     const challenge = await getChallengeForDate(db, date);
     return respond({
@@ -143,19 +148,6 @@ export function createApiHandler(options: ApiHandlerOptions): (request: Request)
     return respond({ session });
   });
 
-  /** Detalle de un resultado del historial (partida individual). */
-  route("GET", /^\/results\/([0-9a-f-]{36})$/, async ({ db, params, player, respond }) => {
-    const me = await player();
-    const res = await db.query<{ session_id: string | null }>(
-      "select session_id from game_results where id = $1 and player_id = $2",
-      [params[0], me.id],
-    );
-    const sessionId = res.rows[0]?.session_id;
-    const session = sessionId ? await getSoloSession(me, sessionId, db) : null;
-    if (!session?.result) throw new AppError(404, "not_found", "Resultado no encontrado.");
-    return respond({ session });
-  });
-
   route("POST", /^\/rooms$/, async ({ db, request, player, respond }) => {
     const me = await player();
     rateLimit(`room-create:${me.id}`, 10, 60_000);
@@ -193,22 +185,6 @@ export function createApiHandler(options: ApiHandlerOptions): (request: Request)
     rateLimit(`room-action:${me.id}`, actionRateLimit(), 10_000);
     const body = await readJson(request, z.object({ actionId: actionIdSchema, action: actionSchema }));
     return respond(await roomAction(me, params[0]!, body, db));
-  });
-
-  route("GET", /^\/stats$/, async ({ db, player, respond }) => respond(await getStats(db, await player())));
-
-  route("GET", /^\/leaderboard$/, async ({ db, url, optionalPlayer, respond }) => {
-    const now = await serverNow(db);
-    const date = url.searchParams.get("date") ?? todayKey(now);
-    const mode = url.searchParams.get("mode") === "program" ? "program" : "rosco";
-    const limit = Math.min(50, Math.max(1, Math.trunc(Number(url.searchParams.get("limit"))) || 50));
-    if (!isDateKey(date) || date > todayKey(now)) throw Errors.badRequest("Fecha no válida.");
-    if (options.background && Date.now() - lastSweep > 60_000) {
-      lastSweep = Date.now();
-      options.background(Promise.all([sweepSoloSessions(db), sweepRooms(db)]).catch(() => undefined));
-    }
-    const me = await optionalPlayer();
-    return respond(await getLeaderboard(db, { date, mode, playerId: me?.id ?? null, limit }));
   });
 
   const corsHeaders = (origin: string | null): Record<string, string> => {

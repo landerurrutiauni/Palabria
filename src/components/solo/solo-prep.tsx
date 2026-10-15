@@ -31,7 +31,7 @@ export function SoloPrep({
             <Rule icon={<Keyboard className="size-5" />} title="Escribe y pulsa Enter">
               Las tildes y las mayúsculas no importan, pero la Ñ sí: «año» no es «ano».
             </Rule>
-            <Rule icon={<RotateCcw className="size-5" />} title="«Pasapalabra» para dejarla para luego">
+            <Rule icon={<RotateCcw className="size-5" />} title="«Palabria» para dejarla para luego">
               Las letras pasadas vuelven en la siguiente vuelta. Un fallo cierra la letra y sigues con la siguiente.
             </Rule>
           </ul>

@@ -33,7 +33,7 @@ const pass = await a("POST", "/solo/action", {
   actionId: randomUUID(),
   action: { type: "pass", stage: 0, item: 0 },
 });
-check("pasapalabra", pass.json.feedback?.outcome === "passed");
+check("palabria", pass.json.feedback?.outcome === "passed");
 const again = await a("POST", "/solo", { mode: "program" });
 check("intento compartido bloqueado", again.status === 409);
 
@@ -54,4 +54,4 @@ const gp = await guest("POST", `/rooms/${room.json.code}/action`, {
   actionId: randomUUID(),
   action: { type: "pass", stage: 0, item: 0 },
 });
-check("pasapalabra cede el turno", gp.json.view?.turn.seat === 1);
+check("palabria cede el turno", gp.json.view?.turn.seat === 1);

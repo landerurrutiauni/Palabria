@@ -75,7 +75,7 @@ export function RoscoLegend({ className }: { className?: string }) {
     { state: "active", text: "Letra activa" },
     { state: "correct", text: "Acertada" },
     { state: "wrong", text: "Fallada" },
-    { state: "passed", text: "Pasapalabra (vuelve luego)" },
+    { state: "passed", text: "Palabria (vuelve luego)" },
     { state: "pending", text: "Pendiente" },
     { state: "unplayed", text: "Sin responder al final" },
   ];

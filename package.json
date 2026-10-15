@@ -2,7 +2,7 @@
   "name": "palabria",
   "version": "1.0.0",
   "private": true,
-  "description": "Palabría — concurso diario de palabras con rosco individual, programa completo y duelos 1 vs 1 por turnos.",
+  "description": "Palabria — concurso diario de palabras con rosco individual, programa completo y duelos 1 vs 1 por turnos.",
   "engines": {
     "node": ">=20.9"
   },

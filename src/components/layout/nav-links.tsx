@@ -2,14 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Settings, Swords, Trophy, User } from "lucide-react";
+import { BookOpen, Settings, Swords, User } from "lucide-react";
 import { cn } from "@/lib/client/cn";
 
 const LINKS = [
   { href: "/jugar", label: "Jugar", icon: User },
   { href: "/duelo", label: "1 vs 1", icon: Swords },
-  { href: "/clasificacion", label: "Clasificación", icon: Trophy },
-  { href: "/estadisticas", label: "Estadísticas", icon: BarChart3 },
+  { href: "/como-se-juega", label: "Cómo se juega", icon: BookOpen },
 ];
 
 export function NavLinks() {

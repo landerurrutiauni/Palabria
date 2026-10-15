@@ -7,7 +7,7 @@ export default function NotFound() {
     <StateScreen
       icon={<SearchX className="size-9 text-ink-700" />}
       eyebrow="Error 404"
-      title="¡Pasapalabra! Esta página no existe"
+      title="¡Palabria! Esta página no existe"
       actions={
         <Link href="/" className="btn btn-primary">
           Ir al desafío de hoy

@@ -12,10 +12,6 @@ export function roomHref(code: string): string {
   return IS_STATIC ? `/sala/?c=${encodeURIComponent(code)}` : `/sala/${code}`;
 }
 
-export function historyHref(resultId: string): string {
-  return IS_STATIC ? `/historial/ver/?id=${encodeURIComponent(resultId)}` : `/historial/${resultId}`;
-}
-
 /** URL absoluta de una ruta de la aplicación (solo en el navegador). */
 export function absoluteUrl(path: string): string {
   return `${window.location.origin}${BASE_PATH}${path}`;

@@ -117,7 +117,7 @@ export function SettingsForm({ displayName }: { displayName: string }) {
         <div className="divide-y divide-glaze-200">
           <Toggle
             label="Efectos de sonido"
-            description="Aciertos, fallos, Pasapalabra, cuenta atrás y final de partida."
+            description="Aciertos, fallos, Palabria, cuenta atrás y final de partida."
             checked={prefs.soundEnabled}
             onChange={(v) => update({ soundEnabled: v })}
           />

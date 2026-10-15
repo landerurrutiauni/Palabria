@@ -2,10 +2,10 @@ import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Pruebas de extremo a extremo de la versión GitHub Pages: la exportación
- * estática servida bajo /Pasapalabra (como en Pages) contra la misma API que
+ * estática servida bajo /Palabria (como en Pages) contra la misma API que
  * ejecuta la Supabase Edge Function (servidor de desarrollo con identidades
  * anónimas simuladas). Antes hay que compilar la exportación:
- *   NEXT_PUBLIC_BASE_PATH=/Pasapalabra NEXT_PUBLIC_API_URL=http://localhost:3301 \
+ *   NEXT_PUBLIC_BASE_PATH=/Palabria NEXT_PUBLIC_API_URL=http://localhost:3301 \
  *   NEXT_PUBLIC_DEV_AUTH=1 npm run build:pages
  */
 const databaseUrl = process.env.E2E_DATABASE_URL ?? process.env.DATABASE_URL ?? "";
@@ -43,10 +43,10 @@ export default defineConfig({
     },
     {
       command: "node scripts/serve-static.mjs 3501",
-      url: "http://localhost:3501/Pasapalabra/",
+      url: "http://localhost:3501/Palabria/",
       reuseExistingServer: !process.env.CI,
       timeout: 30_000,
-      env: { NEXT_PUBLIC_BASE_PATH: "/Pasapalabra" },
+      env: { NEXT_PUBLIC_BASE_PATH: "/Palabria" },
     },
   ],
 });

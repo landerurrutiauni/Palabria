@@ -1,4 +1,4 @@
--- Palabría · esquema inicial
+-- Palabria · esquema inicial
 -- Compatible con PostgreSQL 14+ (Supabase, Postgres local o PGlite embebido).
 -- Las marcas de tiempo usadas por el motor de juego se guardan como epoch en
 -- milisegundos (bigint) para no depender de la zona horaria de la sesión.

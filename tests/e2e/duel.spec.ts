@@ -41,7 +41,7 @@ test("duelo 1 vs 1 entre dos navegadores: invitación, turnos, relojes, reconexi
   await expect(guest.getByText("¡Tu turno!").first()).toBeVisible({ timeout: 10_000 });
   await expect(host.getByText(/Turno de/).first()).toBeVisible();
   await expect(host.getByLabel("Tu respuesta")).toBeDisabled();
-  await expect(host.getByRole("button", { name: "Pasapalabra" })).toBeDisabled();
+  await expect(host.getByRole("button", { name: "Palabria" })).toBeDisabled();
   const meAfter = (await (await host.request.get("/api/me")).json()) as { attempts: { duel: { used: boolean } } };
   expect(meAfter.attempts.duel.used).toBe(true);
 
@@ -66,8 +66,8 @@ test("duelo 1 vs 1 entre dos navegadores: invitación, turnos, relojes, reconexi
   expect(await clockOf(host, "Tu reloj")).toBe(hostPaused1);
   expect(await clockOf(guest, "Tu reloj")).toBeLessThan(25);
 
-  // Prueba C: Pasapalabra → el reloj del invitado se congela y arranca el del anfitrión.
-  await guest.getByRole("button", { name: "Pasapalabra" }).click();
+  // Prueba C: Palabria → el reloj del invitado se congela y arranca el del anfitrión.
+  await guest.getByRole("button", { name: "Palabria" }).click();
   await expect(host.getByText("¡Tu turno!").first()).toBeVisible();
   const guestFrozen = await clockOf(guest, "Tu reloj");
   await expect(letter(guest, "Tu rosco", "B")).toHaveAttribute("data-state", "passed");

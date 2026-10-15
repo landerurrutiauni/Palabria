@@ -34,7 +34,7 @@ export function InvitePanel({ code }: { code: string }) {
   };
   const share = async () => {
     try {
-      await navigator.share({ title: "Duelo en Palabría", text: "¡Te reto a un duelo de El Rosco en Palabría!", url });
+      await navigator.share({ title: "Duelo en Palabria", text: "¡Te reto a un duelo de El Rosco en Palabria!", url });
     } catch {
       /* cancelado */
     }

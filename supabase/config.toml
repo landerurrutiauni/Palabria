@@ -1,4 +1,4 @@
-# Configuración mínima de la CLI de Supabase para desplegar Palabría
+# Configuración mínima de la CLI de Supabase para desplegar Palabria
 # (migraciones en supabase/migrations y la Edge Function «api»).
 project_id = "palabria"
 

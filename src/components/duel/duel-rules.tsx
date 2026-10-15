@@ -30,9 +30,7 @@ export function DuelRules({
               : ` (${roscoSeconds} s en «Solo El Rosco»).`}
         </li>
         <li>Acierto: sigues jugando y tu reloj sigue corriendo.</li>
-        <li>
-          Fallo o «Pasapalabra»: tu reloj se detiene al instante y arranca el de tu rival desde lo que le quedaba.
-        </li>
+        <li>Fallo o «Palabria»: tu reloj se detiene al instante y arranca el de tu rival desde lo que le quedaba.</li>
         <li>Si a tu rival se le acaba el tiempo o termina su rosco, sigues tú hasta acabar el tuyo.</li>
         <li>
           Programa completo: las pruebas se juegan por turnos alternos (una pregunta cada uno) y lo que aciertas suma

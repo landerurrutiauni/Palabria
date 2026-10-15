@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { answer, answers, letter } from "../e2e/helpers";
 
-const BASE = "/Pasapalabra";
+const BASE = "/Palabria";
 const API = "http://localhost:3301";
 
 async function today(): Promise<string> {
@@ -9,7 +9,7 @@ async function today(): Promise<string> {
   return ((await res.json()) as { today: string }).today;
 }
 
-test("Pages: identidad anónima sin cookies, rosco individual, historial y clasificación", async ({ page, context }) => {
+test("Pages: identidad anónima sin cookies, rosco individual y ajustes", async ({ page, context }) => {
   await page.goto(`${BASE}/`);
   await expect(page.getByRole("heading", { name: /Veintisiete letras/ })).toBeVisible();
   await expect(page.getByText("Juegas como")).toBeVisible();
@@ -26,7 +26,7 @@ test("Pages: identidad anónima sin cookies, rosco individual, historial y clasi
 
   await answer(page, solutions[0]!.toUpperCase());
   await expect(page.getByText("¡Correcto!")).toBeVisible();
-  await page.getByRole("button", { name: "Pasapalabra" }).click();
+  await page.getByRole("button", { name: "Palabria" }).click();
   await expect(letter(page, "Tu rosco", "B")).toHaveAttribute("data-state", "passed");
 
   // Recargar recupera la partida del servidor.
@@ -41,14 +41,6 @@ test("Pages: identidad anónima sin cookies, rosco individual, historial y clasi
   await page.goto(`${BASE}/jugar/rosco/`);
   await expect(page.getByText("Puntuación final")).toBeVisible({ timeout: 40_000 });
   await expect(page.getByText("Soluciones del rosco")).toBeVisible();
-
-  await page.goto(`${BASE}/historial/`);
-  await page.getByRole("link", { name: /individual, Solo El Rosco/ }).click();
-  await expect(page).toHaveURL(new RegExp(`${BASE}/historial/ver/\\?id=`));
-  await expect(page.getByText("Soluciones del rosco")).toBeVisible();
-
-  await page.goto(`${BASE}/clasificacion/?modo=rosco`);
-  await expect(page.getByRole("heading", { name: "Los mejores del día" })).toBeVisible();
 
   // Las preferencias se guardan en el servidor y se aplican al recargar.
   await page.goto(`${BASE}/ajustes/`);
@@ -89,7 +81,7 @@ test("Pages: duelo 1 vs 1 por enlace de invitación entre dos navegadores", asyn
   const guestAnswers = await answers(date, "duel_b", "rosco");
   await answer(guest, guestAnswers[0]!);
   await expect(letter(guest, "Tu rosco", "A")).toHaveAttribute("data-state", "correct");
-  await guest.getByRole("button", { name: "Pasapalabra" }).click();
+  await guest.getByRole("button", { name: "Palabria" }).click();
   // Sin Realtime (servidor de desarrollo) el anfitrión se entera por sondeo.
   await expect(host.getByText("¡Tu turno!").first()).toBeVisible({ timeout: 10_000 });
   await expect(host.getByLabel("Tu respuesta")).toBeEnabled();

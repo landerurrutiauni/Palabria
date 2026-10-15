@@ -150,7 +150,7 @@ export function soloShareText(args: {
   url: string | null;
 }): string {
   const lines = [
-    `Palabría · ${formatShortDate(args.date)} · ${modeLabel(args.mode)}`,
+    `Palabria · ${formatShortDate(args.date)} · ${modeLabel(args.mode)}`,
     `✅ ${args.correct}  ❌ ${args.wrong}  ⏳ ${args.unanswered}  ⏱ ${formatClock(args.timeMs)}`,
     emojiGrid(args.rosco),
     `Puntuación: ${args.score}`,

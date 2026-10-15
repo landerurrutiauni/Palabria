@@ -389,7 +389,7 @@ function buildDuelView(ctx: ViewContext): DuelView {
       shareText:
         you && rivalSeat && room.status !== "expired"
           ? [
-              `Palabría · 1 vs 1 · ${formatShortDate(room.challenge_date)} · ${modeLabel(room.mode)}`,
+              `Palabria · 1 vs 1 · ${formatShortDate(room.challenge_date)} · ${modeLabel(room.mode)}`,
               `${outcome === "win" ? "🏆 ¡Victoria!" : outcome === "loss" ? "Derrota por la mínima… o no" : "🤝 Empate"}`,
               `Yo: ✅ ${duelLine(state, you).correct} ❌ ${duelLine(state, you).wrong}`,
               `Rival: ✅ ${duelLine(state, rivalSeat).correct} ❌ ${duelLine(state, rivalSeat).wrong}`,
@@ -420,7 +420,7 @@ function buildDuelView(ctx: ViewContext): DuelView {
       title: stageTitle(kind),
       howTo:
         kind === "rosco"
-          ? "Acierto: sigues jugando. Fallo o «Pasapalabra»: tu reloj se detiene y empieza a correr el de tu rival."
+          ? "Acierto: sigues jugando. Fallo o «Palabria»: tu reloj se detiene y empieza a correr el de tu rival."
           : PHASE_RULES[kind].howTo,
       itemsPerPlayer: kind === "rosco" ? 27 : room.rules.itemsPerPlayer[kind],
     },

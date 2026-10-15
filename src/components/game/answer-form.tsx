@@ -6,7 +6,7 @@ import { MAX_ANSWER_LENGTH } from "@/lib/game/normalize";
 import { cn } from "@/lib/client/cn";
 
 /**
- * Campo de respuesta + «Responder» + «Pasapalabra».
+ * Campo de respuesta + «Responder» + «Palabria».
  * Enter envía la respuesta; un envío en curso bloquea nuevos envíos.
  */
 export function AnswerForm({
@@ -15,7 +15,7 @@ export function AnswerForm({
   busy,
   onAnswer,
   onPass,
-  passLabel = "Pasapalabra",
+  passLabel = "Palabria",
   disabledReason,
   extra,
   autoFocus = true,

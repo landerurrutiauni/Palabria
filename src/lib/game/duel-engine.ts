@@ -9,7 +9,7 @@
  *    durante sus turnos. Al cambiar de turno se detiene (se guarda lo que
  *    queda) y al recuperar el turno se reanuda desde ese valor.
  *  - Acierto: el turno continúa y el reloj sigue corriendo.
- *  - Fallo o «Pasapalabra»: se detiene el reloj propio y arranca el del rival.
+ *  - Fallo o «Palabria»: se detiene el reloj propio y arranca el del rival.
  *
  * Las funciones son puras: el servidor carga el estado, aplica la acción con
  * su propio reloj y persiste el resultado de forma atómica.
@@ -396,7 +396,7 @@ export function applyDuelAction(
     let turnChanged = false;
     const resolvedAll = rosco.cursor === null;
     if (outcome !== "correct" || resolvedAll) {
-      // Fallo, «Pasapalabra» o rosco terminado: se detiene el reloj del jugador.
+      // Fallo, «Palabria» o rosco terminado: se detiene el reloj del jugador.
       stopActiveRoscoClock(state, now);
       if (resolvedAll) state.players[seat] = { ...state.players[seat], status: "finished" };
       passTurn(state, seat, now);

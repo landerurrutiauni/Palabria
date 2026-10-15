@@ -20,7 +20,7 @@ const schema = z.object({
   action: z.union([actionSchema, z.object({ type: z.literal("start_stage"), stage: z.number().int().min(0).max(10) })]),
 });
 
-/** Respuesta, «Pasapalabra», pista o inicio de prueba. El servidor valida y puntúa. */
+/** Respuesta, «Palabria», pista o inicio de prueba. El servidor valida y puntúa. */
 export async function POST(request: Request) {
   try {
     assertSameOrigin(request);

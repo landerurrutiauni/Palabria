@@ -1,28 +1,15 @@
 /**
- * Estadísticas, historial, clasificación y estado del jugador.
- * Todo se calcula a partir de resultados persistidos y verificados.
+ * Estado del jugador (intentos del día) y sus preferencias.
  */
 import { nextChallengeStart } from "@/lib/game/daily";
 import type { GameMode } from "@/lib/game/phases";
-import { accuracy } from "@/lib/game/scoring";
-import type {
-  AttemptStatus,
-  HistoryEntry,
-  LeaderboardEntry,
-  LeaderboardView,
-  MeView,
-  PreferencesView,
-  RoomStatus,
-  StatsView,
-} from "@/lib/views";
+import type { AttemptStatus, MeView, PreferencesView, RoomStatus } from "@/lib/views";
 import { todayKey } from "./challenges";
 import { serverNow } from "./clock";
 import type { Queryable } from "./db-core";
 import type { Player } from "./players";
 import { effectiveStreak } from "./results";
 import { openRoomFor } from "./room-service";
-
-export const LEADERBOARD_MIN_ENTRIES = 3;
 
 interface StatsRow {
   solo_played: number;
@@ -136,126 +123,5 @@ export async function getMe(db: Queryable, player: Player): Promise<MeView> {
       best: row?.best_streak ?? 0,
     },
     preferences: await getPreferences(db, player.id),
-  };
-}
-
-export async function getStats(db: Queryable, player: Player): Promise<StatsView> {
-  const now = await serverNow(db);
-  const today = todayKey(now);
-  const r = await statsRow(db, player.id);
-  const history = await db.query<{
-    id: string;
-    challenge_date: string;
-    kind: "solo" | "duel";
-    mode: GameMode;
-    status: "completed" | "abandoned";
-    correct: number;
-    wrong: number;
-    unanswered: number;
-    score: number;
-    time_used_ms: number;
-    outcome: HistoryEntry["outcome"];
-    opponent_name: string | null;
-    perfect: boolean;
-    room_code: string | null;
-  }>(
-    `select g.id, g.challenge_date, g.kind, g.mode, g.status, g.correct, g.wrong, g.unanswered, g.score, g.time_used_ms,
-            g.outcome, g.opponent_name, g.perfect, r.code as room_code
-       from game_results g left join multiplayer_rooms r on r.id = g.room_id
-      where g.player_id = $1
-      order by g.challenge_date desc, g.created_at desc
-      limit 120`,
-    [player.id],
-  );
-  return {
-    solo: {
-      played: r?.solo_played ?? 0,
-      completed: r?.solo_completed ?? 0,
-      correct: r?.solo_correct ?? 0,
-      wrong: r?.solo_wrong ?? 0,
-      accuracy: accuracy(r?.solo_correct ?? 0, r?.solo_wrong ?? 0),
-      bestScoreRosco: r?.best_score_rosco ?? null,
-      bestScoreProgram: r?.best_score_program ?? null,
-      bestTimeMs: r?.best_time_ms ?? null,
-      roscosCompleted: r?.roscos_completed ?? 0,
-      perfectRoscos: r?.perfect_roscos ?? 0,
-    },
-    duel: {
-      played: r?.duel_played ?? 0,
-      wins: r?.duel_wins ?? 0,
-      losses: r?.duel_losses ?? 0,
-      draws: r?.duel_draws ?? 0,
-      correct: r?.duel_correct ?? 0,
-      wrong: r?.duel_wrong ?? 0,
-      accuracy: accuracy(r?.duel_correct ?? 0, r?.duel_wrong ?? 0),
-    },
-    streak: {
-      current: r ? effectiveStreak(r.current_streak, r.last_streak_date, today) : 0,
-      best: r?.best_streak ?? 0,
-      lastDate: r?.last_streak_date ?? null,
-    },
-    history: history.rows.map((h) => ({
-      id: h.id,
-      date: h.challenge_date,
-      kind: h.kind,
-      mode: h.mode,
-      status: h.status,
-      correct: h.correct,
-      wrong: h.wrong,
-      unanswered: h.unanswered,
-      score: h.score,
-      timeUsedMs: h.time_used_ms,
-      outcome: h.outcome,
-      opponentName: h.opponent_name,
-      perfect: h.perfect,
-      roomCode: h.room_code,
-    })),
-  };
-}
-
-export async function getLeaderboard(
-  db: Queryable,
-  args: { date: string; mode: GameMode; playerId: string | null; limit?: number },
-): Promise<LeaderboardView> {
-  const limit = Math.min(Math.max(args.limit ?? 20, 1), 100);
-  const res = await db.query<{
-    player_id: string;
-    display_name: string;
-    score: number;
-    correct: number;
-    wrong: number;
-    time_used_ms: number;
-    perfect: boolean;
-    rank: number;
-    total: number;
-  }>(
-    `select player_id, display_name, score, correct, wrong, time_used_ms, perfect,
-            rank() over (order by score desc, correct desc, wrong asc, time_used_ms asc)::int as rank,
-            count(*) over ()::int as total
-       from game_results
-      where challenge_date = $1 and kind = 'solo' and mode = $2 and status = 'completed'
-      order by rank, finished_at_ms
-      limit 500`,
-    [args.date, args.mode],
-  );
-  const toEntry = (r: (typeof res.rows)[number]): LeaderboardEntry => ({
-    rank: r.rank,
-    name: r.display_name,
-    score: r.score,
-    correct: r.correct,
-    wrong: r.wrong,
-    timeUsedMs: r.time_used_ms,
-    perfect: r.perfect,
-    isYou: r.player_id === args.playerId,
-  });
-  const total = res.rows[0]?.total ?? 0;
-  const mine = res.rows.find((r) => r.player_id === args.playerId);
-  return {
-    date: args.date,
-    mode: args.mode,
-    total,
-    minEntries: LEADERBOARD_MIN_ENTRIES,
-    entries: total >= LEADERBOARD_MIN_ENTRIES ? res.rows.slice(0, limit).map(toEntry) : [],
-    you: mine ? toEntry(mine) : null,
   };
 }

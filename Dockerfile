@@ -1,4 +1,4 @@
-# Palabría · imagen de producción (Next.js standalone)
+# Palabria · imagen de producción (Next.js standalone)
 FROM node:22-bookworm-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./

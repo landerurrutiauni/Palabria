@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ───────────────────────── Identidad visual de Palabría ─────────────────────────
+/* ───────────────────────── Identidad visual de Palabria ─────────────────────────
    «Azulejo»: las placas de cerámica de las calles de Madrid. Esmalte blanco
    porcelana, letras en azul cobalto, juntas finas entre piezas y un toque de
    azafrán. Tipografía Ibarra Real Nova (tipos de Joaquín Ibarra, impresor de la
@@ -34,7 +34,7 @@
   --color-cobalt-700: #163283;
   --color-cobalt-800: #10255f;
 
-  /* Azafrán (Pasapalabra, premios) */
+  /* Azafrán (Palabria, premios) */
   --color-saffron-100: #fbefcf;
   --color-saffron-300: #f2cc66;
   --color-saffron-400: #e9b331;

@@ -1,6 +1,6 @@
 import { cn } from "@/lib/client/cn";
 
-/** Emblema: un plato de cerámica con las 27 letras como puntos de cobalto y la P de Palabría. */
+/** Emblema: un plato de cerámica con las 27 letras como puntos de cobalto y la P de Palabria. */
 export function LogoMark({ size = 40, className }: { size?: number; className?: string }) {
   const dots = Array.from({ length: 27 }, (_, i) => {
     const angle = ((-90 + (i * 360) / 27) * Math.PI) / 180;
@@ -27,16 +27,16 @@ export function LogoMark({ size = 40, className }: { size?: number; className?: 
   );
 }
 
-/** Logotipo: «Palabría» en la tipografía de Ibarra. */
+/** Logotipo: «Palabria» en la tipografía de Ibarra. */
 export function Logo({ className, compact = false }: { className?: string; compact?: boolean }) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)} aria-label="Palabría">
+    <span className={cn("inline-flex items-center gap-2.5", className)} aria-label="Palabria">
       <LogoMark size={compact ? 32 : 40} className="size-9 sm:size-10" />
       <span
         aria-hidden="true"
         className="font-display text-[1.6rem] font-bold leading-none text-ink-900 sm:text-[1.85rem]"
       >
-        Palabría
+        Palabria
       </span>
     </span>
   );
