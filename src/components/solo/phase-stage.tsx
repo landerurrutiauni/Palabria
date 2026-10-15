@@ -4,6 +4,8 @@ import { Eye } from "lucide-react";
 import { AnswerForm } from "@/components/game/answer-form";
 import { FeedbackBanner } from "@/components/game/feedback";
 import { QuestionCard } from "@/components/game/question-card";
+import { useVoicePreference, VoiceToggle } from "@/components/game/voice-toggle";
+import { promptSpeech } from "@/lib/client/voice";
 import { formatClock } from "@/lib/game/clock";
 import { cn } from "@/lib/client/cn";
 import type { FeedbackView, PhaseItemView, SoloView } from "@/lib/views";
@@ -54,8 +56,12 @@ export function PhaseStage({
   const prompt = view.stage.prompt;
   const fraction = view.stage.timeLimitMs > 0 ? remainingMs / view.stage.timeLimitMs : 0;
   const low = remainingMs <= 10_000;
+  const voice = useVoicePreference();
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-4">
+      <div className="flex justify-end">
+        <VoiceToggle />
+      </div>
       <div className="panel-soft flex flex-col gap-3 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
@@ -98,6 +104,7 @@ export function PhaseStage({
           disabledReason={remainingMs <= 0 ? "Se acabó el tiempo de la prueba" : undefined}
           busy={busy}
           passLabel="Paso"
+          voiceText={voice && prompt ? promptSpeech(prompt) : null}
           onAnswer={(text) => prompt && onAnswer(text, prompt.index)}
           onPass={() => prompt && onPass(prompt.index)}
           extra={

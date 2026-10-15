@@ -143,6 +143,8 @@ export interface DuelPlayerView {
   isYou: boolean;
   connected: boolean;
   ready: boolean;
+  /** Ha aceptado jugar con micrófono. */
+  voice: boolean;
   status: ParticipantStatus;
   bankMs: number;
   running: boolean;
@@ -187,6 +189,8 @@ export interface DuelView {
   canJoin: boolean;
   joinBlockedReason: string | null;
   hostName: string;
+  /** Modo voz: los dos jugadores han aceptado jugar con micrófono. */
+  voiceActive: boolean;
   expiresAt: number | null;
   stages: StageKind[];
   stage: { index: number; kind: StageKind; title: string; howTo: string; itemsPerPlayer: number };

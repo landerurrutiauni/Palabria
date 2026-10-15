@@ -111,7 +111,9 @@ describe("API independiente (Edge Function)", () => {
     const code = created.json.code as string;
     const invite = await guest("GET", `/rooms/${code}`);
     expect(invite.json.room.canJoin).toBe(true);
-    await guest("POST", `/rooms/${code}/join`);
+    await guest("POST", `/rooms/${code}/join`, { voice: true });
+    const voiced = await host("POST", `/rooms/${code}/voice`, { enabled: true });
+    expect(voiced.json.room.voiceActive).toBe(true);
     const started = await host("POST", `/rooms/${code}/ready`, { ready: true });
     expect(started.json.room.status).toBe("in_progress");
     clock.advance(4_000);

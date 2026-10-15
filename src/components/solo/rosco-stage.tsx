@@ -6,6 +6,8 @@ import { QuestionCard } from "@/components/game/question-card";
 import { Rosco } from "@/components/game/rosco";
 import { StatChips } from "@/components/game/stat-chips";
 import { TimerDisplay } from "@/components/game/timer";
+import { useVoicePreference, VoiceToggle } from "@/components/game/voice-toggle";
+import { promptSpeech } from "@/lib/client/voice";
 import { formatClock } from "@/lib/game/clock";
 import { cn } from "@/lib/client/cn";
 import type { FeedbackView, SoloView } from "@/lib/views";
@@ -27,6 +29,7 @@ export function RoscoStage({
 }) {
   const prompt = view.stage.prompt;
   const low = remainingMs <= 10_000;
+  const voice = useVoicePreference();
   return (
     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-start lg:gap-8">
       <div className="mx-auto w-full max-w-[19rem] sm:max-w-[24rem] lg:max-w-[34rem]">
@@ -51,6 +54,7 @@ export function RoscoStage({
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-3">
           <StatChips correct={view.totals.correct} wrong={view.totals.wrong} open={view.totals.open} compact />
+          <VoiceToggle />
           <TimerDisplay
             remainingMs={remainingMs}
             totalMs={view.stage.timeLimitMs}
@@ -69,6 +73,7 @@ export function RoscoStage({
             busy={busy}
             onAnswer={(text) => prompt && onAnswer(text, prompt.index)}
             onPass={() => prompt && onPass(prompt.index)}
+            voiceText={voice && prompt ? promptSpeech(prompt) : null}
           />
         </div>
       </div>

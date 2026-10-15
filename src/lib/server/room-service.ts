@@ -101,12 +101,13 @@ interface ParticipantRow {
   pending: number;
   progress: Progress;
   last_seen_at_ms: number;
+  voice: boolean;
 }
 
 const ROOM_COLUMNS = `id, code, challenge_id, challenge_date, mode, status, creator_id, rules, stages, stage_index,
   turn_seat, turn_started_at_ms, turn_number, winner_seat, end_reason, version, expires_at_ms, started_at_ms, finished_at_ms`;
 const PARTICIPANT_COLUMNS = `id, room_id, player_id, seat, display_name, question_set, is_ready, status, time_bank_ms,
-  bonus_ms, phase_points, time_used_ms, correct, wrong, pending, progress, last_seen_at_ms`;
+  bonus_ms, phase_points, time_used_ms, correct, wrong, pending, progress, last_seen_at_ms, voice`;
 
 function newRoomCode(): string {
   return randomBytes(12).toString("base64url");
@@ -325,6 +326,7 @@ function playerView(ctx: ViewContext, p: ParticipantRow): DuelPlayerView {
     isYou: p.player_id === ctx.viewer.id,
     connected: now - Number(p.last_seen_at_ms) < PRESENCE_WINDOW_MS,
     ready: p.is_ready,
+    voice: p.voice,
     status: p.status,
     bankMs: progress?.bankMs ?? p.time_bank_ms,
     running: running && kind === "rosco",
@@ -412,6 +414,7 @@ function buildDuelView(ctx: ViewContext): DuelView {
     canJoin: ctx.canJoin,
     joinBlockedReason: ctx.joinBlockedReason,
     hostName: host?.display_name ?? "Anfitrión",
+    voiceActive: ctx.parts.length === 2 && ctx.parts.every((p) => p.voice),
     expiresAt: room.status === "waiting" || room.status === "ready" ? room.expires_at_ms : null,
     stages: room.stages,
     stage: {
@@ -607,7 +610,12 @@ async function withRoomTx<T>(
 }
 
 /** El invitado acepta el desafío (entra sin registrarse). */
-export async function joinRoom(player: Player, code: string, dbArg?: Database): Promise<void> {
+export async function joinRoom(
+  player: Player,
+  code: string,
+  dbArg?: Database,
+  options: { voice?: boolean } = {},
+): Promise<void> {
   const db = dbArg ?? (await defaultDatabase());
   try {
     await withRoomTx(db, code, async (tx, roomIn, parts, now) => {
@@ -629,8 +637,9 @@ export async function joinRoom(player: Player, code: string, dbArg?: Database): 
       }
       await tx.query(
         `insert into multiplayer_participants
-           (room_id, player_id, seat, display_name, question_set, is_ready, status, time_bank_ms, progress, last_seen_at_ms)
-         values ($1, $2, 2, $3, 'duel_b', true, 'joined', $4, $5, $6)`,
+           (room_id, player_id, seat, display_name, question_set, is_ready, status, time_bank_ms, progress, last_seen_at_ms,
+            voice)
+         values ($1, $2, 2, $3, 'duel_b', true, 'joined', $4, $5, $6, $7)`,
         [
           room.id,
           player.id,
@@ -638,6 +647,7 @@ export async function joinRoom(player: Player, code: string, dbArg?: Database): 
           room.rules.roscoBaseMs,
           JSON.stringify(initialProgress(room.rules)),
           now,
+          options.voice === true,
         ],
       );
       await tx.query(
@@ -680,6 +690,29 @@ export async function setReady(player: Player, code: string, ready: boolean, dbA
     if (isUniqueViolation(error)) throw Errors.attemptUsed("duel");
     throw error;
   }
+}
+
+/**
+ * Elegir jugar con micrófono. Solo antes de empezar: durante el duelo la
+ * modalidad no cambia. La voz se activa si los dos jugadores la aceptan.
+ */
+export async function setVoice(player: Player, code: string, enabled: boolean, dbArg?: Database): Promise<void> {
+  const db = dbArg ?? (await defaultDatabase());
+  await withRoomTx(db, code, async (tx, roomIn, parts, now) => {
+    const room = await expireIfStale(tx, roomIn, now);
+    const me = parts.find((p) => p.player_id === player.id);
+    if (!me) throw Errors.notParticipant();
+    if (room.status === "in_progress" || room.status === "completed" || room.status === "abandoned") {
+      throw new AppError(409, "already_started", "El duelo ya ha empezado: la modalidad de voz no se puede cambiar.");
+    }
+    if (room.status !== "waiting" && room.status !== "ready") throw Errors.roomExpired();
+    await tx.query("update multiplayer_participants set voice = $2, last_seen_at_ms = $3 where id = $1", [
+      me.id,
+      enabled,
+      now,
+    ]);
+    await tx.query("update multiplayer_rooms set version = version + 1, updated_at = now() where id = $1", [room.id]);
+  });
 }
 
 /**

@@ -163,7 +163,7 @@ export function RoomClient({ code, initial }: { code: string; initial: DuelView 
     return (
       <>
         {errorNotice}
-        <Invitation view={view} busy={busy} onJoin={() => void post("join")} />
+        <Invitation view={view} busy={busy} onJoin={(voice) => void post("join", { voice })} />
       </>
     );
   }
@@ -176,6 +176,7 @@ export function RoomClient({ code, initial }: { code: string; initial: DuelView 
           view={view}
           busy={busy}
           onReady={(ready) => void post("ready", { ready })}
+          onVoice={(enabled) => void post("voice", { enabled })}
           onLeave={() =>
             void post("leave").then((r) => {
               if (r) router.push(view.isHost ? "/duelo" : "/");

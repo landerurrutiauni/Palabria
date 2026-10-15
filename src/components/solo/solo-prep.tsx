@@ -1,5 +1,6 @@
 import { Clock3, Keyboard, Play, RotateCcw } from "lucide-react";
 import { RoscoLegend } from "@/components/game/rosco";
+import { VoiceToggle } from "@/components/game/voice-toggle";
 import { PHASE_RULES, PROGRAM_PHASES, type GameMode } from "@/lib/game/phases";
 
 /** Preparación y explicación de reglas antes de gastar el intento. */
@@ -63,7 +64,14 @@ export function SoloPrep({
             </li>
           </ol>
         )}
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="mt-8 flex flex-col gap-3 rounded-xl border-2 border-glaze-300 bg-ink-900/[0.06] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-ink-700">
+            <strong className="text-ink-900">Modo voz:</strong> una voz lee cada pregunta y respondes hablando. Di
+            «Palabria» para pasar. Funciona mejor en Chrome, Edge o Safari.
+          </p>
+          <VoiceToggle className="shrink-0" />
+        </div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
           <button type="button" className="btn btn-primary min-h-14 px-8 text-lg" onClick={onStart} disabled={busy}>
             <Play className="size-5" aria-hidden="true" />
             {busy ? "Preparando…" : "¡Empezar!"}

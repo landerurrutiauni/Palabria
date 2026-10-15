@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { CheckCircle2, Clock, Hourglass, LogOut, Swords, UserPlus } from "lucide-react";
+import { CheckCircle2, Clock, Hourglass, LogOut, Mic, MicOff, Swords, UserPlus } from "lucide-react";
+import { useState } from "react";
 import { Countdown } from "@/components/home/countdown";
 import { cn } from "@/lib/client/cn";
 import { modeLabel } from "@/lib/game/phases";
@@ -39,6 +40,19 @@ function Seat({ player, seatLabel, waiting }: { player?: DuelPlayerView; seatLab
         )}
       </div>
       {player ? (
+        <span
+          className={cn("flex items-center gap-1 text-xs font-bold", player.voice ? "text-ok-700" : "text-ink-500")}
+          title={player.voice ? "Acepta jugar con micrófono" : "Sin micrófono"}
+        >
+          {player.voice ? (
+            <Mic className="size-4" aria-hidden="true" />
+          ) : (
+            <MicOff className="size-4" aria-hidden="true" />
+          )}
+          <span className="sr-only">{player.voice ? "Acepta jugar con micrófono" : "Sin micrófono"}</span>
+        </span>
+      ) : null}
+      {player ? (
         player.ready ? (
           <span className="flex items-center gap-1 text-sm font-bold text-ok-700">
             <CheckCircle2 className="size-4" aria-hidden="true" /> Listo
@@ -56,11 +70,13 @@ export function Lobby({
   view,
   busy,
   onReady,
+  onVoice,
   onLeave,
 }: {
   view: DuelView;
   busy: boolean;
   onReady: (ready: boolean) => void;
+  onVoice: (enabled: boolean) => void;
   onLeave: () => void;
 }) {
   const me = view.you ? view.players[view.you] : undefined;
@@ -95,6 +111,35 @@ export function Lobby({
           <Seat player={host} seatLabel="Anfitrión" />
           <Seat player={guest} seatLabel="Invitado" waiting={waitingForGuest} />
         </div>
+        {me ? (
+          <div className="mt-6 rounded-xl border-2 border-glaze-300 bg-ink-900/[0.06] p-4">
+            <label className="flex cursor-pointer items-center justify-between gap-4">
+              <span>
+                <span className="block font-extrabold text-ink-900">Jugar con micrófono</span>
+                <span className="block text-sm text-ink-600">
+                  Una voz lee las preguntas y respondes hablando (di «Palabria» para pasar). Solo se activa si los dos
+                  lo aceptáis.
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                className="size-6 shrink-0 accent-[var(--color-ok-600)]"
+                checked={me.voice}
+                disabled={busy}
+                onChange={(e) => onVoice(e.target.checked)}
+              />
+            </label>
+            <p className={cn("mt-2 text-sm font-bold", view.voiceActive ? "text-ok-700" : "text-ink-600")}>
+              {view.voiceActive
+                ? "Modo voz activado: los dos jugaréis con micrófono."
+                : !me.voice
+                  ? "Modo voz desactivado."
+                  : waitingForGuest
+                    ? "Tú lo aceptas; falta que tu rival lo acepte."
+                    : "Tú lo aceptas, pero tu rival no: se jugará escribiendo."}
+            </p>
+          </div>
+        ) : null}
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
           {me && view.isHost ? (
             me.ready ? (
@@ -152,7 +197,17 @@ export function Lobby({
 }
 
 /** Invitación para quien abre el enlace (todavía no participa). */
-export function Invitation({ view, busy, onJoin }: { view: DuelView; busy: boolean; onJoin: () => void }) {
+export function Invitation({
+  view,
+  busy,
+  onJoin,
+}: {
+  view: DuelView;
+  busy: boolean;
+  onJoin: (voice: boolean) => void;
+}) {
+  const host = view.players[1];
+  const [voice, setVoice] = useState(false);
   return (
     <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
       <section className="panel stage-lights relative overflow-hidden p-6 text-center sm:p-10">
@@ -163,10 +218,28 @@ export function Invitation({ view, busy, onJoin }: { view: DuelView; busy: boole
           distintos y equivalentes, turnos con reloj propio.
         </p>
         {view.canJoin ? (
+          <label className="mx-auto mt-6 flex max-w-md cursor-pointer items-start gap-3 rounded-xl border-2 border-glaze-300 bg-ink-900/[0.06] p-4 text-left">
+            <input
+              type="checkbox"
+              className="mt-1 size-5 shrink-0 accent-[var(--color-ok-600)]"
+              checked={voice}
+              onChange={(e) => setVoice(e.target.checked)}
+            />
+            <span>
+              <span className="block font-extrabold text-ink-900">Jugar con micrófono</span>
+              <span className="block text-sm text-ink-600">
+                {host?.voice
+                  ? `${view.hostName} quiere jugar con micrófono. Si lo aceptas, una voz leerá las preguntas y responderéis hablando.`
+                  : "Una voz lee las preguntas y respondes hablando. Solo se activa si los dos lo aceptáis."}
+              </span>
+            </span>
+          </label>
+        ) : null}
+        {view.canJoin ? (
           <button
             type="button"
-            className="btn btn-gold mx-auto mt-8 min-h-14 px-10 text-lg"
-            onClick={onJoin}
+            className="btn btn-gold mx-auto mt-6 min-h-14 px-10 text-lg"
+            onClick={() => onJoin(voice)}
             disabled={busy}
           >
             <Swords className="size-5" aria-hidden="true" />

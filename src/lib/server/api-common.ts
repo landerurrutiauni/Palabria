@@ -41,6 +41,13 @@ export async function readJson<S extends z.ZodType>(request: Request, schema: S)
   return schema.parse(body);
 }
 
+/** Cuerpo JSON opcional: sin cuerpo (o sin tipo JSON) equivale a «{}». */
+export async function readOptionalJson<S extends z.ZodType>(request: Request, schema: S): Promise<z.infer<S>> {
+  const type = request.headers.get("content-type") ?? "";
+  if (!type.includes("application/json")) return schema.parse({});
+  return readJson(request, schema);
+}
+
 /* Limitador sencillo en memoria (por proceso) contra ráfagas abusivas. */
 const globalForRate = globalThis as unknown as { __palabriaRate?: Map<string, { count: number; reset: number }> };
 

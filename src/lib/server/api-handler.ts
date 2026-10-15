@@ -17,6 +17,7 @@ import {
   modeSchema,
   rateLimit,
   readJson,
+  readOptionalJson,
 } from "./api-common";
 import { getChallengeForDate, roscoPreview, todayKey } from "./challenges";
 import { serverNow } from "./clock";
@@ -24,7 +25,16 @@ import type { Database } from "./db-core";
 import { AppError } from "./errors";
 import { sanitizeDisplayName } from "./names";
 import type { Player } from "./players";
-import { createRoom, getRoomView, joinRoom, leaveRoom, roomAction, setReady, sweepRooms } from "./room-service";
+import {
+  createRoom,
+  getRoomView,
+  joinRoom,
+  leaveRoom,
+  roomAction,
+  setReady,
+  setVoice,
+  sweepRooms,
+} from "./room-service";
 import { getSoloSession, getTodaySolo, soloAction, startSolo, sweepSoloSessions } from "./solo-service";
 import { getMe, savePreferences } from "./stats-service";
 
@@ -160,10 +170,11 @@ export function createApiHandler(options: ApiHandlerOptions): (request: Request)
     respond({ room: (await getRoomView(await player(), params[0]!, db)).view }),
   );
 
-  route("POST", new RegExp(`^/rooms/${codePattern}/join$`), async ({ db, params, player, respond }) => {
+  route("POST", new RegExp(`^/rooms/${codePattern}/join$`), async ({ db, params, request, player, respond }) => {
     const me = await player();
     rateLimit(`room-join:${me.id}`, 20, 60_000);
-    await joinRoom(me, params[0]!, db);
+    const { voice } = await readOptionalJson(request, z.object({ voice: z.boolean().optional() }));
+    await joinRoom(me, params[0]!, db, { voice });
     return respond({ room: (await getRoomView(me, params[0]!, db)).view });
   });
 
@@ -172,6 +183,14 @@ export function createApiHandler(options: ApiHandlerOptions): (request: Request)
     rateLimit(`room-ready:${me.id}`, 30, 60_000);
     const { ready } = await readJson(request, z.object({ ready: z.boolean() }));
     await setReady(me, params[0]!, ready, db);
+    return respond({ room: (await getRoomView(me, params[0]!, db)).view });
+  });
+
+  route("POST", new RegExp(`^/rooms/${codePattern}/voice$`), async ({ db, params, request, player, respond }) => {
+    const me = await player();
+    rateLimit(`room-voice:${me.id}`, 30, 60_000);
+    const { enabled } = await readJson(request, z.object({ enabled: z.boolean() }));
+    await setVoice(me, params[0]!, enabled, db);
     return respond({ room: (await getRoomView(me, params[0]!, db)).view });
   });
 

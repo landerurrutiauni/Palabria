@@ -3,7 +3,15 @@ import type { ApiErrorBody } from "@/lib/views";
 import { errorPayload } from "./api-common";
 import { AppError } from "./errors";
 
-export { actionIdSchema, actionRateLimit, actionSchema, modeSchema, rateLimit, readJson } from "./api-common";
+export {
+  actionIdSchema,
+  actionRateLimit,
+  actionSchema,
+  modeSchema,
+  rateLimit,
+  readJson,
+  readOptionalJson,
+} from "./api-common";
 
 export function json<T>(data: T, init?: ResponseInit): NextResponse<T> {
   return NextResponse.json(data, {

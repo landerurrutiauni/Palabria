@@ -19910,6 +19910,11 @@ async function readJson(request, schema) {
   }
   return schema.parse(body);
 }
+async function readOptionalJson(request, schema) {
+  const type = request.headers.get("content-type") ?? "";
+  if (!type.includes("application/json")) return schema.parse({});
+  return readJson(request, schema);
+}
 var globalForRate = globalThis;
 function rateLimit(key, limit, windowMs) {
   const map2 = globalForRate.__palabriaRate ??= /* @__PURE__ */ new Map();
@@ -23249,7 +23254,7 @@ var PRESENCE_WINDOW_MS = 15e3;
 var ROOM_COLUMNS = `id, code, challenge_id, challenge_date, mode, status, creator_id, rules, stages, stage_index,
   turn_seat, turn_started_at_ms, turn_number, winner_seat, end_reason, version, expires_at_ms, started_at_ms, finished_at_ms`;
 var PARTICIPANT_COLUMNS = `id, room_id, player_id, seat, display_name, question_set, is_ready, status, time_bank_ms,
-  bonus_ms, phase_points, time_used_ms, correct, wrong, pending, progress, last_seen_at_ms`;
+  bonus_ms, phase_points, time_used_ms, correct, wrong, pending, progress, last_seen_at_ms, voice`;
 function newRoomCode() {
   return randomBytes(12).toString("base64url");
 }
@@ -23431,6 +23436,7 @@ function playerView(ctx, p) {
     isYou: p.player_id === ctx.viewer.id,
     connected: now - Number(p.last_seen_at_ms) < PRESENCE_WINDOW_MS,
     ready: p.is_ready,
+    voice: p.voice,
     status: p.status,
     bankMs: progress?.bankMs ?? p.time_bank_ms,
     running: running && kind === "rosco",
@@ -23503,6 +23509,7 @@ function buildDuelView(ctx) {
     canJoin: ctx.canJoin,
     joinBlockedReason: ctx.joinBlockedReason,
     hostName: host?.display_name ?? "Anfitri\xF3n",
+    voiceActive: ctx.parts.length === 2 && ctx.parts.every((p) => p.voice),
     expiresAt: room.status === "waiting" || room.status === "ready" ? room.expires_at_ms : null,
     stages: room.stages,
     stage: {
@@ -23659,7 +23666,7 @@ async function withRoomTx(db, code, fn) {
   await publishRoomUpdate(result.room);
   return result.value;
 }
-async function joinRoom(player, code, dbArg) {
+async function joinRoom(player, code, dbArg, options = {}) {
   const db = dbArg ?? await defaultDatabase();
   try {
     await withRoomTx(db, code, async (tx, roomIn, parts, now) => {
@@ -23681,15 +23688,17 @@ async function joinRoom(player, code, dbArg) {
       }
       await tx.query(
         `insert into multiplayer_participants
-           (room_id, player_id, seat, display_name, question_set, is_ready, status, time_bank_ms, progress, last_seen_at_ms)
-         values ($1, $2, 2, $3, 'duel_b', true, 'joined', $4, $5, $6)`,
+           (room_id, player_id, seat, display_name, question_set, is_ready, status, time_bank_ms, progress, last_seen_at_ms,
+            voice)
+         values ($1, $2, 2, $3, 'duel_b', true, 'joined', $4, $5, $6, $7)`,
         [
           room.id,
           player.id,
           player.displayName,
           room.rules.roscoBaseMs,
           JSON.stringify(initialProgress(room.rules)),
-          now
+          now,
+          options.voice === true
         ]
       );
       await tx.query(
@@ -23730,6 +23739,24 @@ async function setReady(player, code, ready, dbArg) {
     if (isUniqueViolation(error62)) throw Errors.attemptUsed("duel");
     throw error62;
   }
+}
+async function setVoice(player, code, enabled, dbArg) {
+  const db = dbArg ?? await defaultDatabase();
+  await withRoomTx(db, code, async (tx, roomIn, parts, now) => {
+    const room = await expireIfStale(tx, roomIn, now);
+    const me = parts.find((p) => p.player_id === player.id);
+    if (!me) throw Errors.notParticipant();
+    if (room.status === "in_progress" || room.status === "completed" || room.status === "abandoned") {
+      throw new AppError(409, "already_started", "El duelo ya ha empezado: la modalidad de voz no se puede cambiar.");
+    }
+    if (room.status !== "waiting" && room.status !== "ready") throw Errors.roomExpired();
+    await tx.query("update multiplayer_participants set voice = $2, last_seen_at_ms = $3 where id = $1", [
+      me.id,
+      enabled,
+      now
+    ]);
+    await tx.query("update multiplayer_rooms set version = version + 1, updated_at = now() where id = $1", [room.id]);
+  });
 }
 async function leaveRoom(player, code, dbArg) {
   const db = dbArg ?? await defaultDatabase();
@@ -24472,10 +24499,11 @@ function createApiHandler(options) {
     new RegExp(`^/rooms/${codePattern}$`),
     async ({ db, params, player, respond }) => respond({ room: (await getRoomView(await player(), params[0], db)).view })
   );
-  route("POST", new RegExp(`^/rooms/${codePattern}/join$`), async ({ db, params, player, respond }) => {
+  route("POST", new RegExp(`^/rooms/${codePattern}/join$`), async ({ db, params, request, player, respond }) => {
     const me = await player();
     rateLimit(`room-join:${me.id}`, 20, 6e4);
-    await joinRoom(me, params[0], db);
+    const { voice } = await readOptionalJson(request, external_exports.object({ voice: external_exports.boolean().optional() }));
+    await joinRoom(me, params[0], db, { voice });
     return respond({ room: (await getRoomView(me, params[0], db)).view });
   });
   route("POST", new RegExp(`^/rooms/${codePattern}/ready$`), async ({ db, params, request, player, respond }) => {
@@ -24483,6 +24511,13 @@ function createApiHandler(options) {
     rateLimit(`room-ready:${me.id}`, 30, 6e4);
     const { ready } = await readJson(request, external_exports.object({ ready: external_exports.boolean() }));
     await setReady(me, params[0], ready, db);
+    return respond({ room: (await getRoomView(me, params[0], db)).view });
+  });
+  route("POST", new RegExp(`^/rooms/${codePattern}/voice$`), async ({ db, params, request, player, respond }) => {
+    const me = await player();
+    rateLimit(`room-voice:${me.id}`, 30, 6e4);
+    const { enabled } = await readJson(request, external_exports.object({ enabled: external_exports.boolean() }));
+    await setVoice(me, params[0], enabled, db);
     return respond({ room: (await getRoomView(me, params[0], db)).view });
   });
   route("POST", new RegExp(`^/rooms/${codePattern}/leave$`), async ({ db, params, player, respond }) => {

@@ -9,6 +9,7 @@ import {
   leaveRoom,
   roomAction,
   setReady,
+  setVoice,
   sweepRooms,
 } from "@/lib/server/room-service";
 import { getMe } from "@/lib/server/stats-service";
@@ -253,6 +254,27 @@ describe("salas 1 vs 1", () => {
     await expect(joinRoom(guest, code, db)).rejects.toMatchObject({ code: "room_expired" });
     await expect(setReady(host, code, true, db)).rejects.toMatchObject({ code: "room_expired" });
     expect(await sweepRooms(db)).toBeGreaterThanOrEqual(0);
+  });
+
+  it("modo voz: solo se activa si los dos lo aceptan y no cambia tras empezar", async () => {
+    const { host, guest, code } = await startedDuel();
+    await setVoice(host, code, true, db);
+    let view = (await getRoomView(host, code, db)).view;
+    expect(view.players[1]?.voice).toBe(true);
+    expect(view.voiceActive).toBe(false);
+    await joinRoom(guest, code, db, { voice: false });
+    view = (await getRoomView(guest, code, db)).view;
+    expect(view.voiceActive).toBe(false);
+    await setVoice(guest, code, true, db);
+    view = (await getRoomView(guest, code, db)).view;
+    expect(view.voiceActive).toBe(true);
+    await setReady(host, code, true, db);
+    view = (await getRoomView(host, code, db)).view;
+    expect(view.status).toBe("in_progress");
+    expect(view.voiceActive).toBe(true);
+    await expect(setVoice(guest, code, false, db)).rejects.toMatchObject({ code: "already_started" });
+    const outsider = await newPlayer(db);
+    await expect(setVoice(outsider, code, true, db)).rejects.toMatchObject({ status: 403 });
   });
 
   it("solicitudes simultáneas de inicio no crean intentos duplicados", async () => {

@@ -9,6 +9,7 @@ import { QuestionCard } from "@/components/game/question-card";
 import { Rosco } from "@/components/game/rosco";
 import { StatChips } from "@/components/game/stat-chips";
 import { TimerDisplay } from "@/components/game/timer";
+import { promptSpeech } from "@/lib/client/voice";
 import { ItemDots } from "@/components/solo/phase-stage";
 import { cn } from "@/lib/client/cn";
 import { estimateServerNow, useNow, useServerOffset } from "@/lib/client/time";
@@ -361,6 +362,7 @@ export function DuelBoard({
               disabledReason={myTurn ? undefined : inCountdown ? "Preparados…" : "Turno de tu rival"}
               busy={busy}
               passLabel={isRosco ? "Palabria" : "Paso"}
+              voiceText={view.voiceActive && myTurn && prompt ? promptSpeech(prompt) : null}
               onAnswer={(text) =>
                 prompt && onAction({ type: "answer", stage: view.stage.index, item: prompt.index, text })
               }
