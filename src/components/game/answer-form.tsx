@@ -274,7 +274,12 @@ export function AnswerForm({
           disabled={locked}
         >
           {passLabel}
-          <kbd aria-hidden="true" className="ml-2 hidden rounded border border-white/60 px-1.5 text-xs font-bold sm:inline">Tab</kbd>
+          <kbd
+            aria-hidden="true"
+            className="ml-2 hidden rounded border border-white/60 px-1.5 text-xs font-bold sm:inline"
+          >
+            Tab
+          </kbd>
         </button>
         {extra}
       </div>
