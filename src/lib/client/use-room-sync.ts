@@ -56,7 +56,7 @@ export function useRoomSync(code: string, initial: DuelView) {
       setStatus(!ok ? (navigator.onLine ? "reconnecting" : "offline") : channelLive || !sb ? "live" : "reconnecting");
     };
     void tick();
-    const id = window.setInterval(tick, 3000);
+    const id = window.setInterval(tick, 1500);
     const onOnline = () => void refresh();
     window.addEventListener("online", onOnline);
     document.addEventListener("visibilitychange", onOnline);

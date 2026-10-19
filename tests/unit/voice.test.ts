@@ -3,7 +3,7 @@ import { interpretSpeech, promptSpeech } from "@/lib/client/voice";
 
 describe("modo voz", () => {
   it("«Palabria» (y variantes que oye el reconocedor) pasa la letra", () => {
-    for (const said of ["Palabria", "palabría", "Pala bria", "pasapalabra"]) {
+    for (const said of ["Palabria", "palabría", "Pala bria", "pasapalabra", "Palabra", "Valeria", "palabrias"]) {
       expect(interpretSpeech(said)).toEqual({ kind: "pass" });
     }
     expect(interpretSpeech("paso")).toEqual({ kind: "answer", text: "paso" });

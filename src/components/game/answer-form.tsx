@@ -52,7 +52,18 @@ function useVoiceAnswer({
       setStatus("listening");
       let gotFinal = false;
       listener = listen({
-        onText: (t) => handlers.current.onText(t),
+        onText: (t) => {
+          // El jugador habla: se interrumpe la lectura (como en el plató).
+          stopSpeaking();
+          setStatus("listening");
+          if (interpretSpeech(t, handlers.current.passWords)?.kind === "pass") {
+            gotFinal = true;
+            listener?.stop();
+            handlers.current.onPass();
+            return;
+          }
+          handlers.current.onText(t);
+        },
         onFinal: (t) => {
           gotFinal = true;
           const spoken = interpretSpeech(t, handlers.current.passWords);
@@ -67,7 +78,7 @@ function useVoiceAnswer({
         onEnd: () => {
           if (cancelled || gotFinal) return;
           // Sin respuesta: se vuelve a escuchar unas cuantas veces.
-          if (++tries < 4) startListening();
+          if (++tries < 20) startListening();
           else setStatus("idle");
         },
         onError: (error) => {
@@ -81,8 +92,11 @@ function useVoiceAnswer({
       await Promise.resolve();
       if (cancelled) return;
       setStatus("speaking");
-      await speak(text);
+      // El micrófono escucha desde el principio: se puede responder sin esperar a la voz.
       startListening();
+      setStatus("speaking");
+      await speak(text);
+      if (!cancelled) setStatus((s) => (s === "speaking" ? "listening" : s));
     })();
 
     return () => {
@@ -231,6 +245,14 @@ export function AnswerForm({
           autoCapitalize="none"
           spellCheck={false}
           enterKeyHint="send"
+          onKeyDown={(e) => {
+            // Tab = Palabria (pasar), sin salir del campo.
+            if (e.key === "Tab" && !e.shiftKey && !locked) {
+              e.preventDefault();
+              setText("");
+              onPass();
+            }
+          }}
           maxLength={MAX_ANSWER_LENGTH}
           aria-label="Tu respuesta"
         />
@@ -252,6 +274,7 @@ export function AnswerForm({
           disabled={locked}
         >
           {passLabel}
+          <kbd aria-hidden="true" className="ml-2 hidden rounded border border-white/60 px-1.5 text-xs font-bold sm:inline">Tab</kbd>
         </button>
         {extra}
       </div>

@@ -109,13 +109,30 @@ function plain(text: string): string {
 const PASS_WORDS = new Set(["palabria", "pala bria", "palabra ria", "palabrea", "pasapalabra", "pasa palabra"]);
 const FILLERS = /^(es|son|seria|la respuesta es|respuesta|creo que es|creo que|pues|eh|el|la|los|las|un|una)\s+/;
 
+function distance(a: string, b: string): number {
+  const d = Array.from({ length: a.length + 1 }, (_, i) => [i, ...Array<number>(b.length).fill(0)]);
+  for (let j = 1; j <= b.length; j++) d[0]![j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      d[i]![j] = Math.min(d[i - 1]![j]! + 1, d[i]![j - 1]! + 1, d[i - 1]![j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return d[a.length]![b.length]!;
+}
+
+/** El reconocedor no conoce «Palabria»: acepta lo que suena parecido (palabra, palabras, Valeria, pala bría…). */
+function soundsLikePass(text: string): boolean {
+  const joined = text.replace(/\s+/g, "");
+  if (text.split(" ").length > 3) return false;
+  if (/^(palabr|pasapalabr)/.test(joined) || /bria$|bria /.test(text)) return true;
+  return distance(joined, "palabria") <= 3 || ["valeria", "palabras", "palabra"].includes(joined);
+}
+
 export type SpokenAnswer = { kind: "pass" } | { kind: "answer"; text: string };
 
 /** Interpreta lo dicho: palabra para pasar o respuesta (sin muletillas ni artículos iniciales). */
 export function interpretSpeech(transcript: string, extraPassWords: string[] = []): SpokenAnswer | null {
   let text = plain(transcript);
   if (!text) return null;
-  if (PASS_WORDS.has(text) || extraPassWords.includes(text)) return { kind: "pass" };
+  if (PASS_WORDS.has(text) || extraPassWords.includes(text) || soundsLikePass(text)) return { kind: "pass" };
   for (let i = 0; i < 3; i++) {
     const next = text.replace(FILLERS, "");
     if (next === text || !next) break;

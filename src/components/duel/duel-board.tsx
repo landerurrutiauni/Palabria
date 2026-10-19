@@ -395,13 +395,13 @@ export function DuelBoard({
       </div>
 
       {flash ? (
-        <div className="pointer-events-none fixed inset-0 z-40 grid place-items-center" aria-hidden="true">
+        <div className="pointer-events-none fixed inset-x-0 top-20 z-40 flex justify-center px-4" aria-hidden="true">
           <div
             key={flash.key}
-            className="animate-flash rounded-xl border border-glaze-300 bg-glaze-0/85 px-10 py-6 text-center shadow-tile backdrop-blur"
+            className="animate-flash flex items-baseline gap-3 rounded-full border border-glaze-300 bg-glaze-0/90 px-5 py-2 shadow-tile backdrop-blur"
           >
-            <p className={cn("font-display text-4xl font-bold sm:text-5xl", flash.tone)}>{flash.title}</p>
-            <p className="mt-2 text-lg font-semibold text-ink-800">{flash.subtitle}</p>
+            <p className={cn("text-lg font-black", flash.tone)}>{flash.title}</p>
+            <p className="text-sm font-semibold text-ink-700">{flash.subtitle}</p>
           </div>
         </div>
       ) : null}
